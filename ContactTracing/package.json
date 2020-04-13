@@ -18,7 +18,7 @@
     "react-native-localize": "^1.4.0",
     "react-native-paper": "^3.8.0",
     "react-native-permissions": "^2.0.10",
-    "react-native-simple-crypto": "^0.2.8",
+    "react-native-simple-crypto": "https://github.com/RichardLindhout/react-native-simple-crypto",
     "react-native-track-player": "^1.2.2",
     "react-native-vector-icons": "^6.6.0",
     "realm": "^5.0.3",

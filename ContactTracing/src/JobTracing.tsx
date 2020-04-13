@@ -10,7 +10,7 @@ const track: Track = {
   url: require('../assets/5-minutes-of-silence.mp3'),
   title: 'Corona Tracing',
   artist: 'Track Artist',
-  artwork: require('track.png'),
+  artwork: require('../assets/virus.png'),
 }
 
 // 1 year of summer ;)

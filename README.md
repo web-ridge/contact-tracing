@@ -23,7 +23,7 @@ Beide applicaties slaan deze 2 encryptie hashes **lokaal** op hun eigen telefoon
 - Alice scant de code
 - Met deze code kan zij de hash van haar _eigen_ bluetooth ID opsturen (met AVG toestemmings popup)
 
-Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. Om te voorkomen dat de backend zou kunnen opslaan worden de laatste 6 cijfers van de hash _niet_ opgestuurd. Zodat de backend nooit met 100% zekerheid zou kunnen bewijzen of hij in de buurt van die hash is geweest. (het wordt sowieso al niet opgeslagen, maar om privacy zorgen weg te nemen)
+Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen.
 
 Van de server krijgt hij de hashes terug die zijn overeengekomen met het eerste gedeelte van de hash. De telefoon van Bob kan lokaal controleren of deze hashes zijn overeengekomen.
 
