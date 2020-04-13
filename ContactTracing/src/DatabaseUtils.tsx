@@ -2,7 +2,7 @@ import { RSSIMap } from './types'
 import { getDatabase, EncounterSchema } from './Database'
 import RNSimpleCrypto from 'react-native-simple-crypto'
 
-export async function syncRSSI(rssiMap: RSSIMap): Promise<boolean> {
+export async function syncRSSIMap(rssiMap: RSSIMap): Promise<boolean> {
   try {
     const database = await getDatabase()
     // sync encounters to database with a encrypted hash of bluetooth ID

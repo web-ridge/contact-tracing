@@ -3,6 +3,7 @@ import { BleManager } from 'react-native-ble-plx'
 import TrackPlayer,{Track} from 'react-native-track-player';
 import BackgroundService from 'react-native-background-actions'
 import { RSSIMap } from './types'
+import {syncRSSIMap} from './DatabaseUtils'
 
 const track:Track = {
   id: 'trackId',
@@ -22,6 +23,12 @@ for (i = 0; i < 105120; i++) {
 
 // this is used keep the bluetooth working in background
 function play1YearOfSummer() {
+  // The clouds have gone away
+  // To start a brighter day
+  // We have waited for too long
+  // It's time to let it out
+  // You know what it's about
+  // I've waited all to feel the sun
   TrackPlayer.setupPlayer().then(async () => {
 
     // Adds a track to the queue
@@ -33,21 +40,26 @@ function play1YearOfSummer() {
 });
 }
 
+function sleep(ms:number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // You can do anything in your task such as network requests, timers and so on,
 // as long as it doesn't touch UI. Once your task completes (i.e. the promise is resolved),
 // React Native will go into "paused" mode (unless there are other tasks running,
 // or there is a foreground app).
 const scanForBluetoothDevices = async () => {
 
-  const rssiPerHash: RSSIMap = {}
+  let rssiPerHash: RSSIMap = {}
 
   // Example of an infinite loop task
   
   await new Promise((resolve) => {
     for (let i = 0; BackgroundService.isRunning(); i++) {
 
-
+      console.log('run task')
       // ;-)
+      // 
       if (Platform.OS === 'ios') {
         play1YearOfSummer()
       }
@@ -62,11 +74,6 @@ const scanForBluetoothDevices = async () => {
         null, // uuids
         {}, // options
         (error, scannedDevice) => {
-          console.log({
-            error,
-            scannedDevice,
-          })
-
           if (error) {
             return
           }
@@ -77,11 +84,11 @@ const scanForBluetoothDevices = async () => {
           }
 
           // we map rssi values so we can see if device did come closer
-          // Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
-          // een getal dat -50 (min 50) is een redelijk goed signaal,
-          // een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
+          // Closer to zero is better!
+          // -50 (min 50) fairly good,
+          // -70 (min 70) good
+          // -100 bleghh
           
-          // https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
           const previousRSSI = rssiPerHash[scannedDevice.id]
           const latestRSSI = scannedDevice.rssi
 
@@ -92,6 +99,19 @@ const scanForBluetoothDevices = async () => {
             : latestRSSI
      
     })
+
+    const hourInMs = 1*1000*60*60
+
+    // every half an hour we sync rssi values to a database
+    await sleep(hourInMs/2);
+   const done = await syncRSSIMap(rssiPerHash)
+   if (done) {
+    console.log('syncing rrsi values done')
+    rssiPerHash = {}
+   } else {
+    console.log('syncing rrsi not done')
+   }
+
 
 }
 
@@ -110,15 +130,5 @@ const options = {
 }
 
 export default function startTracing() {
-  return BackgroundService.start(scanForBluetoothDevices, {
-    taskName: 'ContactTracing',
-    taskTitle: 'Corona onder controle',
-    taskDesc: 'Samen krijgen we Corona onder controle',
-    color: 'blue',
-    taskIconOptions: {
-      name: '',
-      type: '',
-      package: '',
-    },
-  })
+  return BackgroundService.start(scanForBluetoothDevices, options)
 }
