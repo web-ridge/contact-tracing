@@ -1,4 +1,4 @@
-Als je de privacy wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
+Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
 
 Voorgestelde werking van de app uitgelegd
 Alice installeert de tracing app via de App Store.
@@ -14,7 +14,7 @@ Alice’s bluetooth ID: 00000000-0000-1000-8000-00203B2C20DA
 - Bob’s bluetooth hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
 - Alice’s bluetooth hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
 
-Beide applicaties slaan deze 2 encryptie hashes **lokaal** op hun eigen telefoon op met datum en tijdstip.
+Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun eigen telefoon op met datum en de sterkte van het signaal (RSSI).
 
 ## Een besmetting
 
@@ -23,9 +23,9 @@ Beide applicaties slaan deze 2 encryptie hashes **lokaal** op hun eigen telefoon
 - Alice scant de code
 - Met deze code kan zij de hash van haar _eigen_ bluetooth ID opsturen (met AVG toestemmings popup)
 
-Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen.
+Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
 
-Van de server krijgt hij de hashes terug die zijn overeengekomen met het eerste gedeelte van de hash. De telefoon van Bob kan lokaal controleren of deze hashes zijn overeengekomen.
+Van de server krijgt hij de hashes terug die zijn overeengekomen. Er komt een notificatie met het aantal keren waarmee de gebruiker in contact is geweest met deze telefoon.
 
 ## Bepalen wanneer besmetting is voorgekomen
 
@@ -44,6 +44,7 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Blokkades
 
+- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of iemand besmet is ja/nee. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft.
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
 - Het is moeilijk om op basis van het signaal te bepalen hoever de gebruikers van elkaar hebben gestaan
