@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { StyleSheet, ScrollView, View, StatusBar, Platform } from 'react-native'
-import { BleManager } from 'react-native-ble-plx'
 import { Button, Text } from 'react-native-paper'
-import { useDebouncedCallback } from 'use-debounce'
 import {
   check,
   request,
   PERMISSIONS,
   Permission,
 } from 'react-native-permissions'
+
+import { startTracing } from './JobTracing'
 
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
@@ -23,15 +23,20 @@ async function requestBluetoothStatus() {
   return bluetoothStatus
 }
 
+async function requestPermissionAndStartTracing() {
+  const bluetoothStatus = await requestBluetoothStatus()
+  // TODO: start background status
+  // TODO: add modals
+  if (bluetoothStatus === 'granted') {
+    startTracing()
+  }
+}
+
 function App() {
   const [isTracking, setIsTracking] = useState(false)
 
   const startTracing = () => {
-    async function startProcess() {
-      const bluetoothStatus = await requestBluetoothStatus()
-      // TODO: start background status
-    }
-    startProcess()
+    requestPermissionAndStartTracing()
   }
 
   return (
@@ -58,9 +63,9 @@ function App() {
             </Button>
           )}
           <View style={{ height: 24 }} />
-          <Button mode="outlined" onPress={() => setInfectionModalOpen(true)}>
+          {/* <Button mode="outlined" onPress={() => setInfectionModalOpen(true)}>
             Scan infection QR-code
-          </Button>
+          </Button> */}
         </View>
       </ScrollView>
     </>
