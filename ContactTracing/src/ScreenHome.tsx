@@ -15,7 +15,7 @@ import { RSSIMap } from './types'
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
     ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
-    android: PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+    android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
   })!
   // can be done in parallel
   let bluetoothStatus = await check(permission)

@@ -148,7 +148,6 @@
 				FAC4A7F3B3555B89B81394F2 /* Pods-ContactTracing-tvOSTests.debug.xcconfig */,
 				0C42B282FE64391137E1E24A /* Pods-ContactTracing-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
