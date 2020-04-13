@@ -89,6 +89,10 @@ function App() {
           // Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
           // een getal dat -50 (min 50) is een redelijk goed signaal,
           // een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
+          if (scannedDevice.rssi > 70) {
+            // not relevant enough
+            return
+          }
           // https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
           const previousRSSI = rssiPerHash.current[scannedDevice.id]
           const latestRSSI = scannedDevice.rssi
@@ -109,23 +113,6 @@ function App() {
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={infectionModalOpen}
-        statusBarTranslucent={true}
-        onRequestClose={() => {
-          setInfectionModalOpen(false)
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>Checklist</Text>
-            <Checkbox.Android status={'unchecked'} />
-            <Checkbox.Android status={'unchecked'} />
-          </View>
-        </View>
-      </Modal>
 
       <ScrollView
         style={styles.scrollView}
