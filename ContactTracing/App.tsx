@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  StatusBar,
-  Platform,
-  Modal,
-} from 'react-native'
+import { StyleSheet, ScrollView, View, StatusBar, Platform } from 'react-native'
 import { BleManager } from 'react-native-ble-plx'
-import { Checkbox, Button, Text } from 'react-native-paper'
+import { Button, Text } from 'react-native-paper'
 import { useDebouncedCallback } from 'use-debounce'
 import {
   check,
@@ -16,7 +9,6 @@ import {
   PERMISSIONS,
   Permission,
 } from 'react-native-permissions'
-import { sha256 } from 'js-sha256'
 import { syncRSSI } from './DatabaseUtils'
 import { RSSIMap } from './types'
 
