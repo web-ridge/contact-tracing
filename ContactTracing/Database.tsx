@@ -27,8 +27,8 @@ async function getEncryptionKey(): Promise<ArrayBuffer> {
   return randomKey
 }
 
-const EncounterSchema = {
-  name: 'Hit',
+export const EncounterSchema = {
+  name: 'Encounter',
   primaryKey: 'hash',
   properties: {
     hash: 'string',
@@ -38,18 +38,13 @@ const EncounterSchema = {
 
 let realm: Realm | undefined
 
-async function getDatabase(): Promise<Realm | Error> {
+export async function getDatabase(): Promise<Realm> {
   // if already exist in memory let's return that database
   if (realm) {
     return realm
   }
 
-  try {
-    const encryptionKey = await getEncryptionKey()
-    realm = new Realm({ schema: [EncounterSchema], encryptionKey })
-    return realm
-  } catch (e) {
-    return e
-  }
+  const encryptionKey = await getEncryptionKey()
+  realm = new Realm({ schema: [EncounterSchema], encryptionKey })
+  return realm
 }
-export default getDatabase

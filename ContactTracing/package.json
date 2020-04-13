@@ -21,7 +21,8 @@
     "react-native-simple-crypto": "^0.2.8",
     "react-native-vector-icons": "^6.6.0",
     "realm": "^5.0.3",
-    "rn-secure-storage": "^2.0.4"
+    "rn-secure-storage": "^2.0.4",
+    "use-debounce": "^3.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

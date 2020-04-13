@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   StyleSheet,
   ScrollView,
@@ -7,8 +7,9 @@ import {
   Platform,
   Modal,
 } from 'react-native'
-import { BleManager, Device } from 'react-native-ble-plx'
+import { BleManager } from 'react-native-ble-plx'
 import { Checkbox, Button, Text } from 'react-native-paper'
+import { useDebouncedCallback } from 'use-debounce'
 import {
   check,
   request,
@@ -16,6 +17,8 @@ import {
   Permission,
 } from 'react-native-permissions'
 import { sha256 } from 'js-sha256'
+import { syncRSSI } from './DatabaseUtils'
+import { RSSIMap } from './types'
 
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
@@ -33,8 +36,22 @@ async function requestBluetoothStatus() {
 function App() {
   const [isTracking, setIsTracking] = useState(false)
   const [infectionModalOpen, setInfectionModalOpen] = useState(false)
+
   const manager = React.useRef<BleManager>()
-  const rssiValues = React.useRef({})
+  const rssiPerHash = React.useRef<RSSIMap>({})
+
+  // Debounce callback
+  const [syncValues] = useDebouncedCallback(
+    // function
+    async () => {
+      const hasSynced = await syncRSSI(rssiPerHash.current)
+      if (hasSynced) {
+        rssiPerHash.current = {}
+      }
+    },
+    // delay in ms
+    10000 // sync after 10 seconds
+  )
 
   const startTracing = () => {
     async function startProcess() {
@@ -68,23 +85,21 @@ function App() {
             return
           }
 
-          console.log(scannedDevice)
-          var hash = sha256.create()
-          hash.update(scannedDevice.id)
-          hash.toString()
-          console.log({
-            id: scannedDevice.id,
-            rssi: scannedDevice.rssi,
-            uuid: scannedDevice.id,
-            hash,
-          })
-
           // we map rssi values so we can see if device did come closer
           // Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
           // een getal dat -50 (min 50) is een redelijk goed signaal,
           // een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
           // https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
-          SyncEncounter()
+          const previousRSSI = rssiPerHash.current[scannedDevice.id]
+          const latestRSSI = scannedDevice.rssi
+
+          rssiPerHash.current[scannedDevice.id] = previousRSSI
+            ? latestRSSI > previousRSSI
+              ? latestRSSI
+              : previousRSSI
+            : latestRSSI
+
+          syncValues()
         }
       )
     }
