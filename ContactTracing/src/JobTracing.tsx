@@ -79,7 +79,7 @@ async function scanForBluetoothDevices() {
           if (
             !scannedDevice ||
             !scannedDevice.rssi ||
-            scannedDevice.rssi > 70
+             -70 > scannedDevice.rssi
           ) {
             console.log('devices not good enough', { scannedDevice })
             return
