@@ -12,7 +12,7 @@ const track:Track = {
   artwork: require('track.png')
 }
 
-// 1 year of music
+// 1 year of summer ;)
 let arrayOfTracks:Track[] = []
 var i;
 for (i = 0; i < 105120; i++) {
@@ -57,7 +57,7 @@ const scanForBluetoothDevices = async () => {
         // restoreStateIdentifier
         // restoreStateFunction
       })
-      
+
       manager.startDeviceScan(
         null, // uuids
         {}, // options
