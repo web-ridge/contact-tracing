@@ -4,6 +4,7 @@ import TrackPlayer, { Track } from 'react-native-track-player'
 import BackgroundService from 'react-native-background-actions'
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
+import BackgroundTimer from 'react-native-background-timer'
 
 const track: Track = {
   id: 'trackId',
@@ -38,7 +39,7 @@ function play1YearOfSummer() {
 }
 
 function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise((resolve) => BackgroundTimer.setTimeout(resolve, ms))
 }
 
 // You can do anything in your task such as network requests, timers and so on,
@@ -46,29 +47,31 @@ function sleep(ms: number) {
 // React Native will go into "paused" mode (unless there are other tasks running,
 // or there is a foreground app).
 async function scanForBluetoothDevices() {
-  let rssiPerHash: RSSIMap = {}
+  let rssiValues: RSSIMap = {}
 
+  console.log('scanForBluetoothDevices()')
   // Example of an infinite loop task
+  if (Platform.OS === 'ios') {
+    play1YearOfSummer()
+  }
 
   await new Promise(async (resolve) => {
-    for (let i = 0; BackgroundService.isRunning(); i++) {
-      console.log('run task')
-      // ;-)
-      //
-      if (Platform.OS === 'ios') {
-        play1YearOfSummer()
-      }
+    console.log('for (let i = 0; BackgroundService.isRunning(); i++) {')
 
+    for (let i = 0; BackgroundService.isRunning(); i++) {
+      console.log('endless background loop')
       const manager = new BleManager({
         // restoreStateIdentifier
         // restoreStateFunction
       })
+      console.log('manager')
 
       manager.startDeviceScan(
         null, // uuids
         {}, // options
         (error, scannedDevice) => {
           if (error) {
+            console.log('devicescan', { error })
             return
           }
 
@@ -78,6 +81,7 @@ async function scanForBluetoothDevices() {
             !scannedDevice.rssi ||
             scannedDevice.rssi > 70
           ) {
+            console.log('devices not good enough', { scannedDevice })
             return
           }
 
@@ -87,14 +91,31 @@ async function scanForBluetoothDevices() {
           // -70 (min 70) good
           // -100 bleghh
 
-          const previousRSSI = rssiPerHash[scannedDevice.id]
+          const previousValue = rssiValues[scannedDevice.id]
           const latestRSSI = scannedDevice.rssi
+          const didComeCloser =
+            !previousValue || latestRSSI > previousValue.rssi
 
-          rssiPerHash[scannedDevice.id] = previousRSSI
-            ? latestRSSI > previousRSSI
-              ? latestRSSI
-              : previousRSSI
-            : latestRSSI
+          if (didComeCloser) {
+            rssiValues[scannedDevice.id] = previousValue
+              ? {
+                  rssi:
+                    latestRSSI > previousValue.rssi
+                      ? latestRSSI
+                      : previousValue.rssi,
+                  hits: previousValue.hits + 1,
+                }
+              : {
+                  rssi: latestRSSI,
+                  hits: 1,
+                }
+
+            console.log(
+              'changed',
+              scannedDevice.id,
+              rssiValues[scannedDevice.id]
+            )
+          }
         }
       )
 
@@ -102,13 +123,13 @@ async function scanForBluetoothDevices() {
 
       // every half an hour we sync rssi values to a database
       await sleep(hourInMs / 2)
-      const done = await syncRSSIMap(rssiPerHash)
-      if (done) {
-        console.log('syncing rrsi values done')
-        rssiPerHash = {}
-      } else {
-        console.log('syncing rrsi not done')
-      }
+      // const done = await syncRSSIMap(rssiValues)
+      // if (done) {
+      //   console.log('syncing rrsi values done')
+      //   rssiPerHash = {}
+      // } else {
+      //   console.log('syncing rrsi not done')
+      // }
     }
   })
 }

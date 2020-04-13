@@ -54,7 +54,7 @@ function App() {
             <Text
               style={{ fontWeight: 'bold', textDecorationLine: 'underline' }}
             >
-              without giving up your privacy.
+              together.
             </Text>
           </Text>
           {!isTracking && (
