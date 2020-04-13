@@ -17,6 +17,12 @@ import {
 } from 'react-native-permissions'
 import { sha256 } from 'js-sha256'
 
+interface RSSValue {
+  min: number
+  max: number
+  hits: number
+}
+
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
     ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
@@ -81,7 +87,7 @@ function App() {
           })
 
           //@ts-ignore
-          const previous: Device | null = rssiValues.current[scannedDevice.id]
+          const previous: RSSValue = rssiValues.current[scannedDevice.id]
 
           // we map rssi values so we can see if device did come closer
           // Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
@@ -89,22 +95,22 @@ function App() {
           // een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
           // https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
           //@ts-ignore
-          rssiValues.current[scannedDevice.id] =
-            previous && previous.rssi
-              ? {
-                  min:
-                    previous.rssi > scannedDevice.rssi
-                      ? scannedDevice.rssi
-                      : previous.rssi,
-                  max:
-                    scannedDevice.rssi > previous.rssi
-                      ? scannedDevice.rssi
-                      : previous.rssi,
-                }
-              : {
-                  min: scannedDevice.rssi,
-                  max: scannedDevice.rssi,
-                }
+          rssiValues.current[scannedDevice.id] = previous
+            ? {
+                hits: previous.hits + 1,
+                min:
+                  previous.min > scannedDevice.rssi
+                    ? scannedDevice.rssi
+                    : previous.min,
+                max:
+                  scannedDevice.rssi > previous.max
+                    ? scannedDevice.rssi
+                    : previous.max,
+              }
+            : {
+                min: scannedDevice.rssi,
+                max: scannedDevice.rssi,
+              }
 
           console.log({ rssiValues: rssiValues.current })
         }
