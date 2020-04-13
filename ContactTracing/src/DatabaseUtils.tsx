@@ -8,9 +8,11 @@ export async function syncRSSIMap(rssiMap: RSSIMap): Promise<boolean> {
     // sync encounters to database with a encrypted hash of bluetooth ID
     database.write(() => {
       Object.keys(rssiMap).forEach((bluetoothID) => {
+        const rrsiValue = rssiMap[bluetoothID]
         database.create(EncounterSchema.name, {
           hash: RNSimpleCrypto.SHA.sha256(bluetoothID),
-          rssi: rssiMap[bluetoothID],
+          rssi: rrsiValue.rssi,
+          hits: rrsiValue.hits,
         })
       })
     })

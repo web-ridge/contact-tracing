@@ -5,14 +5,19 @@ import RNSimpleCrypto from 'react-native-simple-crypto'
 const encryptionKeyID = 'contactTractingEncryptionKey'
 
 async function getEncryptionKey(): Promise<ArrayBuffer> {
-  const stringKey = await RNSecureStorage.get(encryptionKeyID)
-  if (stringKey) {
-    return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
+  const exist = await RNSecureStorage.exists(encryptionKeyID)
+  if (exist) {
+    const stringKey = await RNSecureStorage.get(encryptionKeyID)
+    console.log({ stringKey })
+    if (stringKey) {
+      return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
+    }
   }
 
   // key does not exist (yet)
   var randomKey = await RNSimpleCrypto.utils.randomBytes(64)
 
+  console.log({ randomKey })
   // to string
   var randomKeyString = RNSimpleCrypto.utils.convertArrayBufferToBase64(
     randomKey
@@ -46,6 +51,7 @@ export async function getDatabase(): Promise<Realm> {
   }
 
   const encryptionKey = await getEncryptionKey()
+  console.log({ encryptionKey })
   realm = new Realm({ schema: [EncounterSchema], encryptionKey })
   return realm
 }
