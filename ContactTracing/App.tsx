@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   ScrollView,
@@ -16,12 +16,6 @@ import {
   Permission,
 } from 'react-native-permissions'
 import { sha256 } from 'js-sha256'
-
-interface RSSValue {
-  min: number
-  max: number
-  hits: number
-}
 
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
@@ -81,38 +75,16 @@ function App() {
           console.log({
             id: scannedDevice.id,
             rssi: scannedDevice.rssi,
-            centimeters: rssiToCentimetres(scannedDevice.rssi),
             uuid: scannedDevice.id,
             hash,
           })
-
-          //@ts-ignore
-          const previous: RSSValue = rssiValues.current[scannedDevice.id]
 
           // we map rssi values so we can see if device did come closer
           // Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
           // een getal dat -50 (min 50) is een redelijk goed signaal,
           // een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
           // https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
-          //@ts-ignore
-          rssiValues.current[scannedDevice.id] = previous
-            ? {
-                hits: previous.hits + 1,
-                min:
-                  previous.min > scannedDevice.rssi
-                    ? scannedDevice.rssi
-                    : previous.min,
-                max:
-                  scannedDevice.rssi > previous.max
-                    ? scannedDevice.rssi
-                    : previous.max,
-              }
-            : {
-                min: scannedDevice.rssi,
-                max: scannedDevice.rssi,
-              }
-
-          console.log({ rssiValues: rssiValues.current })
+          SyncEncounter()
         }
       )
     }

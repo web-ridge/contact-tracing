@@ -38,7 +38,9 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Overige punten
 
-Server slaat van elke besmette hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijnl
+- Server slaat van elke besmette hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijn
+- De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key
+- De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers
 
 ## Blokkades
 

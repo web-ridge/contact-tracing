@@ -1,0 +1,55 @@
+import Realm from 'realm'
+import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
+import RNSimpleCrypto from 'react-native-simple-crypto'
+
+const encryptionKeyID = 'contactTractingEncryptionKey'
+
+async function getEncryptionKey(): Promise<ArrayBuffer> {
+  const stringKey = await RNSecureStorage.get(encryptionKeyID)
+  if (stringKey) {
+    return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
+  }
+
+  // key does not exist (yet)
+  var randomKey = await RNSimpleCrypto.utils.randomBytes(64)
+
+  // to string
+  var randomKeyString = RNSimpleCrypto.utils.convertArrayBufferToBase64(
+    randomKey
+  )
+
+  // store so we can de-crypt next time
+  await RNSecureStorage.set(encryptionKeyID, randomKeyString, {
+    accessible: ACCESSIBLE.ALWAYS, // we need to write, even when device is in sleep mode
+  })
+
+  // return
+  return randomKey
+}
+
+const EncounterSchema = {
+  name: 'Hit',
+  primaryKey: 'hash',
+  properties: {
+    hash: 'string',
+    rssi: { type: 'int', default: 0 },
+  },
+}
+
+let realm: Realm | undefined
+
+async function getDatabase(): Promise<Realm | Error> {
+  // if already exist in memory let's return that database
+  if (realm) {
+    return realm
+  }
+
+  try {
+    const encryptionKey = await getEncryptionKey()
+    realm = new Realm({ schema: [EncounterSchema], encryptionKey })
+    return realm
+  } catch (e) {
+    return e
+  }
+}
+export default getDatabase
