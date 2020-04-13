@@ -44,7 +44,7 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Blokkades
 
-- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of iemand besmet is ja/nee. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft.
+- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of die gehashte besmet is. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft.
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
 - Het is moeilijk om op basis van het signaal te bepalen hoever de gebruikers van elkaar hebben gestaan
