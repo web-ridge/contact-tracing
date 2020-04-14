@@ -21,7 +21,7 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 ## Een besmetting
 
 - Alice is besmet met corona
-- De GGD gebruikt de ContactTracingAdmin om een infectie aan te maken op een Bluetooth hash (ze selecteren Bluetooth apparaat)
+- De GGD gebruikt de ContactTracingAdmin om een infectie aan te maken op een Bluetooth hash (ze selecteren Bluetooth apparaat).   
 _Alleen bestuursorganen kunnen een verwerking van een persoonsgegeven baseren op de grondslag van de noodzaak voor het vervullen van een taak van algemeen belang of bij het uitoefenen van een openbaar gezag (artikel 6(1) onder e van de AVG)._
 
 - Code wordt verwijderd
