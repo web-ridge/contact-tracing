@@ -24,8 +24,6 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 - De GGD gebruikt de ContactTracingAdmin om een infectie aan te maken op een Bluetooth hash (ze selecteren Bluetooth apparaat).   
 _Alleen bestuursorganen kunnen een verwerking van een persoonsgegeven baseren op de grondslag van de noodzaak voor het vervullen van een taak van algemeen belang of bij het uitoefenen van een openbaar gezag (artikel 6(1) onder e van de AVG)._
 
-- Code wordt verwijderd
-
 Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
 
 Van de server krijgt hij de hashes terug die in de databank bestaan en dus besmet zijn. Er komt een notificatie met het aantal keren waarmee de gebruiker in contact is geweest met deze telefoon.
