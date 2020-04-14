@@ -1,4 +1,4 @@
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID. Bij deze oplossing is er niet voor gekozen om de ontmoeting op te slaan omdat dan kan worden bewezen dat een bepaald persoon iemand anders is tegengekomen. Dit lijkt meer inbreuk op de privacy te zijn dan of een hash van een bluetooth wel/niet besmet is met Corona. 
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID. Bij deze oplossing is er niet voor gekozen om de ontmoeting op te slaan omdat dan kan worden bewezen dat een bepaald persoon iemand anders is tegengekomen. Dit lijkt meer inbreuk op de privacy te zijn dan of een hash van een bluetooth wel/niet besmet is met Corona. Ook kan deze persoon zelf zijn infectie melden omdat de testcapaciteit beperkt is. Daarom kan hij bij vermoeden van Corona klachten melden dat hij waarschijnlijk besmet is.
 
 Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Maar mijn advies is wachten totdat de Contact Tracing API's beschikbaar komen.
 
@@ -20,9 +20,9 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 
 ## Een besmetting
 
-- Alice is besmet met corona
-- De GGD gebruikt de ContactTracingAdmin om een infectie aan te maken op een Bluetooth hash (ze selecteren Bluetooth apparaat).   
-_Alleen bestuursorganen kunnen een verwerking van een persoonsgegeven baseren op de grondslag van de noodzaak voor het vervullen van een taak van algemeen belang of bij het uitoefenen van een openbaar gezag (artikel 6(1) onder e van de AVG)._
+- Alice is besmet met corona. 
+- Alice loopt checklist af in app.
+- Alice geeft haar Bluetooth hash op via de app met toestemming van haarzelf.
 
 Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
 
@@ -47,7 +47,7 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Concerns
 
-- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of die gehashte besmet is. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft.
+- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of die gehashte besmet is. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft als hij zijn infectie invoert.
 
 ## Blokkades
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
