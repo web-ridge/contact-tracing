@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/gorilla/mux"
+	// "github.com/go-redis/redis_rate/v8"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/web-ridge/contact-tracing/backend/database"
@@ -20,12 +21,13 @@ func main() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
 
-	client := redis.NewClient(&redis.Options{
+	redisClient := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%v:%v", redisHost, redisPort),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	pong, err := client.Ping().Result()
+
+	pong, err := redisClient.Ping().Result()
 	if err != nil {
 		log.Fatal().Err(err)
 	}
@@ -36,18 +38,16 @@ func main() {
 		log.Fatal().Err(err)
 	}
 
-	handler := handler.NewHandler(db, client)
+	handler := handler.NewHandler(db, redisClient)
+
+	// limiter := redis_rate.NewLimiter(redisClient)
 
 	// Create REST api for telephone user
-	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/checkInfections", handler.CheckInfections).Methods(http.MethodPost)
-	r.HandleFunc("/userConfirmedInfection", handler.UserConfirmedInfection).Methods(http.MethodPost)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), r); err != nil {
+	http.HandleFunc("/checkInfections", handler.CheckInfections)
+	http.HandleFunc("/userConfirmedInfection", handler.UserConfirmedInfection)
+
+	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
 		log.Fatal().Err(err)
 	}
-}
-
-func cleanOldData() {
-	// TODO: clean infection codes older than 2 days
 }
