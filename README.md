@@ -8,14 +8,14 @@ Bob installeert de tracing app via de Play Store.
 
 Bob komt Alice tegen waarmee hij een praatje maakt. Als deze personen langer met elkaar in contact staan gaat neemt de kans op besmetting toe en gaan de apparaten het volgende doen.
 
-Bob’s bluetooth ID: 00000000-0000-1000-8000-00805F9B34FB
+Bob’s bluetooth ID: 00000000-0000-1000-8000-00805F9B34FB   
 Alice’s bluetooth ID: 00000000-0000-1000-8000-00203B2C20DA
 
 **Stap 1: Beide applicaties hashen elkaars Bluetooth ID met SHA256**
 
-- Bob’s bluetooth hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
-- Alice’s bluetooth hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
-
+- Bob’s bluetooth hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb   
+- Alice’s bluetooth hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507   
+   
 Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun eigen telefoon op met datum en de sterkte van het signaal (RSSI).
 
 ## Een besmetting
