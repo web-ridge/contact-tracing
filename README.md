@@ -1,4 +1,4 @@
-Bij deze oplossing is er gekozen voor zoveel mogelijk decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID.
 
 Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
 
