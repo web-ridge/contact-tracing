@@ -1,4 +1,4 @@
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID. Bij deze oplossing is er niet voor gekozen om de ontmoeting op te slaan omdat dan kan worden bewezen dat een bepaald persoon iemand anders is tegengekomen. Dit lijkt meer inbreuk op de privacy te zijn dan of een hash van een bluetooth wel/niet besmet is met Corona.
 
 Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
 
