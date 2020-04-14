@@ -25,7 +25,7 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 
 Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
 
-Van de server krijgt hij de hashes terug die zijn overeengekomen. Er komt een notificatie met het aantal keren waarmee de gebruiker in contact is geweest met deze telefoon.
+Van de server krijgt hij de hashes terug die in de databank bestaan en dus besmet zijn. Er komt een notificatie met het aantal keren waarmee de gebruiker in contact is geweest met deze telefoon.
 
 ## Bepalen wanneer besmetting is voorgekomen
 
