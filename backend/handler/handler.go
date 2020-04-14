@@ -1,18 +1,18 @@
 package handler
 
 import (
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
-	"github.com/mediocregopher/radix/v3"
 )
 
 type Handler struct {
-	db   *gorm.DB
-	pool radix.Client
+	db          *gorm.DB
+	redisClient *redis.Client
 }
 
-func NewHandler(db *gorm.DB, pool radix.Client) *Handler {
+func NewHandler(db *gorm.DB, redisClient *redis.Client) *Handler {
 	return &Handler{
-		db:   db,
-		pool: pool,
+		db:          db,
+		redisClient: redisClient,
 	}
 }

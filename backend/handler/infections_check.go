@@ -3,8 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/mediocregopher/radix/v3"
 )
 
 type CheckInfectionsRequest struct {
@@ -24,7 +22,7 @@ func (h *Handler) CheckInfections(w http.ResponseWriter, r *http.Request) {
 
 	// Let's request all hashes
 	var values []string
-	if err := h.pool.Do(radix.Cmd(&values, "MGET", checkInfectionRequest.Hashes...)); err != nil {
+	if err := h.redisClient.MGet(checkInfectionRequest.Hashes...).Err(); err != nil {
 		WriteGlobalError(w)
 		return
 	}

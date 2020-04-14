@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-redis/redis/v7"
 	"github.com/gorilla/mux"
-	"github.com/mediocregopher/radix/v3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/web-ridge/contact-tracing/backend/database"
@@ -20,39 +20,28 @@ func main() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
 
-	pool, err := radix.NewPool("tcp", fmt.Sprintf("%v:%v", redisHost, redisPort), 10)
+	client := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%v:%v", redisHost, redisPort),
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	pong, err := client.Ping().Result()
 	if err != nil {
 		log.Fatal().Err(err)
 	}
+	log.Info().Msg("connected to redis :) " + pong)
 
 	db, err := database.GetDatabase()
 	if err != nil {
 		log.Fatal().Err(err)
 	}
 
-	handler := handler.NewHandler(db, pool)
+	handler := handler.NewHandler(db, client)
 
 	// Create REST api for telephone user
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/checkInfections", handler.CheckInfections).Methods(http.MethodPost)
-	r.HandleFunc("/userAcceptedInfectionCode", handler.UserAcceptedInfectionCode).Methods(http.MethodPost)
-
-	// Create authorized route
-	s := r.PathPrefix("/authorized").Subrouter()
-	s.Use(AuthMiddleware(db))
-	s.HandleFunc("/generateInfectionCode", handler.GenerateInfectionCode).Methods(http.MethodPost)
-
-	// manage users of infection organizations
-	s.HandleFunc("/user", handler.UserList).Methods(http.MethodGet)
-	s.HandleFunc("/user", handler.UserCreate).Methods(http.MethodPost)
-	s.HandleFunc("/user/{id}", handler.UserFind).Methods(http.MethodGet)
-	s.HandleFunc("/user/{id}", handler.UserDelete).Methods(http.MethodDelete)
-
-	// manage infection organisation
-	s.HandleFunc("/organisation", handler.CompanyList).Methods(http.MethodGet)
-	s.HandleFunc("/organisation", handler.CompanyCreate).Methods(http.MethodPost)
-	s.HandleFunc("/organisation/{id}", handler.CompanyFind).Methods(http.MethodGet)
-	s.HandleFunc("/organisation/{id}", handler.CompanyDelete).Methods(http.MethodDelete)
+	r.HandleFunc("/userConfirmedInfection", handler.UserConfirmedInfection).Methods(http.MethodPost)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), r); err != nil {
 		log.Fatal().Err(err)

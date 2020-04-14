@@ -8,11 +8,5 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-data:/data
-  db:
-    image: "postgres"
-    ports:
-      - 5432:5432
-    volumes:
-      - exampledb:/var/lib/postgresql/data
 volumes:
   redis-data:

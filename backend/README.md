@@ -2,10 +2,6 @@
 
 For fast checking the bluetooth hashes.
 
-## Postgres
-
-For the infection companies we use a postgres database.
-
 ## We want a fast scalable way to save
 
 What is the maximum number of keys a single Redis instance can hold? and what is the max number of elements in a Hash, List, Set, Sorted Set?
