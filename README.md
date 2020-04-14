@@ -21,8 +21,8 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 ## Een besmetting
 
 - Alice is besmet met corona
-- De GGD gebruikt de ContactTracingAdmin om een unieke QR-code aan te maken
-- Alice scant de code
+- De GGD gebruikt de ContactTracingAdmin om een unieke QR-code aan te maken op een Bluetooth hash (ze selecteren apparaat)
+- Alice scant de code (en stuurt haar bluetoothID op
 - Met deze code kan zij de hash van haar _eigen_ bluetooth ID opsturen (met AVG toestemmings popup)
 
 Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
