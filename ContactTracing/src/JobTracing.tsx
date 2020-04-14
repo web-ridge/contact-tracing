@@ -79,7 +79,7 @@ async function scanForBluetoothDevices() {
           if (
             !scannedDevice ||
             !scannedDevice.rssi ||
-            scannedDevice.rssi > 70
+             -70 > scannedDevice.rssi
           ) {
             console.log('devices not good enough', { scannedDevice })
             return
@@ -118,7 +118,10 @@ async function scanForBluetoothDevices() {
           }
         }
       )
-      await sleep(3000)
+      
+      // every half an hour we sync rssi values to a database
+      await sleep(hourInMs / 2)
+      
       const hourInMs = 1 * 1000 * 60 * 60
       const done = await syncRSSIMap(rssiValues)
       if (done) {
@@ -127,8 +130,7 @@ async function scanForBluetoothDevices() {
       } else {
         console.log('syncing rrsi not done')
       }
-      // every half an hour we sync rssi values to a database
-      await sleep(hourInMs / 2)
+     
     }
   })
 }
