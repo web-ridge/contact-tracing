@@ -59,13 +59,18 @@ function App() {
           </Text>
           {!isTracking && (
             <Button mode="contained" onPress={startTracing}>
-              Start tracing
+              Ik doe mee
             </Button>
           )}
           <View style={{ height: 24 }} />
-          {/* <Button mode="outlined" onPress={() => setInfectionModalOpen(true)}>
-            Scan infection QR-code
-          </Button> */}
+          <Button
+            mode="outlined"
+            onPress={() => {
+              // TODO send bluetooth ID to server
+            }}
+          >
+            Ik heb Corona :-(
+          </Button>
         </View>
       </ScrollView>
     </>
