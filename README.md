@@ -1,3 +1,5 @@
+Bij deze oplossing is er gekozen voor zoveel mogelijk decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers.
+
 Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
 
 Voorgestelde werking van de app uitgelegd
@@ -36,15 +38,19 @@ een getal dat -50 (min 50) is een redelijk goed signaal,
 een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
 https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
 
-## Overige punten
+## Security
 
 - Server slaat van elke besmette hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijn
 - De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers
+- Aan server kant staan de keys in een Redis store dit is puur Ram en wordt dus niet naar een schijf weggeschreven
+- De backup van deze database wordt encrypted opgeslagen
 
-## Blokkades
+## Concerns
 
 - Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of die gehashte besmet is. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft.
+
+## Blokkades
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
 - Het is moeilijk om op basis van het signaal te bepalen hoever de gebruikers van elkaar hebben gestaan
