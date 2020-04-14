@@ -1,4 +1,4 @@
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID. Bij deze oplossing is er niet voor gekozen om de ontmoeting op te slaan omdat dan kan worden bewezen dat een bepaald persoon iemand anders is tegengekomen. Dit lijkt meer inbreuk op de privacy te zijn dan of een hash van een bluetooth wel/niet besmet is met Corona.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. De oplossing gaat er vanuit dat gebruikers bereid zijn om toestemming te geven voor het melden van hun eigen hash van hun BluetoothID. Bij deze oplossing is er niet voor gekozen om de ontmoeting op te slaan omdat dan kan worden bewezen dat een bepaald persoon iemand anders is tegengekomen. Dit lijkt meer inbreuk op de privacy te zijn dan of een hash van een bluetooth wel/niet besmet is met Corona. 
 
 Als je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken.
 
@@ -21,9 +21,9 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 ## Een besmetting
 
 - Alice is besmet met corona
-- De GGD gebruikt de ContactTracingAdmin om een unieke QR-code aan te maken op een Bluetooth hash (ze selecteren apparaat)
-- Alice scant de code (en stuurt haar bluetoothID op
-- Met deze code kan zij de hash van haar _eigen_ bluetooth ID opsturen (met AVG toestemmings popup)
+- De GGD gebruikt de ContactTracingAdmin om een infectie aan te maken op een Bluetooth hash (ze selecteren Bluetooth apparaat)
+_Alleen bestuursorganen kunnen een verwerking van een persoonsgegeven baseren op de grondslag van de noodzaak voor het vervullen van een taak van algemeen belang of bij het uitoefenen van een openbaar gezag (artikel 6(1) onder e van de AVG)._
+
 - Code wordt verwijderd
 
 Bob vraagt om de zoveel tijd aan de centrale server of er 1 van zijn hashes besmet is geraakt. De opgevraagde hashes worden niet opgeslagen op de server.
