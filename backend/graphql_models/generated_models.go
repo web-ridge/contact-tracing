@@ -10,18 +10,18 @@ type InfectedEncounterCreateInput struct {
 	Time                 *int    `json:"time"`
 }
 
+type InfectedEncounterCreatePayload struct {
+	Ok bool `json:"ok"`
+}
+
 type InfectedEncountersCreateInput struct {
 	InfectedEncounters []*InfectedEncounterCreateInput `json:"infectedEncounters"`
 }
 
-type InfectedEncountersPayload struct {
-	Ok bool `json:"ok"`
-}
-
 type InfectionSummary struct {
-	HighRiskInteractions   *int `json:"HighRiskInteractions"`
-	MiddleRiskInteractions *int `json:"MiddleRiskInteractions"`
-	LowRiskInteractions    *int `json:"LowRiskInteractions"`
-	MaxSymptonDate         *int `json:"MaxSymptonDate"`
-	MinSymptonDate         *int `json:"MinSymptonDate"`
+	HighRiskInteractions   int `json:"HighRiskInteractions"`
+	MiddleRiskInteractions int `json:"MiddleRiskInteractions"`
+	LowRiskInteractions    int `json:"LowRiskInteractions"`
+	MaxSymptonDate         int `json:"MaxSymptonDate"`
+	MinSymptonDate         int `json:"MinSymptonDate"`
 }

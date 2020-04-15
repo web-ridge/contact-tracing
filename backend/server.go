@@ -78,13 +78,12 @@ func main() {
 	lmt.SetOnLimitReached(api.HandleRateLimiting)
 
 	//NEW
-	c := graphql_models.Config{
+
+	srv := handler.New(graphql_models.NewExecutableSchema(graphql_models.Config{
 		Resolvers: &Resolver{
 			db: db,
 		},
-	}
-
-	srv := handler.New(graphql_models.NewExecutableSchema(c))
+	}))
 	srv.Use(extension.Introspection{})
 	// srv.AddTransport(transport.Websocket{
 	// 	KeepAlivePingInterval: 10 * time.Second,
