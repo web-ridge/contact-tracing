@@ -34,8 +34,8 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) (*f
 		HighRiskInteractions:   0,
 		MiddleRiskInteractions: 0,
 		LowRiskInteractions:    0,
-		MaxSymptonDate:         0,
-		MinSymptonDate:         0,
+		MaxSymptonDate:         nil,
+		MinSymptonDate:         nil,
 	}, nil
 }
 

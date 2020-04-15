@@ -52,6 +52,7 @@ type ComplexityRoot struct {
 		MaxSymptonDate         func(childComplexity int) int
 		MiddleRiskInteractions func(childComplexity int) int
 		MinSymptonDate         func(childComplexity int) int
+		PredictedSymptonDate   func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -126,6 +127,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.InfectionSummary.MinSymptonDate(childComplexity), true
+
+	case "InfectionSummary.PredictedSymptonDate":
+		if e.complexity.InfectionSummary.PredictedSymptonDate == nil {
+			break
+		}
+
+		return e.complexity.InfectionSummary.PredictedSymptonDate(childComplexity), true
 
 	case "Mutation.createInfectedEncounters":
 		if e.complexity.Mutation.CreateInfectedEncounters == nil {
@@ -219,8 +227,9 @@ var sources = []*ast.Source{
   HighRiskInteractions: Int!
   MiddleRiskInteractions: Int!
   LowRiskInteractions: Int!
-  MaxSymptonDate: Int!
-  MinSymptonDate: Int!
+  MaxSymptonDate: Int
+  MinSymptonDate: Int
+  PredictedSymptonDate: Int
 }
 
 type Query {
@@ -494,14 +503,11 @@ func (ec *executionContext) _InfectionSummary_MaxSymptonDate(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _InfectionSummary_MinSymptonDate(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
@@ -528,14 +534,42 @@ func (ec *executionContext) _InfectionSummary_MinSymptonDate(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InfectionSummary_PredictedSymptonDate(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "InfectionSummary",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PredictedSymptonDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createInfectedEncounters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1867,14 +1901,10 @@ func (ec *executionContext) _InfectionSummary(ctx context.Context, sel ast.Selec
 			}
 		case "MaxSymptonDate":
 			out.Values[i] = ec._InfectionSummary_MaxSymptonDate(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "MinSymptonDate":
 			out.Values[i] = ec._InfectionSummary_MinSymptonDate(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+		case "PredictedSymptonDate":
+			out.Values[i] = ec._InfectionSummary_PredictedSymptonDate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

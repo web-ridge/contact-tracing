@@ -19,9 +19,10 @@ type InfectedEncountersCreateInput struct {
 }
 
 type InfectionSummary struct {
-	HighRiskInteractions   int `json:"HighRiskInteractions"`
-	MiddleRiskInteractions int `json:"MiddleRiskInteractions"`
-	LowRiskInteractions    int `json:"LowRiskInteractions"`
-	MaxSymptonDate         int `json:"MaxSymptonDate"`
-	MinSymptonDate         int `json:"MinSymptonDate"`
+	HighRiskInteractions   int  `json:"HighRiskInteractions"`
+	MiddleRiskInteractions int  `json:"MiddleRiskInteractions"`
+	LowRiskInteractions    int  `json:"LowRiskInteractions"`
+	MaxSymptonDate         *int `json:"MaxSymptonDate"`
+	MinSymptonDate         *int `json:"MinSymptonDate"`
+	PredictedSymptonDate   *int `json:"PredictedSymptonDate"`
 }
