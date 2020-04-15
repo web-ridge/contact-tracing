@@ -4,7 +4,7 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 
 - Er staat niet opgeslagen wie besmet is;
 - Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
-- Een besmet persoon mag zijn  bluetooth hashes opsturen waarmee hij contact heeft gehad
+- Een besmet persoon mag zijn bluetooth hashes opsturen waarmee hij contact heeft gehad
 - Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat.
 - Achteraf logica wijzigen van kans op besmetting
 
@@ -30,7 +30,16 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 - Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende)
 - Alice stuurt de hashes op met een RSSI signaal sterkte (er is niet bekend op de server wat Alice's hash is)
 
-Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash meldingen heeft. Hij ziet overzichtelijk welke meldingen er zijn voor zijn Bluetooth adres.
+Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash mogelijke infecties heeft.
+Hij krijgt het volgende terug:
+
+```
+	HighRiskInteractions:   0,
+	MiddleRiskInteractions: 0,
+	LowRiskInteractions:    0,
+	MaxSymptonDate:         nil,
+	MinSymptonDate:         nil,
+```
 
 ## Bepalen wanneer besmetting is voorgekomen
 
