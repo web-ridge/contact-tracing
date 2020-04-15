@@ -4,7 +4,9 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 
 - Er staat niet opgeslagen wie besmet is;
 - Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
-- Telefoon hoeft geen honderden bluetooth id's op te sturen waarmee hij contact heeft gehad, maar alleen zijn eigen key;
+- Een besmet persoon mag zijn  bluetooth hashes opsturen waarmee hij contact heeft gehad
+- Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat.
+- Achteraf logica wijzigen van kans op besmetting
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
