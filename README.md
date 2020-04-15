@@ -50,13 +50,13 @@ een getal dat -50 (min 50) is een redelijk goed signaal,
 een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
 https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
 
-## Security
+## Security / data
 
-- Server slaat een mogelijke besmetting hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijn.
-- De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key
-- De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers
-- Aan server kant staan de keys in een Redis store dit is puur Ram en wordt dus niet naar een schijf weggeschreven
-- De backup van deze database wordt encrypted opgeslagen
+- Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
+- De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
+- De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
+- Server moet in veilig datacenter staat.
+- Backup encrypted opgeslagen.
 
 ## Concerns
 
