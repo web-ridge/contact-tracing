@@ -1,0 +1,7 @@
+postgres:
+  dbname: contact_tracing
+  host: localhost
+  port: 5432
+  user: postgres
+  pass: root
+  sslmode: "false"

@@ -1,12 +1,13 @@
-version: "3.7"
-
+version: "3"
 services:
-  redis:
-    image: redis:latest
+  postgres:
+    image: postgres:alpine
+    # network_mode: host
+    restart: always
+    environment:
+      - DATABASE_SSL_MODE=disable # only ment for local deploy
+      - POSTGRES_PASSWORD=root
+    expose:
+      - 5432
     ports:
-      - 6379:6379
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - redis-data:/data
-volumes:
-  redis-data:
+      - 5432:5432

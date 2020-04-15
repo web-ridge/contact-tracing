@@ -39,6 +39,7 @@ export const EncounterSchema = {
     hash: 'string',
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },
+    time: { type: 'unix', default: 0 },
   },
 }
 
