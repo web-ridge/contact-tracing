@@ -22,7 +22,7 @@ Alice’s bluetooth ID: 00000000-0000-1000-8000-00203B2C20DA
 
 Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun eigen telefoon op met datum en de sterkte van het signaal (RSSI).
 
-## Een besmetting
+**Stap 2: Een besmetting**
 
 - Alice is besmet met corona.
 - Alice loopt checklist af in app.
