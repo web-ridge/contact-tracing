@@ -25,7 +25,7 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 **Stap 2: Een besmetting**
 
 - Alice is besmet met corona.
-- Alice loopt checklist af in app.
+- Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende)
 - Alice stuurt de hashes op met een risico percentage van besmetting (op basis van RSSI)
 
 Bob vraagt om de zoveel tijd aan de centrale server of zijn bluetooth hash meldingen heeft. Hij ziet overzichtelijk welke meldingen er zijn voor zijn bluetooth adres.
