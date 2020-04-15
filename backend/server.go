@@ -36,6 +36,7 @@ func initLogger() {
 		zerolog.SetGlobalLevel(level)
 	}
 }
+
 func initDb() *sql.DB {
 	// Start database connection
 	connStr := fmt.Sprintf(`host=%v port=%v user=%v dbname=%v password=%v sslmode=%v`,
@@ -66,6 +67,7 @@ func initDb() *sql.DB {
 	}
 	return db
 }
+
 func main() {
 
 	initLogger()
