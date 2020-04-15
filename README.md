@@ -6,7 +6,7 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
 - Telefoon hoeft geen honderden bluetooth id's op te sturen waarmee hij contact heeft gehad, maar alleen zijn eigen key;
 
-Voorgestelde werking van de app uitgelegd
+_Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
 Bob installeert de tracing app via de Play Store.
 
