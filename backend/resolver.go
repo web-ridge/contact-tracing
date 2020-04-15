@@ -23,6 +23,9 @@ const inputKey = "input"
 func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input fm.InfectedEncountersCreateInput) (*fm.InfectedEncounterCreatePayload, error) {
 
 	// batch create in database
+	// INSERT INTO films (code, title, did, date_prod, kind) VALUES
+	// ('B6717', 'Tampopo', 110, '1985-02-10', 'Comedy'),
+	// ('HG120', 'The Dinner Game', 140, DEFAULT, 'Comedy');
 
 	return &fm.InfectedEncounterCreatePayload{
 		Ok: true,
