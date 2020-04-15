@@ -5,10 +5,11 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
+    "start": "yarn run relay; concurrently --kill-others --names \"react-scripts,relay\" \"react-native start\" \"yarn run relay --watch\"",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "npx jetify"
+    "postinstall": "npx jetify",
+    "relay": "relay-compiler --src ./src --schema ../schema.graphql --language typescript --artifactDirectory ./src/__generated__"
   },
   "dependencies": {
     "react": "16.11.0",
@@ -22,6 +23,7 @@
     "react-native-simple-crypto": "https://github.com/RichardLindhout/react-native-simple-crypto",
     "react-native-track-player": "^1.2.2",
     "react-native-vector-icons": "^6.6.0",
+    "react-relay": "^9.0.0",
     "realm": "^5.0.3",
     "rn-secure-storage": "^2.0.4",
     "use-debounce": "^3.4.1"
@@ -35,11 +37,18 @@
     "@types/react-native": "^0.62.2",
     "@types/react-test-renderer": "^16.9.2",
     "babel-jest": "^25.3.0",
+    "babel-plugin-relay": "^9.0.0",
+    "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
+    "graphql": "^15.0.0",
+    "graphql-compiler": "^1.7.0",
     "jest": "^25.3.0",
     "jetifier": "^1.6.5",
     "metro-react-native-babel-preset": "^0.59.0",
     "react-test-renderer": "16.11.0",
+    "relay-compiler": "^9.0.0",
+    "relay-compiler-language-typescript": "^12.0.0",
+    "relay-config": "^9.0.0",
     "typescript": "^3.8.3"
   },
   "jest": {
