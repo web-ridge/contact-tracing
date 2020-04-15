@@ -26,9 +26,9 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 
 - Alice is besmet met corona.
 - Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende)
-- Alice stuurt de hashes op met een risico percentage van besmetting (op basis van RSSI)
+- Alice stuurt de hashes op met een RSSI signaal sterkte (er is niet bekend op de server wat Alice's hash is)
 
-Bob vraagt om de zoveel tijd aan de centrale server of zijn bluetooth hash meldingen heeft. Hij ziet overzichtelijk welke meldingen er zijn voor zijn bluetooth adres.
+Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash meldingen heeft. Hij ziet overzichtelijk welke meldingen er zijn voor zijn Bluetooth adres.
 
 ## Bepalen wanneer besmetting is voorgekomen
 
@@ -41,7 +41,7 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Security
 
-- Server slaat van elke besmette hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijn
+- Server slaat een mogelijke besmetting hash een tijdstip op, na 2 weken wordt deze verwijderd omdat deze persoon dan niet meer besmet kan zijn.
 - De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers
 - Aan server kant staan de keys in een Redis store dit is puur Ram en wordt dus niet naar een schijf weggeschreven
