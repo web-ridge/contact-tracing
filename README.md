@@ -1,16 +1,11 @@
-
 <img src="https://user-images.githubusercontent.com/6492229/79509074-1ad7d680-803b-11ea-840f-3cc13a7e47e8.jpeg" width="280" />|
 <img src="https://user-images.githubusercontent.com/6492229/79509077-1b706d00-803b-11ea-8a50-bbec74eb17de.jpeg" width="280" />|
 <img src="https://user-images.githubusercontent.com/6492229/79509080-1c090380-803b-11ea-8f7d-daac75e02459.jpeg" width="280" />
 
-
 ## Help us
 
-- Screen of symptons checklist
 - Kubernetes files for deploying to Cloud Infrastructure
-- Backup kubernetes encrypted postgres
-- Start screen more beatifull
-- Ask user for permission sending his contacts
+- Backup Kubernetes encrypted postgres
 
 ## Explain way of working
 
