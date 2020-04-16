@@ -83,6 +83,10 @@ export default {
     en: `These are in no way traceable to you.`,
     nl: `Deze zijn op geen enkele manier te herleiden naar jou.`,
   },
+  sendContactsButtonText: {
+    en: `Send contacts`,
+    nl: `Verzend contacten`,
+  },
   HIGH_RISK: {
     en: 'High risk',
     nl: 'Hoog risico',

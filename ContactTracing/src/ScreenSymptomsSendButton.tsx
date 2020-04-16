@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { ScrollView, View, TouchableHighlight, StyleSheet } from 'react-native'
-import { Text, Button, TouchableRipple, RadioButton } from 'react-native-paper'
-import { Checkbox } from 'react-native-paper'
+import React from 'react'
+import { Button } from 'react-native-paper'
+
+import { Translate } from 'react-translated'
 
 export default function ScreenSymptomsSendButton({
   disabled,
@@ -10,7 +10,7 @@ export default function ScreenSymptomsSendButton({
 }) {
   return (
     <Button mode="contained" disabled={disabled}>
-      Contacten versturen
+      <Translate text="sendContactsButtonText" />
     </Button>
   )
 }
