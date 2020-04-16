@@ -18,7 +18,6 @@
     "react-native-background-timer": "^2.2.0",
     "react-native-ble-plx": "https://github.com/RichardLindhout/react-native-ble-plx",
     "react-native-contact-tracing": "^1.11.0",
-    "react-native-localize": "^1.4.0",
     "react-native-navigation": "^6.4.0",
     "react-native-paper": "^3.8.0",
     "react-native-permissions": "^2.0.10",
@@ -26,6 +25,7 @@
     "react-native-track-player": "^1.2.2",
     "react-native-vector-icons": "^6.6.0",
     "react-relay": "^9.0.0",
+    "react-translated": "^2.5.0",
     "realm": "^5.0.3",
     "rn-secure-storage": "^2.0.4",
     "use-debounce": "^3.4.1"
@@ -34,6 +34,7 @@
     "@babel/core": "^7.9.0",
     "@babel/runtime": "^7.9.2",
     "@react-native-community/eslint-config": "^1.0.0",
+    "@types/i18n-js": "^3.0.2",
     "@types/jest": "^25.2.1",
     "@types/react": "^16.9.34",
     "@types/react-native": "^0.62.2",

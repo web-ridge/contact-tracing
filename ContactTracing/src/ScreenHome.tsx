@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Navigation } from 'react-native-navigation'
 
 import { StyleSheet, ScrollView, View, StatusBar, Platform } from 'react-native'
 import { Button, Text } from 'react-native-paper'
@@ -51,15 +50,8 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
         contentContainerStyle={styles.contentContainerStyle}
       >
         <View style={styles.body}>
-          <Text style={styles.title}>COVID-19 Tracing</Text>
-          <Text style={styles.text}>
-            Let's beat COVID-19{' '}
-            <Text
-              style={{ fontWeight: 'bold', textDecorationLine: 'underline' }}
-            >
-              together.
-            </Text>
-          </Text>
+          <Text style={styles.title}>Contact Tracing COVID-19</Text>
+          <Text style={styles.text}>Let's beat COVID-19 together.</Text>
           {!isTracking && (
             <Button mode="contained" onPress={startTracing}>
               Ik doe mee
@@ -97,48 +89,28 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#4d089a',
   },
   body: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
+    paddingBottom: 56,
   },
   title: {
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 24,
+    color: '#fff',
   },
   text: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 24,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginTop: 56,
-  },
-  modalView: {
-    // margin: 20,
-    width: '100%',
-    flex: 1,
-    backgroundColor: 'white',
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    color: '#fff',
+    opacity: 0.8,
   },
 })
 

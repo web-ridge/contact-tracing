@@ -1159,6 +1159,11 @@
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
   integrity sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==
 
+"@types/i18n-js@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/i18n-js/-/i18n-js-3.0.2.tgz#0ead61f15a3f563ed0aa2cf37bbb569bacc22663"
+  integrity sha512-dBzhpFDXV8CsHeaXcVXvAYcUAqg0gl8PPeMRTMY9ZauTFn+NQamM3F8Ras4LZSqNgwL1Phewf1zzcojweAsiqA==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.1.tgz#42995b446db9a48a11a07ec083499a860e9138ff"
@@ -1796,6 +1801,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+basic-parser@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/basic-parser/-/basic-parser-1.1.0.tgz#4225866303ba5a9ec5eb360d378a7d46f41910f5"
+  integrity sha512-KABkST6SL7NCZH9Yi5ZsJrki6388ZkXzpbN7j2lIWvptNagagkXID4F8GF7XGju8bTyXQfMzoTXgoiKMggiQjA==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
@@ -6071,7 +6081,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@15.x.x, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.x.x, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -6174,11 +6184,6 @@ react-native-contact-tracing@^1.11.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/react-native-contact-tracing/-/react-native-contact-tracing-1.11.0.tgz#924811ed49813322b583be4a3b38a6c8a2c08042"
   integrity sha512-xkPZaISBZvtMEzMHNJ+Y3H7Sa7Hdq/UvpikXGlydYDm0PUJc+YSCfVceh6KP+4OoSw6V4h3lz2TFnG2lhS6bbw==
-
-react-native-localize@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-1.4.0.tgz#4653596d066d0941c48f5404dc1c0d08b6950443"
-  integrity sha512-W2MQxm6hzD549ZbZcbWzWtYJseY7S7WR2WgsNhm9ULmbwP7tXFfOTbkJjQoqgPXYSXogKN3srXhntVsNZL0Ksw==
 
 react-native-navigation@^6.4.0:
   version "6.4.0"
@@ -6294,6 +6299,14 @@ react-test-renderer@16.11.0:
     prop-types "^15.6.2"
     react-is "^16.8.6"
     scheduler "^0.17.0"
+
+react-translated@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/react-translated/-/react-translated-2.5.0.tgz#2d7373d322ee9e305c8d607721ff162675a53669"
+  integrity sha512-s/wtzU185TgdF5iF4JsRvOSOJjKQL//mAHIJX9qdDgRiBWV9Z1fiiXSTmvUBx7NlUNLbX8FCwXn5plB6BufyWA==
+  dependencies:
+    basic-parser "^1.1.0"
+    prop-types "^15.6.0"
 
 react@16.11.0:
   version "16.11.0"
