@@ -17,7 +17,7 @@ import {
 } from 'react-native-permissions'
 import BackgroundService from 'react-native-background-actions'
 import InfectionAlerts from './InfectionAlerts'
-import { startTracing } from './JobTracing'
+import { startTracing, stopTracing } from './JobTracing'
 import { goToSymptonsScreen } from './Screens'
 
 const bluetoothPermission: Permission = Platform.select({
@@ -57,7 +57,7 @@ function ScreenHome({ componentId }: { componentId: string }) {
   }
   const stopTracingPressed = () => {
     const stopTracingAsync = async () => {
-      await BackgroundService.stop()
+      await stopTracing()
       setIsTracking(BackgroundService.isRunning())
     }
     stopTracingAsync()
@@ -77,23 +77,15 @@ function ScreenHome({ componentId }: { componentId: string }) {
         contentContainerStyle={styles.contentContainerStyle}
       >
         <View style={styles.body}>
-          <Text style={styles.subtitle}>
+          {/* <Text style={styles.subtitle}>
             <Translate text="subtitle" />
           </Text>
           <Text style={styles.title}>
             <Translate text="title" />
-          </Text>
+          </Text> */}
 
           {isTracking ? (
             <>
-              <Button
-                mode="contained"
-                onPress={stopTracingPressed}
-                style={styles.button}
-              >
-                <Translate text="stopTracking" />
-              </Button>
-
               <View style={{ height: 24 }} />
               <Button
                 mode="outlined"
@@ -101,9 +93,27 @@ function ScreenHome({ componentId }: { componentId: string }) {
               >
                 <Translate text="symptomsButton" />
               </Button>
+              <InfectionAlerts />
+              <Button
+                mode="contained"
+                onPress={stopTracingPressed}
+                style={styles.button}
+              >
+                <Translate text="stopTracking" />
+              </Button>
             </>
           ) : (
             <>
+              <Image
+                source={require('../assets/privacy.png')}
+                style={{
+                  height: 300,
+                  width: 300,
+                  marginTop: 12,
+                  marginBottom: 12,
+                }}
+                resizeMode="contain"
+              ></Image>
               <Button
                 mode="contained"
                 onPress={startTracingPressed}
@@ -115,7 +125,6 @@ function ScreenHome({ componentId }: { componentId: string }) {
             </>
           )}
         </View>
-        {isTracking && <InfectionAlerts />}
       </ScrollView>
     </>
   )
@@ -140,12 +149,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: 40,
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
     opacity: 0.7,
   },

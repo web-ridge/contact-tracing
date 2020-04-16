@@ -2,17 +2,24 @@ import { RSSIMap } from './types'
 import { getDatabase, EncounterSchema } from './Database'
 import RNSimpleCrypto from 'react-native-simple-crypto'
 
-export async function syncRSSIMap(rssiMap: RSSIMap): Promise<boolean> {
+export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
+  let rssiMap: RSSIMap = {}
+  Object.keys(rssiMapUnsafe).forEach(async (bluetoothID) => {
+    const hash = await RNSimpleCrypto.SHA.sha256(bluetoothID)
+    rssiMap[hash] = rssiMapUnsafe[bluetoothID]
+  })
+
   try {
     const database = await getDatabase()
     // sync encounters to database with a encrypted hash of bluetooth ID
     database.write(() => {
-      Object.keys(rssiMap).forEach((bluetoothID) => {
-        const rrsiValue = rssiMap[bluetoothID]
+      Object.keys(rssiMap).forEach((bluetoothHash) => {
+        const rrsiValue = rssiMap[bluetoothHash]
         database.create(EncounterSchema.name, {
-          hash: RNSimpleCrypto.SHA.sha256(bluetoothID),
+          hash: bluetoothHash,
           rssi: rrsiValue.rssi,
           hits: rrsiValue.hits,
+          time: Math.round(new Date().getTime() / 1000),
         })
       })
     })

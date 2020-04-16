@@ -49,3 +49,6 @@ async function scanForBluetoothDevices() {
 export async function startTracing() {
   return await scanForBluetoothDevices()
 }
+export async function stopTracing() {
+  return null
+}

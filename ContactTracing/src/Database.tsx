@@ -8,7 +8,6 @@ async function getEncryptionKey(): Promise<ArrayBuffer> {
   const exist = await RNSecureStorage.exists(encryptionKeyID)
   if (exist) {
     const stringKey = await RNSecureStorage.get(encryptionKeyID)
-    console.log({ stringKey })
     if (stringKey) {
       return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
     }
@@ -39,7 +38,7 @@ export const EncounterSchema = {
     hash: 'string',
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },
-    time: { type: 'unix', default: 0 },
+    time: { type: 'int', default: 0 },
   },
 }
 

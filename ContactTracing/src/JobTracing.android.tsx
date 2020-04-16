@@ -9,13 +9,27 @@ function sleep(ms: number) {
   return new Promise((resolve) => BackgroundTimer.setTimeout(resolve, ms))
 }
 
+let rssiValues: RSSIMap = {}
+
+export async function syncMap() {
+  const done = await syncRSSIMap(rssiValues)
+  if (done) {
+    console.log('syncing rrsi values done')
+    rssiValues = {}
+  } else {
+    console.log('syncing rrsi not done')
+  }
+}
+export async function stopTracing() {
+  await syncMap()
+  await BackgroundService.stop()
+}
+
 // You can do anything in your task such as network requests, timers and so on,
 // as long as it doesn't touch UI. Once your task completes (i.e. the promise is resolved),
 // React Native will go into "paused" mode (unless there are other tasks running,
 // or there is a foreground app).
 async function scanForBluetoothDevices() {
-  let rssiValues: RSSIMap = {}
-
   console.log('scanForBluetoothDevices()')
 
   await new Promise(async (resolve) => {
@@ -82,17 +96,10 @@ async function scanForBluetoothDevices() {
         }
       )
 
-      // every half an hour we sync rssi values to a database
+      // every fifteen minutes we sync rssi values to a database
       const hourInMs = 1 * 1000 * 60 * 60
-      await sleep(hourInMs / 2)
-
-      const done = await syncRSSIMap(rssiValues)
-      if (done) {
-        console.log('syncing rrsi values done')
-        rssiValues = {}
-      } else {
-        console.log('syncing rrsi not done')
-      }
+      await sleep(hourInMs / 4)
+      syncMap()
     }
   })
 }

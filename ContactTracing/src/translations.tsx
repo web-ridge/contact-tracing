@@ -15,8 +15,8 @@ export default {
     nl: 'Samen krijgen we Corona onder controle',
   },
   startTracking: {
-    en: 'Start saving',
-    nl: 'Start opslaan',
+    en: 'Start saving contacts',
+    nl: 'Start opslaan contacten',
   },
   stopTracking: {
     en: 'Stop with saving',
