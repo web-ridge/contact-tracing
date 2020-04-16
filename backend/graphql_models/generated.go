@@ -46,13 +46,9 @@ type ComplexityRoot struct {
 		Ok func(childComplexity int) int
 	}
 
-	InfectionSummary struct {
-		HighRiskInteractions   func(childComplexity int) int
-		LowRiskInteractions    func(childComplexity int) int
-		MaxSymptonDate         func(childComplexity int) int
-		MiddleRiskInteractions func(childComplexity int) int
-		MinSymptonDate         func(childComplexity int) int
-		PredictedSymptonDate   func(childComplexity int) int
+	InfectionAlert struct {
+		HowManyEncounters func(childComplexity int) int
+		Risk              func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -68,7 +64,7 @@ type MutationResolver interface {
 	CreateInfectedEncounters(ctx context.Context, input InfectedEncountersCreateInput) (*InfectedEncounterCreatePayload, error)
 }
 type QueryResolver interface {
-	InfectedEncounters(ctx context.Context, hash string) (*InfectionSummary, error)
+	InfectedEncounters(ctx context.Context, hash string) ([]*InfectionAlert, error)
 }
 
 type executableSchema struct {
@@ -93,47 +89,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InfectedEncounterCreatePayload.Ok(childComplexity), true
 
-	case "InfectionSummary.HighRiskInteractions":
-		if e.complexity.InfectionSummary.HighRiskInteractions == nil {
+	case "InfectionAlert.howManyEncounters":
+		if e.complexity.InfectionAlert.HowManyEncounters == nil {
 			break
 		}
 
-		return e.complexity.InfectionSummary.HighRiskInteractions(childComplexity), true
+		return e.complexity.InfectionAlert.HowManyEncounters(childComplexity), true
 
-	case "InfectionSummary.LowRiskInteractions":
-		if e.complexity.InfectionSummary.LowRiskInteractions == nil {
+	case "InfectionAlert.risk":
+		if e.complexity.InfectionAlert.Risk == nil {
 			break
 		}
 
-		return e.complexity.InfectionSummary.LowRiskInteractions(childComplexity), true
-
-	case "InfectionSummary.MaxSymptonDate":
-		if e.complexity.InfectionSummary.MaxSymptonDate == nil {
-			break
-		}
-
-		return e.complexity.InfectionSummary.MaxSymptonDate(childComplexity), true
-
-	case "InfectionSummary.MiddleRiskInteractions":
-		if e.complexity.InfectionSummary.MiddleRiskInteractions == nil {
-			break
-		}
-
-		return e.complexity.InfectionSummary.MiddleRiskInteractions(childComplexity), true
-
-	case "InfectionSummary.MinSymptonDate":
-		if e.complexity.InfectionSummary.MinSymptonDate == nil {
-			break
-		}
-
-		return e.complexity.InfectionSummary.MinSymptonDate(childComplexity), true
-
-	case "InfectionSummary.PredictedSymptonDate":
-		if e.complexity.InfectionSummary.PredictedSymptonDate == nil {
-			break
-		}
-
-		return e.complexity.InfectionSummary.PredictedSymptonDate(childComplexity), true
+		return e.complexity.InfectionAlert.Risk(childComplexity), true
 
 	case "Mutation.createInfectedEncounters":
 		if e.complexity.Mutation.CreateInfectedEncounters == nil {
@@ -223,17 +191,19 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	&ast.Source{Name: "../schema.graphql", Input: `type InfectionSummary {
-  HighRiskInteractions: Int!
-  MiddleRiskInteractions: Int!
-  LowRiskInteractions: Int!
-  MaxSymptonDate: Int
-  MinSymptonDate: Int
-  PredictedSymptonDate: Int
+	&ast.Source{Name: "../schema.graphql", Input: `enum Risk {
+  HIGH_RISK
+  MIDDLE_RISK
+  LOW_RISK
+}
+
+type InfectionAlert {
+  howManyEncounters: Int!
+  risk: Risk!
 }
 
 type Query {
-  infectedEncounters(hash: String!): InfectionSummary!
+  infectedEncounters(hash: String!): [InfectionAlert]!
 }
 
 input InfectedEncounterCreateInput {
@@ -377,7 +347,7 @@ func (ec *executionContext) _InfectedEncounterCreatePayload_ok(ctx context.Conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _InfectionSummary_HighRiskInteractions(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
+func (ec *executionContext) _InfectionAlert_howManyEncounters(ctx context.Context, field graphql.CollectedField, obj *InfectionAlert) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -385,7 +355,7 @@ func (ec *executionContext) _InfectionSummary_HighRiskInteractions(ctx context.C
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
+		Object:   "InfectionAlert",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -394,7 +364,7 @@ func (ec *executionContext) _InfectionSummary_HighRiskInteractions(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.HighRiskInteractions, nil
+		return obj.HowManyEncounters, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -411,7 +381,7 @@ func (ec *executionContext) _InfectionSummary_HighRiskInteractions(ctx context.C
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _InfectionSummary_MiddleRiskInteractions(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
+func (ec *executionContext) _InfectionAlert_risk(ctx context.Context, field graphql.CollectedField, obj *InfectionAlert) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -419,7 +389,7 @@ func (ec *executionContext) _InfectionSummary_MiddleRiskInteractions(ctx context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
+		Object:   "InfectionAlert",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -428,7 +398,7 @@ func (ec *executionContext) _InfectionSummary_MiddleRiskInteractions(ctx context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MiddleRiskInteractions, nil
+		return obj.Risk, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -440,136 +410,9 @@ func (ec *executionContext) _InfectionSummary_MiddleRiskInteractions(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(Risk)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _InfectionSummary_LowRiskInteractions(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LowRiskInteractions, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _InfectionSummary_MaxSymptonDate(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MaxSymptonDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _InfectionSummary_MinSymptonDate(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MinSymptonDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _InfectionSummary_PredictedSymptonDate(ctx context.Context, field graphql.CollectedField, obj *InfectionSummary) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "InfectionSummary",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PredictedSymptonDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNRisk2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐRisk(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createInfectedEncounters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -649,9 +492,9 @@ func (ec *executionContext) _Query_infectedEncounters(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*InfectionSummary)
+	res := resTmp.([]*InfectionAlert)
 	fc.Result = res
-	return ec.marshalNInfectionSummary2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionSummary(ctx, field.Selections, res)
+	return ec.marshalNInfectionAlert2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionAlert(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1873,38 +1716,27 @@ func (ec *executionContext) _InfectedEncounterCreatePayload(ctx context.Context,
 	return out
 }
 
-var infectionSummaryImplementors = []string{"InfectionSummary"}
+var infectionAlertImplementors = []string{"InfectionAlert"}
 
-func (ec *executionContext) _InfectionSummary(ctx context.Context, sel ast.SelectionSet, obj *InfectionSummary) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, infectionSummaryImplementors)
+func (ec *executionContext) _InfectionAlert(ctx context.Context, sel ast.SelectionSet, obj *InfectionAlert) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, infectionAlertImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("InfectionSummary")
-		case "HighRiskInteractions":
-			out.Values[i] = ec._InfectionSummary_HighRiskInteractions(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("InfectionAlert")
+		case "howManyEncounters":
+			out.Values[i] = ec._InfectionAlert_howManyEncounters(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "MiddleRiskInteractions":
-			out.Values[i] = ec._InfectionSummary_MiddleRiskInteractions(ctx, field, obj)
+		case "risk":
+			out.Values[i] = ec._InfectionAlert_risk(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "LowRiskInteractions":
-			out.Values[i] = ec._InfectionSummary_LowRiskInteractions(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "MaxSymptonDate":
-			out.Values[i] = ec._InfectionSummary_MaxSymptonDate(ctx, field, obj)
-		case "MinSymptonDate":
-			out.Values[i] = ec._InfectionSummary_MinSymptonDate(ctx, field, obj)
-		case "PredictedSymptonDate":
-			out.Values[i] = ec._InfectionSummary_PredictedSymptonDate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2300,18 +2132,41 @@ func (ec *executionContext) unmarshalNInfectedEncountersCreateInput2githubᚗcom
 	return ec.unmarshalInputInfectedEncountersCreateInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNInfectionSummary2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionSummary(ctx context.Context, sel ast.SelectionSet, v InfectionSummary) graphql.Marshaler {
-	return ec._InfectionSummary(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNInfectionSummary2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionSummary(ctx context.Context, sel ast.SelectionSet, v *InfectionSummary) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
+func (ec *executionContext) marshalNInfectionAlert2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionAlert(ctx context.Context, sel ast.SelectionSet, v []*InfectionAlert) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
 	}
-	return ec._InfectionSummary(ctx, sel, v)
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOInfectionAlert2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionAlert(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
@@ -2326,6 +2181,15 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNRisk2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐRisk(ctx context.Context, v interface{}) (Risk, error) {
+	var res Risk
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNRisk2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐRisk(ctx context.Context, sel ast.SelectionSet, v Risk) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -2591,27 +2455,15 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
-func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
-	return graphql.UnmarshalInt(v)
+func (ec *executionContext) marshalOInfectionAlert2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionAlert(ctx context.Context, sel ast.SelectionSet, v InfectionAlert) graphql.Marshaler {
+	return ec._InfectionAlert(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	return graphql.MarshalInt(v)
-}
-
-func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOInt2int(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+func (ec *executionContext) marshalOInfectionAlert2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectionAlert(ctx context.Context, sel ast.SelectionSet, v *InfectionAlert) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec.marshalOInt2int(ctx, sel, *v)
+	return ec._InfectionAlert(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

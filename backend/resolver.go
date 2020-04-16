@@ -32,7 +32,7 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	}, nil
 }
 
-func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) (*fm.InfectionSummary, error) {
+func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]*fm.InfectionAlert, error) {
 
 	//  1-14 days, most commonly around five days.
 	now := time.Now()
@@ -50,31 +50,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) (*f
 		return nil, fmt.Errorf("could not get summary from database")
 	}
 
-	groupedEncountersPerHash := groupInfectedEncounterOnFirstPartOfHash(infectedEncounters)
-
-	highRiskInteractions := 0
-	middleRiskInteractions := 0
-	lowRiskInteractions := 0
-
-	for _, value := range groupedEncountersPerHash {
-		risk := getRisk(value)
-		if risk > 10 {
-			highRiskInteractions++
-		} else if risk > 5 {
-			middleRiskInteractions++
-		} else {
-			lowRiskInteractions++
-		}
-	}
-
-	// GroupBy first part of hash
-	return &fm.InfectionSummary{
-		HighRiskInteractions:   highRiskInteractions,
-		MiddleRiskInteractions: middleRiskInteractions,
-		LowRiskInteractions:    lowRiskInteractions,
-		MaxSymptonDate:         nil,
-		MinSymptonDate:         nil,
-	}, nil
+	return getRiskAlerts(infectedEncounters), nil
 }
 
 func (r *Resolver) Mutation() fm.MutationResolver { return &mutationResolver{r} }

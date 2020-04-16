@@ -43,12 +43,9 @@ Hij krijgt het volgende terug:
 
 ## Bepalen wanneer besmetting is voorgekomen
 
-We kijken naar de RSSI van het signaal en het aantal hits wat er met dit signaal is. Alles tussen de 0 en - 70 wordt lokaal opgeslagen met het minimale en maximale RSSI getal. Hoe dichter de RSSI bij de 0 is en hoe meer hits hoe meer de kans op besmetting is toegenomen.
+We kijken naar de RSSI van het signaal en het aantal hits wat er met dit signaal is. Alles tussen de 0 en - 100 wordt lokaal opgeslagen met het minimale en maximale RSSI getal. Hoe dichter de RSSI bij de 0 is en hoe meer hits hoe meer de kans op besmetting is toegenomen.
 
-Als gemeten in negatieve getallen betekent een getal dat dichter bij 0 ligt meestal een beter signaal,
-een getal dat -50 (min 50) is een redelijk goed signaal,
-een getal van -70 (min 70) is redelijk terwijl een getal dat -100 (min 100) is helemaal geen signaal heeft.
-https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
+https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function-of-distance-A-Scans-between-two-phones_fig2_263708916
 
 ## Security / data
 
@@ -60,7 +57,7 @@ https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-fro
 
 ## Concerns
 
-- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen of die gehashte besmet is. Dit dient duidelijk te worden vermeld als de gebruiker toestemming geeft als hij zijn infectie invoert.
+- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen hoeveel risivolle ontmoetingen deze hash heeft gehad. Het is niet mogelijk om te zien met welke hash deze persoon contact heeft gehad (wordt ook niet opgeslagen op de server).
 
 ## Blokkades
 
