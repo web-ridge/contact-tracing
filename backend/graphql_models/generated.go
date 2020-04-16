@@ -237,11 +237,11 @@ type Query {
 }
 
 input InfectedEncounterCreateInput {
-  startOfCreatorHash: String
-  possibleInfectedHash: String
-  rssi: Int
-  hits: Int
-  time: Int
+  startOfCreatorHash: String!
+  possibleInfectedHash: String!
+  rssi: Int!
+  hits: Int!
+  time: Int!
 }
 
 input InfectedEncountersCreateInput {
@@ -1786,31 +1786,31 @@ func (ec *executionContext) unmarshalInputInfectedEncounterCreateInput(ctx conte
 		switch k {
 		case "startOfCreatorHash":
 			var err error
-			it.StartOfCreatorHash, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.StartOfCreatorHash, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "possibleInfectedHash":
 			var err error
-			it.PossibleInfectedHash, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.PossibleInfectedHash, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "rssi":
 			var err error
-			it.Rssi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Rssi, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "hits":
 			var err error
-			it.Hits, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Hits, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "time":
 			var err error
-			it.Time, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Time, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}

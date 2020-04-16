@@ -160,6 +160,7 @@ github.com/web-ridge/gqlgen-sqlboiler/helper v0.0.0-20200409201443-82c6f4a43f5e/
 github.com/web-ridge/gqlgen-sqlboiler/helper v0.0.0-20200414200904-b129e9f3941f h1:4hinWe6fIrUP4l/BtaTQxaAs8OMJNkoatv5AK9K7BY0=
 github.com/web-ridge/gqlgen-sqlboiler/helper v0.0.0-20200414200904-b129e9f3941f/go.mod h1:BL8ieQWoQPkSxVCrMEGjOwLC/Cfz8AyJKA0FJJoihpU=
 github.com/web-ridge/gqlgen-sqlboiler/resolver v0.0.0-20200409201443-82c6f4a43f5e/go.mod h1:XxDJnwjYf5vQ2AJKznnVRPNXmBUHHWiKQ5kO7qBH04c=
+github.com/web-ridge/sqlboiler-graphql-schema v0.0.0-20200410214211-bce8aed49f93 h1:TRsZP9qBYvXp0+PnvcK+Xv1e9m8r3CyWz3NT4nx8DvY=
 github.com/web-ridge/sqlboiler-graphql-schema v0.0.0-20200410214211-bce8aed49f93/go.mod h1:BQcwT+e/FwlhGG7UfhU5nxq78o2VwPPQvzJbDdKILqI=
 github.com/web-ridge/utils-go/api v0.0.0-20200415194614-3a337234e424 h1:XsuCLTP/eOcl4fzVuOgd0/m5QQWSaVrDhjLshYpWgcA=
 github.com/web-ridge/utils-go/api v0.0.0-20200415194614-3a337234e424/go.mod h1:KzTsqW+f/OV441uiPnQgI3Oqlx+sY7qUyqI+pffaaHc=

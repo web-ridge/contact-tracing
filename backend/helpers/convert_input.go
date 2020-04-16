@@ -26,11 +26,11 @@ func InfectedEncounterCreateInputToBoiler(
 		return nil
 	}
 	r := &models.InfectedEncounter{
-		StartOfCreatorHash:   helper.PointerStringToNullDotString(m.StartOfCreatorHash),
-		PossibleInfectedHash: helper.PointerStringToNullDotString(m.PossibleInfectedHash),
-		Rssi:                 helper.PointerIntToNullDotInt(m.Rssi),
-		Hits:                 helper.PointerIntToNullDotInt(m.Hits),
-		Time:                 helper.PointerIntToNullDotTime(m.Time),
+		StartOfCreatorHash:   m.StartOfCreatorHash,
+		PossibleInfectedHash: m.PossibleInfectedHash,
+		Rssi:                 m.Rssi,
+		Hits:                 m.Hits,
+		Time:                 helper.IntToTimeTime(m.Time),
 	}
 	return r
 }
@@ -43,15 +43,15 @@ func InfectedEncounterCreateInputToModelM(
 	for key, _ := range input {
 		switch key {
 		case "startOfCreatorHash":
-			modelM[models.InfectedEncounterColumns.StartOfCreatorHash] = helper.PointerStringToNullDotString(m.StartOfCreatorHash)
+			modelM[models.InfectedEncounterColumns.StartOfCreatorHash] = m.StartOfCreatorHash
 		case "possibleInfectedHash":
-			modelM[models.InfectedEncounterColumns.PossibleInfectedHash] = helper.PointerStringToNullDotString(m.PossibleInfectedHash)
+			modelM[models.InfectedEncounterColumns.PossibleInfectedHash] = m.PossibleInfectedHash
 		case "rssi":
-			modelM[models.InfectedEncounterColumns.Rssi] = helper.PointerIntToNullDotInt(m.Rssi)
+			modelM[models.InfectedEncounterColumns.Rssi] = m.Rssi
 		case "hits":
-			modelM[models.InfectedEncounterColumns.Hits] = helper.PointerIntToNullDotInt(m.Hits)
+			modelM[models.InfectedEncounterColumns.Hits] = m.Hits
 		case "time":
-			modelM[models.InfectedEncounterColumns.Time] = helper.PointerIntToNullDotTime(m.Time)
+			modelM[models.InfectedEncounterColumns.Time] = helper.IntToTimeTime(m.Time)
 		}
 	}
 	return modelM

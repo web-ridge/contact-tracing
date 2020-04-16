@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"github.com/volatiletech/null"
 	fm "github.com/web-ridge/contact-tracing/backend/graphql_models"
-	. "github.com/web-ridge/contact-tracing/backend/helpers"
+
+	// . "github.com/web-ridge/contact-tracing/backend/helpers"
 	dm "github.com/web-ridge/contact-tracing/backend/models"
 )
 
@@ -32,51 +32,6 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	}, nil
 }
 
-// groupInfectedEncounterOnFirstPartOfHash so we know how many interactions with this hash
-// not the full hash because we don't want it to be tracable
-func groupInfectedEncounterOnFirstPartOfHash(infectedEncounters []*dm.InfectedEncounter) map[string][]*dm.InfectedEncounter {
-	m := make(map[string][]*dm.InfectedEncounter)
-	for _, infectedEncounter := range infectedEncounters {
-		key := infectedEncounter.StartOfCreatorHash.String
-		groupedValue, valueExist := m[key]
-		if valueExist {
-			m[key] = append(groupedValue, infectedEncounter)
-		} else {
-			m[key] = []*dm.InfectedEncounter{infectedEncounter}
-		}
-	}
-	return m
-}
-
-// getRiskPercentage returns int based on encounters with maximum risk
-func getRisk(infectedEncounters []*dm.InfectedEncounter) int {
-
-	risk := 0
-
-	for _, encounter := range infectedEncounters {
-		if !encounter.Rssi.Valid {
-			continue
-		}
-
-		// not so many hits probably not good enough
-		if encounter.Hits.Int < 5 {
-			continue
-		}
-
-		if encounter.Rssi.Int > -65 {
-			risk += 4
-		} else if encounter.Rssi.Int > -70 {
-			if encounter.Hits.Int > 50 {
-				risk += 2
-			} else {
-				risk += 1
-			}
-		}
-	}
-
-	return risk
-}
-
 func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) (*fm.InfectionSummary, error) {
 
 	//  1-14 days, most commonly around five days.
@@ -85,9 +40,9 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) (*f
 
 	// get infected encounters for this hash in incubation period
 	infectedEncounters, err := dm.InfectedEncounters(
-		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(null.StringFrom(hash)),
-		dm.InfectedEncounterWhere.Time.LTE(null.NewTime(now, true)),
-		dm.InfectedEncounterWhere.Time.GTE(null.NewTime(beginOfIncubationPeriod, true)),
+		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(hash),
+		dm.InfectedEncounterWhere.Time.LTE(now),
+		dm.InfectedEncounterWhere.Time.GTE(beginOfIncubationPeriod),
 	).All(ctx, r.db)
 
 	if err != nil {

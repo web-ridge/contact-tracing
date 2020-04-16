@@ -3,11 +3,11 @@
 package graphql_models
 
 type InfectedEncounterCreateInput struct {
-	StartOfCreatorHash   *string `json:"startOfCreatorHash"`
-	PossibleInfectedHash *string `json:"possibleInfectedHash"`
-	Rssi                 *int    `json:"rssi"`
-	Hits                 *int    `json:"hits"`
-	Time                 *int    `json:"time"`
+	StartOfCreatorHash   string `json:"startOfCreatorHash"`
+	PossibleInfectedHash string `json:"possibleInfectedHash"`
+	Rssi                 int    `json:"rssi"`
+	Hits                 int    `json:"hits"`
+	Time                 int    `json:"time"`
 }
 
 type InfectedEncounterCreatePayload struct {
