@@ -15,12 +15,12 @@ export default {
     nl: 'Samen krijgen we Corona onder controle',
   },
   startTracking: {
-    en: 'Start saving contacts',
-    nl: 'Start opslaan contacten',
+    en: 'Start scanning',
+    nl: 'Begin met scannen',
   },
   stopTracking: {
-    en: 'Stop with saving',
-    nl: 'Stop met opslaan',
+    en: 'Stop scanning',
+    nl: 'Stop scannen',
   },
   symptomsButton: {
     en: 'I have symptoms',
