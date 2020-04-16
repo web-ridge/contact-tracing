@@ -9,7 +9,7 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    
+    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS" />
 
     <!-- Add this line if your application always requires BLE. More info can be found on:
          https://developer.android.com/guide/topics/connectivity/bluetooth-le.html#permissions

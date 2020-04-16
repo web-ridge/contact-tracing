@@ -50,7 +50,7 @@ func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString
 }
 
 func InfectedEncountersToQuery(a []*models.InfectedEncounter, randomString string) (string, []interface{}) {
-	queryMarks, values := InfectedEncountersToBatchCreate(a)
+	queryMarks, values := InfectedEncountersToBatchCreate(a, randomString)
 	// nolint: gosec -> remove warning because no user input
 	return fmt.Sprintf(`INSERT INTO %s (%s) VALUES %s`,
 		models.TableNames.InfectedEncounter,

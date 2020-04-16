@@ -1224,6 +1224,14 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-relay@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@types/react-relay/-/react-relay-7.0.3.tgz#73a7dd35286aabd645bfbe4a00723a7b546054fe"
+  integrity sha512-laZ9nGDqQd9VyljJ2w8tGDcFZz9dm8K6NHsyDR8jig1eLzjYf/3ayQl+N3hnrfOVLUQsmuvy4dsyyJzjCIJAHA==
+  dependencies:
+    "@types/react" "*"
+    "@types/relay-runtime" "*"
+
 "@types/react-test-renderer@^16.9.2":
   version "16.9.2"
   resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-16.9.2.tgz#e1c408831e8183e5ad748fdece02214a7c2ab6c5"
@@ -1238,6 +1246,11 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
+
+"@types/relay-runtime@*":
+  version "8.0.8"
+  resolved "https://registry.yarnpkg.com/@types/relay-runtime/-/relay-runtime-8.0.8.tgz#77be2b7647995b6f2d9bcceae0febe7a7e337da8"
+  integrity sha512-Wy/31wkIZn0M1VlDAy2haNRiXQtaQr6D+XnhCRraX6BTGhzytLj05hdqMo3unbP0/5WcYXXTPMLPeGvDwHQISQ==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -6184,6 +6197,11 @@ react-native-contact-tracing@^1.11.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/react-native-contact-tracing/-/react-native-contact-tracing-1.11.0.tgz#924811ed49813322b583be4a3b38a6c8a2c08042"
   integrity sha512-xkPZaISBZvtMEzMHNJ+Y3H7Sa7Hdq/UvpikXGlydYDm0PUJc+YSCfVceh6KP+4OoSw6V4h3lz2TFnG2lhS6bbw==
+
+react-native-device-info@^5.5.5:
+  version "5.5.5"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.5.5.tgz#0be4dcee93433285a83ede81202a811d78901544"
+  integrity sha512-CIoFDlfaUVNJiHzj/2DRb0KGRxBnGfw8ZkFWR0txNg7CkN0R9hF5vToB5jklEQ8EK6HrgFEC6fa9TjJQY6eKzg==
 
 react-native-navigation@^6.4.0:
   version "6.4.0"

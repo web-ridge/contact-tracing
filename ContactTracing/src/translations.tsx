@@ -15,8 +15,8 @@ export default {
     nl: 'Samen krijgen we Corona onder controle',
   },
   startTracking: {
-    en: 'Start saving contacts',
-    nl: 'Start het opslaan van contacten',
+    en: 'Start saving',
+    nl: 'Start opslaan',
   },
   stopTracking: {
     en: 'Stop with saving',
@@ -31,5 +31,37 @@ export default {
       'All your Bluetooth contacts will be saved locally and fully encrypted.',
     nl:
       'Al jouw Bluetooth contacten worden lokaal opgeslagen en volledig versleuteld.',
+  },
+  refetchAlerts: {
+    en: 'Retry',
+    nl: 'Opnieuw ophalen',
+  },
+  errorWhileFetchingAlerts: {
+    en: 'Something went wrong while fetching the alerts',
+    nl: 'Fout bij ophalen meldingen',
+  },
+  noAlerts: {
+    en: 'No alerts yet',
+    nl: 'Nog geen meldingen',
+  },
+  alerts: {
+    en: 'Alerts',
+    nl: 'Meldingen',
+  },
+  labelForEncounters: {
+    en: 'contact with someone who is probably infected',
+    nl: 'contactmoment met persoon die waarschijnlijk besmet is',
+  },
+  HIGH_RISK: {
+    en: 'High risk',
+    nl: 'Hoog risico',
+  },
+  MIDDLE_RISK: {
+    en: 'Medium risk',
+    nl: 'Gemiddeld risico',
+  },
+  LOW_RISK: {
+    en: 'Low risk',
+    nl: 'Laag risico',
   },
 } as TranslationDatabase

@@ -16,33 +16,34 @@ import {
   Permission,
 } from 'react-native-permissions'
 import BackgroundService from 'react-native-background-actions'
-
+import InfectionAlerts from './InfectionAlerts'
 import { startTracing } from './JobTracing'
 import { goToSymptonsScreen } from './Screens'
 
+const bluetoothPermission: Permission = Platform.select({
+  ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
+  android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+})!
+
 async function requestBluetoothStatus() {
-  const permission: Permission = Platform.select({
-    ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
-    android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-  })!
   // can be done in parallel
-  let bluetoothStatus = await check(permission)
+  let bluetoothStatus = await check(bluetoothPermission)
   if (bluetoothStatus === 'denied') {
-    bluetoothStatus = await request(permission)
+    bluetoothStatus = await request(bluetoothPermission)
   }
   return bluetoothStatus
 }
 
-const ScreenHome = ({ componentId }: { componentId: string }) => {
+function ScreenHome({ componentId }: { componentId: string }) {
   const [isTracking, setIsTracking] = useState<boolean>(
     BackgroundService.isRunning()
   )
 
   const startTracingPressed = () => {
     const startTracingAsync = async () => {
-      console.log('doSynced')
+      // console.log('doSynced')
       const bluetoothStatus = await requestBluetoothStatus()
-      console.log({ bluetoothStatus })
+      // console.log({ bluetoothStatus })
       // TODO: start background status
       // TODO: add modals
       if (bluetoothStatus === 'granted') {
@@ -76,12 +77,13 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
         contentContainerStyle={styles.contentContainerStyle}
       >
         <View style={styles.body}>
+          <Text style={styles.subtitle}>
+            <Translate text="subtitle" />
+          </Text>
           <Text style={styles.title}>
             <Translate text="title" />
           </Text>
-          <Text style={styles.text}>
-            <Translate text="subtitle" />
-          </Text>
+
           {isTracking ? (
             <>
               <Button
@@ -89,9 +91,9 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
                 onPress={stopTracingPressed}
                 style={styles.button}
               >
-                <Translate text="stop" />
+                <Translate text="stopTracking" />
               </Button>
-              {privacyText}
+
               <View style={{ height: 24 }} />
               <Button
                 mode="outlined"
@@ -107,33 +109,19 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
                 onPress={startTracingPressed}
                 style={styles.button}
               >
-                <Translate text="start" />
+                <Translate text="startTracking" />
               </Button>
               {privacyText}
             </>
           )}
         </View>
-        <Image
-          source={require('../assets/background.png')}
-          style={{ height: 400, width: 400 }}
-          resizeMode="contain"
-        ></Image>
+        {isTracking && <InfectionAlerts />}
       </ScrollView>
     </>
   )
 }
-ScreenHome.options = {
-  topBar: {
-    title: {
-      text: 'Home',
-      color: 'white',
-    },
-  },
-}
+
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   button: {
     width: '100%',
     maxWidth: 300,
@@ -146,23 +134,20 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    maxWidth: 550,
   },
   title: {
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 6,
   },
-  text: {
+  subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 24,
-
-    opacity: 0.8,
+    opacity: 0.7,
   },
 })
 
