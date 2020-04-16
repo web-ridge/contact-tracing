@@ -24,7 +24,7 @@ export default {
   },
   symptomsButton: {
     en: 'I have symptoms',
-    nl: 'Ik heb symptonen',
+    nl: 'Ik heb symptomen',
   },
   privacyTracking: {
     en:
@@ -73,8 +73,8 @@ export default {
     nl: 'of',
   },
   permissionText: {
-    en: `I agree that my locally saved Bluetooth contacts from the past 2 weeks will be shared so that other phones will be notified when they have been in contact with you.`,
-    nl: `Ik ga ermee akkoord dat mijn lokaal opgeslagen Bluetooth-contacten van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact geweest zijn met jou.`,
+    en: `I agree that my locally saved Bluetooth contacts from the past 2 weeks will be shared so that other phones will be notified when they have been in contact with me.`,
+    nl: `Ik ga ermee akkoord dat mijn lokaal opgeslagen Bluetooth-contacten van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
   },
   permissionTrust: {
     en: `These are in no way traceable to you.`,

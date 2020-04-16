@@ -49,8 +49,7 @@ export default function ScreenSymptons() {
           >
             <View style={styles.symptonItemInnerContent}>
               <Text>
-                <Translate text="permissionText" />
-
+                <Translate text="permissionText" />{' '}
                 <Text style={styles.permissionTrust}>
                   <Translate text="permissionTrust" />
                 </Text>
