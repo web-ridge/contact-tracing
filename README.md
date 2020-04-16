@@ -1,8 +1,14 @@
 ## Help us
 
+- Screen of symptons checklist
+- Kubernetes files for deploying to Cloud Infrastructure
+- Backup kubernetes encrypted postgres
+- Start screen more beatifull
+- Ask user for permission sending his contacts
+
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. Als je de privacy van de gebruiker zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Maar mijn advies is wachten totdat de Contact Tracing API's beschikbaar komen zodat het ook op iOS apparaten werkt.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Als deze beschikbaar is het mogelijk om de app gelijk om te bouwen: https://github.com/ericlewis/react-native-contact-tracing. Er is bij deze library contact met engineers binnen Apple/Android zodat de API goed gaat werken als deze uitkomt.
 
 ## Voordeel aan deze oplossing
 
