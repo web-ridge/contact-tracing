@@ -20,7 +20,7 @@ func getRowMarks(columns []string) string {
 }
 
 var InfectedEncountersBatchCreateColumns = []string{
-	models.InfectedEncounterColumns.StartOfCreatorHash,
+	models.InfectedEncounterColumns.RandomPart,
 	models.InfectedEncounterColumns.PossibleInfectedHash,
 	models.InfectedEncounterColumns.Rssi,
 	models.InfectedEncounterColumns.Hits,
@@ -29,9 +29,9 @@ var InfectedEncountersBatchCreateColumns = []string{
 
 var InfectedEncountersatchCreateColumnsMarks = getRowMarks(InfectedEncountersBatchCreateColumns)
 
-func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter) []interface{} {
+func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter, randomString string) []interface{} {
 	return []interface{}{
-		e.StartOfCreatorHash,
+		randomString,
 		e.PossibleInfectedHash,
 		e.Rssi,
 		e.Hits,
@@ -39,17 +39,17 @@ func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter) []interfa
 	}
 }
 
-func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter) ([]string, []interface{}) {
+func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString string) ([]string, []interface{}) {
 	queryMarks := make([]string, len(a))
 	values := []interface{}{}
 	for i, boilerRow := range a {
 		queryMarks[i] = InfectedEncountersatchCreateColumnsMarks
-		values = append(values, InfectedEncounterToBatchCreateValues(boilerRow)...)
+		values = append(values, InfectedEncounterToBatchCreateValues(boilerRow, randomString)...)
 	}
 	return queryMarks, values
 }
 
-func InfectedEncountersToQuery(a []*models.InfectedEncounter) (string, []interface{}) {
+func InfectedEncountersToQuery(a []*models.InfectedEncounter, randomString string) (string, []interface{}) {
 	queryMarks, values := InfectedEncountersToBatchCreate(a)
 	// nolint: gosec -> remove warning because no user input
 	return fmt.Sprintf(`INSERT INTO %s (%s) VALUES %s`,

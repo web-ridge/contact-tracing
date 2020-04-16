@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -19,6 +20,11 @@ type Resolver struct {
 }
 
 func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input fm.InfectedEncountersCreateInput) (*fm.InfectedEncounterCreatePayload, error) {
+
+	// four random characters which are used to group infections later to filter out unique encounters
+	// will not be tracable back to a specific person since it's not nearly unique enough for that :-D
+	randomString := randSeq(4)
+
 	boilerRows := InfectedEncounterCreateInputsToBoiler(input.InfectedEncounters)
 	if len(boilerRows) == 0 {
 		return &fm.InfectedEncounterCreatePayload{
@@ -26,7 +32,7 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 		}, nil
 	}
 
-	sql, values := InfectedEncountersToQuery(boilerRows)
+	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
 	if _, err := r.db.Exec(sql, values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
 		return nil, fmt.Errorf("could not sync infected encounters")
@@ -56,6 +62,17 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]
 	}
 
 	return getRiskAlerts(infectedEncounters), nil
+}
+
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+// randSeq does not need be to be really unique
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }
 
 func (r *Resolver) Mutation() fm.MutationResolver { return &mutationResolver{r} }

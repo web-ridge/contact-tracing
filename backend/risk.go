@@ -83,11 +83,11 @@ func getRiskOfEncounters(encounters []*dm.InfectedEncounter) int {
 	return noRisk
 }
 
-// groupInfectedEncounterOnFirstPartOfHash so we know how many different encounters with this hash
-func groupInfectedEncounterOnFirstPartOfHash(infectedEncounters []*dm.InfectedEncounter) map[string][]*dm.InfectedEncounter {
+// groupInfectedEncounterOnRandomPart so we know how many different encounters probably from 1 device
+func groupInfectedEncounterOnRandomPart(infectedEncounters []*dm.InfectedEncounter) map[string][]*dm.InfectedEncounter {
 	m := make(map[string][]*dm.InfectedEncounter)
 	for _, infectedEncounter := range infectedEncounters {
-		hash := infectedEncounter.StartOfCreatorHash
+		hash := infectedEncounter.RandomPart
 		groupedValue, valueExist := m[hash]
 		if valueExist {
 			m[hash] = append(groupedValue, infectedEncounter)
@@ -99,7 +99,7 @@ func groupInfectedEncounterOnFirstPartOfHash(infectedEncounters []*dm.InfectedEn
 }
 
 func getRiskAlerts(infectedEncounters []*dm.InfectedEncounter) []*fm.InfectionAlert {
-	encounterPerSickPerson := groupInfectedEncounterOnFirstPartOfHash(infectedEncounters)
+	encounterPerSickPerson := groupInfectedEncounterOnRandomPart(infectedEncounters)
 
 	alerts := []*fm.InfectionAlert{}
 	for _, value := range encounterPerSickPerson {
@@ -125,4 +125,6 @@ func riskToGraphql(risk int) fm.Risk {
 	if risk == lowRisk {
 		return fm.RiskLowRisk
 	}
+	// will be filtered out and not shown
+	return fm.RiskLowRisk
 }

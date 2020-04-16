@@ -24,7 +24,7 @@ import (
 // InfectedEncounter is an object representing the database table.
 type InfectedEncounter struct {
 	ID                   int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	StartOfCreatorHash   string    `boil:"start_of_creator_hash" json:"start_of_creator_hash" toml:"start_of_creator_hash" yaml:"start_of_creator_hash"`
+	RandomPart           string    `boil:"random_part" json:"random_part" toml:"random_part" yaml:"random_part"`
 	PossibleInfectedHash string    `boil:"possible_infected_hash" json:"possible_infected_hash" toml:"possible_infected_hash" yaml:"possible_infected_hash"`
 	Rssi                 int       `boil:"rssi" json:"rssi" toml:"rssi" yaml:"rssi"`
 	Hits                 int       `boil:"hits" json:"hits" toml:"hits" yaml:"hits"`
@@ -36,14 +36,14 @@ type InfectedEncounter struct {
 
 var InfectedEncounterColumns = struct {
 	ID                   string
-	StartOfCreatorHash   string
+	RandomPart           string
 	PossibleInfectedHash string
 	Rssi                 string
 	Hits                 string
 	Time                 string
 }{
 	ID:                   "id",
-	StartOfCreatorHash:   "start_of_creator_hash",
+	RandomPart:           "random_part",
 	PossibleInfectedHash: "possible_infected_hash",
 	Rssi:                 "rssi",
 	Hits:                 "hits",
@@ -107,14 +107,14 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 
 var InfectedEncounterWhere = struct {
 	ID                   whereHelperint
-	StartOfCreatorHash   whereHelperstring
+	RandomPart           whereHelperstring
 	PossibleInfectedHash whereHelperstring
 	Rssi                 whereHelperint
 	Hits                 whereHelperint
 	Time                 whereHelpertime_Time
 }{
 	ID:                   whereHelperint{field: "\"infected_encounter\".\"id\""},
-	StartOfCreatorHash:   whereHelperstring{field: "\"infected_encounter\".\"start_of_creator_hash\""},
+	RandomPart:           whereHelperstring{field: "\"infected_encounter\".\"random_part\""},
 	PossibleInfectedHash: whereHelperstring{field: "\"infected_encounter\".\"possible_infected_hash\""},
 	Rssi:                 whereHelperint{field: "\"infected_encounter\".\"rssi\""},
 	Hits:                 whereHelperint{field: "\"infected_encounter\".\"hits\""},
@@ -138,8 +138,8 @@ func (*infectedEncounterR) NewStruct() *infectedEncounterR {
 type infectedEncounterL struct{}
 
 var (
-	infectedEncounterAllColumns            = []string{"id", "start_of_creator_hash", "possible_infected_hash", "rssi", "hits", "time"}
-	infectedEncounterColumnsWithoutDefault = []string{"start_of_creator_hash", "possible_infected_hash", "rssi", "hits", "time"}
+	infectedEncounterAllColumns            = []string{"id", "random_part", "possible_infected_hash", "rssi", "hits", "time"}
+	infectedEncounterColumnsWithoutDefault = []string{"random_part", "possible_infected_hash", "rssi", "hits", "time"}
 	infectedEncounterColumnsWithDefault    = []string{"id"}
 	infectedEncounterPrimaryKeyColumns     = []string{"id"}
 )
