@@ -6,6 +6,7 @@
 
 - Kubernetes files for deploying to Cloud Infrastructure
 - Backup Kubernetes encrypted postgres
+- iOS note for keeping app in background
 
 ## Explain way of working
 
