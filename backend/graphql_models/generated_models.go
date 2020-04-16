@@ -9,7 +9,6 @@ import (
 )
 
 type InfectedEncounterCreateInput struct {
-	StartOfCreatorHash   string `json:"startOfCreatorHash"`
 	PossibleInfectedHash string `json:"possibleInfectedHash"`
 	Rssi                 int    `json:"rssi"`
 	Hits                 int    `json:"hits"`

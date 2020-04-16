@@ -207,7 +207,6 @@ type Query {
 }
 
 input InfectedEncounterCreateInput {
-  startOfCreatorHash: String!
   possibleInfectedHash: String!
   rssi: Int!
   hits: Int!
@@ -1627,12 +1626,6 @@ func (ec *executionContext) unmarshalInputInfectedEncounterCreateInput(ctx conte
 
 	for k, v := range asMap {
 		switch k {
-		case "startOfCreatorHash":
-			var err error
-			it.StartOfCreatorHash, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "possibleInfectedHash":
 			var err error
 			it.PossibleInfectedHash, err = ec.unmarshalNString2string(ctx, v)

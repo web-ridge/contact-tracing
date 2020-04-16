@@ -25,7 +25,6 @@ func InfectedEncounterCreateInputToBoiler(
 		return nil
 	}
 	r := &models.InfectedEncounter{
-		StartOfCreatorHash:   m.StartOfCreatorHash,
 		PossibleInfectedHash: m.PossibleInfectedHash,
 		Rssi:                 m.Rssi,
 		Hits:                 m.Hits,

@@ -1,7 +1,7 @@
+import { Navigation } from 'react-native-navigation'
+
 import React from 'react'
-import { AppRegistry } from 'react-native'
 import App from './src/ScreenHome'
-import { name as appName } from './app.json'
 import { Provider as PaperProvider } from 'react-native-paper'
 
 export default function AppWrappers() {
@@ -12,4 +12,19 @@ export default function AppWrappers() {
   )
 }
 
-AppRegistry.registerComponent(appName, () => AppWrappers)
+Navigation.registerComponent('root', () => AppWrappers)
+Navigation.events().registerAppLaunchedListener(() => {
+  Navigation.setRoot({
+    root: {
+      stack: {
+        children: [
+          {
+            component: {
+              name: 'root',
+            },
+          },
+        ],
+      },
+    },
+  })
+})

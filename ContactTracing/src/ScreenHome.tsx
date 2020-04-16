@@ -66,7 +66,7 @@ function App() {
           <Button
             mode="outlined"
             onPress={() => {
-              // TODO send bluetooth ID to server
+              // TODO send bluetooth hash to server
             }}
           >
             Ik heb Corona :-(

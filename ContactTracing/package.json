@@ -18,6 +18,7 @@
     "react-native-background-timer": "^2.2.0",
     "react-native-ble-plx": "https://github.com/RichardLindhout/react-native-ble-plx",
     "react-native-localize": "^1.4.0",
+    "react-native-navigation": "^6.4.0",
     "react-native-paper": "^3.8.0",
     "react-native-permissions": "^2.0.10",
     "react-native-simple-crypto": "https://github.com/RichardLindhout/react-native-simple-crypto",
