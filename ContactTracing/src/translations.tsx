@@ -56,6 +56,33 @@ export default {
     en: 'encounters with someone who is probably infected',
     nl: 'contactmomenten met persoon die waarschijnlijk besmet is',
   },
+  symptomIntroduction: {
+    en: 'I have all of the following symptoms',
+    nl: 'Ik heb alle onderstaande symptomen',
+  },
+  symptomText: {
+    en: 'Colds, sneezing, coughing, sore throat, difficulty breathing, fever',
+    nl: 'Verkoudheid, niezen, hoesten, keelpijn, moeilijk ademen, koorts',
+  },
+  testedText: {
+    en: 'I have been tested positive on COVID-19',
+    nl: 'Ik ben positief getest op COVID-19',
+  },
+  orText: {
+    en: 'or',
+    nl: 'of',
+  },
+  permissionText: {
+    en: `I agree that my locally saved Bluetooth contacts from the past 2 weeks
+    will be shared so that other phones will be notified when they have been in contact with you.`,
+    nl: `Ik ga ermee akkoord dat mijn lokaal opgeslagen Bluetooth-contacten van de afgelopen 
+    2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact 
+    geweest zijn met jou.`,
+  },
+  permissionTrust: {
+    en: `These are in no way traceable to you.`,
+    nl: `Deze zijn op geen enkele manier te herleiden naar jou.`,
+  },
   HIGH_RISK: {
     en: 'High risk',
     nl: 'Hoog risico',
