@@ -48,6 +48,8 @@ risk: "middleRisk"
 
 We kijken naar de RSSI van het signaal en het aantal hits wat er met dit signaal is. Alles tussen de 0 en - 100 wordt lokaal opgeslagen met het minimale en maximale RSSI getal. Hoe dichter de RSSI bij de 0 is en hoe meer hits hoe meer de kans op besmetting is toegenomen.
 
+Code voor risicobepaling: https://github.com/web-ridge/contact-tracing/blob/master/backend/risk.go
+
 https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function-of-distance-A-Scans-between-two-phones_fig2_263708916
 
 ## Security / data

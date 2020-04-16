@@ -1,0 +1,36 @@
+enum Risk {
+  HIGH_RISK
+  MIDDLE_RISK
+  LOW_RISK
+}
+
+type InfectionAlert {
+  howManyEncounters: Int!
+  risk: Risk!
+}
+
+type Query {
+  infectedEncounters(hash: String!): [InfectionAlert]!
+}
+
+input InfectedEncounterCreateInput {
+  startOfCreatorHash: String!
+  possibleInfectedHash: String!
+  rssi: Int!
+  hits: Int!
+  time: Int!
+}
+
+input InfectedEncountersCreateInput {
+  infectedEncounters: [InfectedEncounterCreateInput!]!
+}
+
+type InfectedEncounterCreatePayload {
+  ok: Boolean!
+}
+
+type Mutation {
+  createInfectedEncounters(
+    input: InfectedEncountersCreateInput!
+  ): InfectedEncounterCreatePayload!
+}
