@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	fm "github.com/web-ridge/contact-tracing/backend/graphql_models"
 
-	// . "github.com/web-ridge/contact-tracing/backend/helpers"
+	. "github.com/web-ridge/contact-tracing/backend/helpers"
 	dm "github.com/web-ridge/contact-tracing/backend/models"
 )
 
@@ -18,14 +18,19 @@ type Resolver struct {
 	db *sql.DB
 }
 
-const inputKey = "input"
-
 func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input fm.InfectedEncountersCreateInput) (*fm.InfectedEncounterCreatePayload, error) {
+	boilerRows := InfectedEncounterCreateInputsToBoiler(input.InfectedEncounters)
+	if len(boilerRows) == 0 {
+		return &fm.InfectedEncounterCreatePayload{
+			Ok: true,
+		}, nil
+	}
 
-	// batch create in database
-	// INSERT INTO films (code, title, did, date_prod, kind) VALUES
-	// ('B6717', 'Tampopo', 110, '1985-02-10', 'Comedy'),
-	// ('HG120', 'The Dinner Game', 140, DEFAULT, 'Comedy');
+	sql, values := InfectedEncountersToQuery(boilerRows)
+	if _, err := r.db.Exec(sql, values...); err != nil {
+		log.Error().Err(err).Msg("Could not insert infected encounters from database")
+		return nil, fmt.Errorf("could not sync infected encounters")
+	}
 
 	return &fm.InfectedEncounterCreatePayload{
 		Ok: true,
@@ -46,7 +51,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]
 	).All(ctx, r.db)
 
 	if err != nil {
-		log.Error().Err(err).Msg("could not get infected encounters from database")
+		log.Error().Err(err).Msg("Could not get infected encounters from database")
 		return nil, fmt.Errorf("could not get summary from database")
 	}
 
