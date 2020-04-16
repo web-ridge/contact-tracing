@@ -1,6 +1,21 @@
-import { RSSIMap } from './types'
+import { RSSIMap, Encounter } from './types'
 import { getDatabase, EncounterSchema } from './Database'
 import RNSimpleCrypto from 'react-native-simple-crypto'
+
+export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
+  try {
+    const database = await getDatabase()
+    let encounters = database.objects('Encounter').filtered(`time > ${unix}`)
+    if (!encounters) {
+      return []
+    }
+    return encounters as any
+  } catch (e) {
+    console.log('Could not get encounters')
+    console.log({ e })
+    return []
+  }
+}
 
 export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
   let rssiMap: RSSIMap = {}

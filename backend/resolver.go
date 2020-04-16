@@ -33,6 +33,8 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	randomString := randSeq(4)
 
 	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
+	fmt.Println(sql)
+	fmt.Println(values)
 	if _, err := r.db.Exec(sql, values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
 		return nil, fmt.Errorf("could not sync infected encounters")
@@ -52,8 +54,8 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]
 	// get infected encounters for this hash in incubation period
 	infectedEncounters, err := dm.InfectedEncounters(
 		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(hash),
-		dm.InfectedEncounterWhere.Time.LTE(now),
-		dm.InfectedEncounterWhere.Time.GTE(beginOfIncubationPeriod),
+		dm.InfectedEncounterWhere.Time.LTE(int(now.Unix())),
+		dm.InfectedEncounterWhere.Time.GTE(int(beginOfIncubationPeriod.Unix())),
 	).All(ctx, r.db)
 
 	if err != nil {

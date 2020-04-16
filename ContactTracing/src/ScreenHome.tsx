@@ -86,13 +86,6 @@ function ScreenHome({ componentId }: { componentId: string }) {
 
           {isTracking ? (
             <>
-              <View style={{ height: 24 }} />
-              <Button
-                mode="outlined"
-                onPress={() => goToSymptonsScreen(componentId)}
-              >
-                <Translate text="symptomsButton" />
-              </Button>
               <InfectionAlerts />
               <Button
                 mode="contained"
@@ -100,6 +93,13 @@ function ScreenHome({ componentId }: { componentId: string }) {
                 style={styles.button}
               >
                 <Translate text="stopTracking" />
+              </Button>
+              <View style={{ height: 12 }} />
+              <Button
+                mode="outlined"
+                onPress={() => goToSymptonsScreen(componentId)}
+              >
+                <Translate text="symptomsButton" />
               </Button>
             </>
           ) : (

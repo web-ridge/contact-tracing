@@ -23,12 +23,12 @@ import (
 
 // InfectedEncounter is an object representing the database table.
 type InfectedEncounter struct {
-	ID                   int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	RandomPart           string    `boil:"random_part" json:"random_part" toml:"random_part" yaml:"random_part"`
-	PossibleInfectedHash string    `boil:"possible_infected_hash" json:"possible_infected_hash" toml:"possible_infected_hash" yaml:"possible_infected_hash"`
-	Rssi                 int       `boil:"rssi" json:"rssi" toml:"rssi" yaml:"rssi"`
-	Hits                 int       `boil:"hits" json:"hits" toml:"hits" yaml:"hits"`
-	Time                 time.Time `boil:"time" json:"time" toml:"time" yaml:"time"`
+	ID                   int    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	RandomPart           string `boil:"random_part" json:"random_part" toml:"random_part" yaml:"random_part"`
+	PossibleInfectedHash string `boil:"possible_infected_hash" json:"possible_infected_hash" toml:"possible_infected_hash" yaml:"possible_infected_hash"`
+	Rssi                 int    `boil:"rssi" json:"rssi" toml:"rssi" yaml:"rssi"`
+	Hits                 int    `boil:"hits" json:"hits" toml:"hits" yaml:"hits"`
+	Time                 int    `boil:"time" json:"time" toml:"time" yaml:"time"`
 
 	R *infectedEncounterR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L infectedEncounterL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -84,41 +84,20 @@ func (w whereHelperstring) IN(slice []string) qm.QueryMod {
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
 
-type whereHelpertime_Time struct{ field string }
-
-func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var InfectedEncounterWhere = struct {
 	ID                   whereHelperint
 	RandomPart           whereHelperstring
 	PossibleInfectedHash whereHelperstring
 	Rssi                 whereHelperint
 	Hits                 whereHelperint
-	Time                 whereHelpertime_Time
+	Time                 whereHelperint
 }{
 	ID:                   whereHelperint{field: "\"infected_encounter\".\"id\""},
 	RandomPart:           whereHelperstring{field: "\"infected_encounter\".\"random_part\""},
 	PossibleInfectedHash: whereHelperstring{field: "\"infected_encounter\".\"possible_infected_hash\""},
 	Rssi:                 whereHelperint{field: "\"infected_encounter\".\"rssi\""},
 	Hits:                 whereHelperint{field: "\"infected_encounter\".\"hits\""},
-	Time:                 whereHelpertime_Time{field: "\"infected_encounter\".\"time\""},
+	Time:                 whereHelperint{field: "\"infected_encounter\".\"time\""},
 }
 
 // InfectedEncounterRels is where relationship names are stored.

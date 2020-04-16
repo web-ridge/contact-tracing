@@ -2,6 +2,7 @@ export interface Encounter {
   hash: string
   rssi: number
   hits: number
+  time: number
 }
 
 export interface RSSIValue {
