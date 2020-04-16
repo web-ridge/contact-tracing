@@ -1,11 +1,14 @@
-import { Navigation } from 'react-native-navigation'
+import { Navigation, Options } from 'react-native-navigation'
 import ScreenInfected from './ScreenInfected'
+import ScreenSymptons from './ScreenSymptoms'
 
 const screenInfectedRoute = 'com.contacttracing.infectedScreenRoute'
+const screenSymptonsRoute = 'com.contacttracing.symptomsRoute'
+
 Navigation.registerComponent(screenInfectedRoute, () => ScreenInfected)
+Navigation.registerComponent(screenSymptonsRoute, () => ScreenSymptons)
 
 export const goToInfectedScreen = (componentId: string) => {
-  console.log({ componentId })
   Navigation.push(componentId, {
     component: {
       name: screenInfectedRoute,
@@ -14,7 +17,15 @@ export const goToInfectedScreen = (componentId: string) => {
   })
 }
 
-export const defaultOptions = {
+export const goToSymptonsScreen = (componentId: string) => {
+  Navigation.push(componentId, {
+    component: {
+      name: screenSymptonsRoute,
+      options: defaultOptions,
+    },
+  })
+}
+export const defaultOptions: Options = {
   statusBar: {
     backgroundColor: '#7FADF2',
     style: 'dark',
@@ -22,13 +33,16 @@ export const defaultOptions = {
   topBar: {
     elevation: 0,
     title: {
-      color: 'white',
+      color: '#242648',
     },
     backButton: {
-      color: 'white',
+      color: '#242648',
     },
     background: {
       color: '#7FADF2',
     },
+  },
+  layout: {
+    backgroundColor: '#7FADF2',
   },
 }

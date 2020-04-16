@@ -15,15 +15,21 @@ export default {
     nl: 'Samen krijgen we Corona onder controle',
   },
   startTracking: {
-    en: 'Start',
-    nl: 'Start',
+    en: 'Start saving contacts',
+    nl: 'Start het opslaan van contacten',
   },
   stopTracking: {
-    en: 'Stop',
-    nl: 'Stop',
+    en: 'Stop with saving',
+    nl: 'Stop met opslaan',
   },
-  sendInfectionButton: {
-    en: 'Report contamination',
-    nl: 'Meld besmetting',
+  symptomsButton: {
+    en: 'I have symptoms',
+    nl: 'Ik heb symptonen',
+  },
+  privacyTracking: {
+    en:
+      'All your Bluetooth contacts will be saved locally and fully encrypted.',
+    nl:
+      'Al jouw Bluetooth contacten worden lokaal opgeslagen en volledig versleuteld.',
   },
 } as TranslationDatabase

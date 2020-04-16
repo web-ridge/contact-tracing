@@ -98,14 +98,14 @@ async function scanForBluetoothDevices() {
 }
 
 const options = {
-  taskName: 'Example',
-  taskTitle: 'ExampleTask title',
-  taskDesc: 'ExampleTask desc',
+  taskName: 'Contacten opslaan',
+  taskTitle: 'Contacten lokaal opslaan',
+  taskDesc: 'Bluetooth apparaten worden lokaal opgeslagen.',
   taskIcon: {
-    name: 'ic_launcher',
+    name: 'ic_stat_sentiment_satisfied_alt',
     type: 'mipmap',
   },
-  color: '#ff00ff',
+  color: '#F27188',
   parameters: {
     delay: 1000,
   },

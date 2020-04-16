@@ -19,11 +19,12 @@ const deviceLanguageShort =
 
 const theme = {
   ...DefaultTheme,
-  roundness: 2,
+  roundness: 20,
   colors: {
     ...DefaultTheme.colors,
     primary: '#242648',
     accent: '#F27188',
+    text: '#242648',
   },
 }
 
