@@ -31,14 +31,17 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 - Alice stuurt de hashes op met een RSSI signaal sterkte (er is niet bekend op de server wat Alice's hash is)
 
 Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash mogelijke infecties heeft.
-Hij krijgt het volgende terug:
+Hij krijgt terug hoeveel keer contact hij heeft gehad met een bepaalde hash (gegroepeerd op eerste 5 cijfers van hash).
 
 ```
-	HighRiskInteractions:   0,
-	MiddleRiskInteractions: 0,
-	LowRiskInteractions:    0,
-	MaxSymptonDate:         nil,
-	MinSymptonDate:         nil,
+howManyEncounters: 2
+risk: "highRisk"
+
+howManyEncounters: 3
+risk: "lowRisk"
+
+howManyEncounters: 4
+risk: "middleRisk"
 ```
 
 ## Bepalen wanneer besmetting is voorgekomen
