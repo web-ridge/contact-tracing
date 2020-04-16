@@ -69,7 +69,7 @@ function App() {
               // TODO send bluetooth hash to server
             }}
           >
-            Ik heb Corona :-(
+            Besmetting melden
           </Button>
         </View>
       </ScrollView>

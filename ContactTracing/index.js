@@ -12,7 +12,7 @@ export default function AppWrappers() {
   )
 }
 
-Navigation.registerComponent('root', () => AppWrappers)
+Navigation.registerComponent('com.contacttracing.Root', () => AppWrappers)
 Navigation.events().registerAppLaunchedListener(() => {
   Navigation.setRoot({
     root: {
@@ -20,7 +20,7 @@ Navigation.events().registerAppLaunchedListener(() => {
         children: [
           {
             component: {
-              name: 'root',
+              name: 'com.contacttracing.Root',
             },
           },
         ],

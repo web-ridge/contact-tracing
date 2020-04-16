@@ -1,13 +1,17 @@
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Maar mijn advies is wachten totdat de Contact Tracing API's beschikbaar komen.
+## Help us
+
+## Explain way of working
+
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. Als je de privacy van de gebruiker zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Maar mijn advies is wachten totdat de Contact Tracing API's beschikbaar komen zodat het ook op iOS apparaten werkt.
 
 ## Voordeel aan deze oplossing
 
 - Er staat niet opgeslagen wie besmet is;
 - Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
-- Een besmet persoon mag zijn bluetooth hashes opsturen waarmee hij contact heeft gehad
-- Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat.
-- Achteraf logica wijzigen van kans op besmetting
-- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt niet goed in achtergrond op iOS.
+- Een besmet persoon mag zijn bluetooth hashes opsturen waarmee hij contact heeft gehad;
+- Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat;
+- Achteraf logica wijzigen van kans op besmetting;
+- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.

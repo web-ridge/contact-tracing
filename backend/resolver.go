@@ -21,16 +21,16 @@ type Resolver struct {
 
 func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input fm.InfectedEncountersCreateInput) (*fm.InfectedEncounterCreatePayload, error) {
 
-	// four random characters which are used to group infections later to filter out unique encounters
-	// will not be tracable back to a specific person since it's not nearly unique enough for that :-D
-	randomString := randSeq(4)
-
 	boilerRows := InfectedEncounterCreateInputsToBoiler(input.InfectedEncounters)
 	if len(boilerRows) == 0 {
 		return &fm.InfectedEncounterCreatePayload{
 			Ok: true,
 		}, nil
 	}
+
+	// four random characters which are used to group infections later to filter out unique encounters
+	// will not be tracable back to a specific person since it's not nearly unique enough for that :-D
+	randomString := randSeq(4)
 
 	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
 	if _, err := r.db.Exec(sql, values...); err != nil {
