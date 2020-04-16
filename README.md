@@ -1,4 +1,4 @@
-![Home screen](https://pbs.twimg.com/media/EVvGqZCXgAEiANO?format=jpg&name=large)
+![Home screen](https://pbs.twimg.com/media/EVvGqZCXgAEiANO?format=jpg&name=large | width=100)
 
 
 
