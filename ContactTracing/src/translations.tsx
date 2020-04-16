@@ -18,4 +18,12 @@ export default {
     en: 'Start',
     nl: 'Start',
   },
+  stopTracking: {
+    en: 'Stop',
+    nl: 'Stop',
+  },
+  sendInfectionButton: {
+    en: 'Report contamination',
+    nl: 'Meld besmetting',
+  },
 } as TranslationDatabase

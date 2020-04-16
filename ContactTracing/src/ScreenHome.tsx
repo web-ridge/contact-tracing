@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
-
-import { StyleSheet, ScrollView, View, StatusBar, Platform } from 'react-native'
+import { Translate } from 'react-translated'
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  StatusBar,
+  Platform,
+  Image,
+} from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import {
   check,
@@ -8,6 +15,7 @@ import {
   PERMISSIONS,
   Permission,
 } from 'react-native-permissions'
+import BackgroundService from 'react-native-background-actions'
 
 import { startTracing } from './JobTracing.android'
 import { goToInfectedScreen } from './Screens'
@@ -25,20 +33,33 @@ async function requestBluetoothStatus() {
   return bluetoothStatus
 }
 
-async function requestPermissionAndStartTracing() {
-  const bluetoothStatus = await requestBluetoothStatus()
-  // TODO: start background status
-  // TODO: add modals
-  if (bluetoothStatus === 'granted') {
-    startTracing()
-  }
-}
-
 const ScreenHome = ({ componentId }: { componentId: string }) => {
-  const [isTracking, setIsTracking] = useState(false)
+  const [isTracking, setIsTracking] = useState<boolean>(
+    BackgroundService.isRunning()
+  )
 
   const startTracing = () => {
-    requestPermissionAndStartTracing()
+    const startTracingAsync = async () => {
+      console.log('doSynced')
+      const bluetoothStatus = await requestBluetoothStatus()
+      console.log({ bluetoothStatus })
+      // TODO: start background status
+      // TODO: add modals
+      if (bluetoothStatus === 'granted') {
+        startTracing()
+        setIsTracking(true)
+      } else {
+        console.log({ bluetoothStatus })
+      }
+    }
+    startTracingAsync()
+  }
+  const stopTracing = () => {
+    const stopTracingAsync = async () => {
+      await BackgroundService.stop()
+      setIsTracking(BackgroundService.isRunning())
+    }
+    stopTracingAsync()
   }
 
   return (
@@ -50,11 +71,19 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
         contentContainerStyle={styles.contentContainerStyle}
       >
         <View style={styles.body}>
-          <Text style={styles.title}>Contact Tracing COVID-19</Text>
-          <Text style={styles.text}>Let's beat COVID-19 together.</Text>
-          {!isTracking && (
-            <Button mode="contained" onPress={startTracing}>
-              Ik doe mee
+          <Text style={styles.title}>
+            <Translate text="title" />
+          </Text>
+          <Text style={styles.text}>
+            <Translate text="subtitle" />
+          </Text>
+          {isTracking ? (
+            <Button mode="contained" onPress={() => stopTracing}>
+              <Translate text="stop" />
+            </Button>
+          ) : (
+            <Button mode="contained" onPress={() => startTracing}>
+              <Translate text="start" />
             </Button>
           )}
           <View style={{ height: 24 }} />
@@ -62,9 +91,14 @@ const ScreenHome = ({ componentId }: { componentId: string }) => {
             mode="outlined"
             onPress={() => goToInfectedScreen(componentId)}
           >
-            Besmetting melden
+            <Translate text="sendInfectionButton" />
           </Button>
         </View>
+        <Image
+          source={require('../assets/background.png')}
+          style={{ height: 400, width: 400 }}
+          resizeMode="contain"
+        ></Image>
       </ScrollView>
     </>
   )
@@ -76,7 +110,7 @@ ScreenHome.options = {
       color: 'white',
     },
     background: {
-      color: '#4d089a',
+      color: '#7FADF2',
     },
   },
 }
@@ -89,7 +123,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#4d089a',
+    backgroundColor: '#7FADF2',
   },
   body: {
     flex: 1,
@@ -103,13 +137,13 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 24,
-    color: '#fff',
+    color: '#242648',
   },
   text: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 24,
-    color: '#fff',
+    color: '#242648',
     opacity: 0.8,
   },
 })
