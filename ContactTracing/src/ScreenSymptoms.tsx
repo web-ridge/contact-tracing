@@ -73,6 +73,7 @@ export default function ScreenSymptons() {
     </ScrollView>
   )
 }
+
 function CheckItem({
   children,
   onPress,
