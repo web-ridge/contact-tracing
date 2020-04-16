@@ -1,12 +1,17 @@
 import { Navigation, Options } from 'react-native-navigation'
+
+import AppHOC from './App'
 import ScreenInfected from './ScreenInfected'
 import ScreenSymptons from './ScreenSymptoms'
+import ScreenHome from './ScreenHome'
 
 const screenInfectedRoute = 'com.contacttracing.infectedScreenRoute'
 const screenSymptonsRoute = 'com.contacttracing.symptomsRoute'
+export const screenHomeRoute = 'com.contacttracing.home'
 
-Navigation.registerComponent(screenInfectedRoute, () => ScreenInfected)
-Navigation.registerComponent(screenSymptonsRoute, () => ScreenSymptons)
+Navigation.registerComponent(screenHomeRoute, () => AppHOC(ScreenHome))
+Navigation.registerComponent(screenInfectedRoute, () => AppHOC(ScreenInfected))
+Navigation.registerComponent(screenSymptonsRoute, () => AppHOC(ScreenSymptons))
 
 export const goToInfectedScreen = (componentId: string) => {
   Navigation.push(componentId, {
