@@ -18,6 +18,8 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat;
 - Achteraf logica wijzigen van kans op besmetting;
 - iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
+- Meertalig
+- Snel schakelen voor iOS en Android apps
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
