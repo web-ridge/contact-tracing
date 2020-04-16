@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { Navigation } from 'react-native-navigation'
+
 import { StyleSheet, ScrollView, View, StatusBar, Platform } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import {
@@ -8,7 +10,8 @@ import {
   Permission,
 } from 'react-native-permissions'
 
-import { startTracing } from './JobTracing'
+import { startTracing } from './JobTracing.android'
+import { goToInfectedScreen } from './Screens'
 
 async function requestBluetoothStatus() {
   const permission: Permission = Platform.select({
@@ -32,7 +35,7 @@ async function requestPermissionAndStartTracing() {
   }
 }
 
-function App() {
+const ScreenHome = ({ componentId }: { componentId: string }) => {
   const [isTracking, setIsTracking] = useState(false)
 
   const startTracing = () => {
@@ -65,9 +68,7 @@ function App() {
           <View style={{ height: 24 }} />
           <Button
             mode="outlined"
-            onPress={() => {
-              // TODO send bluetooth hash to server
-            }}
+            onPress={() => goToInfectedScreen(componentId)}
           >
             Besmetting melden
           </Button>
@@ -76,7 +77,17 @@ function App() {
     </>
   )
 }
-
+ScreenHome.options = {
+  topBar: {
+    title: {
+      text: 'Home',
+      color: 'white',
+    },
+    background: {
+      color: '#4d089a',
+    },
+  },
+}
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -131,4 +142,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default App
+export default ScreenHome
