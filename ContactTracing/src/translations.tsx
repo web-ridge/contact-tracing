@@ -48,9 +48,13 @@ export default {
     en: 'Alerts',
     nl: 'Meldingen',
   },
-  labelForEncounters: {
-    en: 'contact with someone who is probably infected',
+  labelForEncounter: {
+    en: 'encounter with someone who is probably infected',
     nl: 'contactmoment met persoon die waarschijnlijk besmet is',
+  },
+  labelForEncounters: {
+    en: 'encounters with someone who is probably infected',
+    nl: 'contactmomenten met persoon die waarschijnlijk besmet is',
   },
   HIGH_RISK: {
     en: 'High risk',

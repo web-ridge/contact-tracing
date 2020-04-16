@@ -105,22 +105,22 @@ const renderAlerts = ({
     )
   }
 
-  // if (props.infectedEncounters.length === 0) {
-  //   return <NoAlerts />
-  // }
-  const infectedEncounters = [
-    {
-      howManyEncounters: 2,
-      risk: 'HIGH_RISK',
-    },
-  ] as InfectionAlertsQueryResponse['infectedEncounters']
+  if (props.infectedEncounters.length === 0) {
+    return <NoAlerts />
+  }
+  // const infectedEncounters = [
+  //   {
+  //     howManyEncounters: 2,
+  //     risk: 'HIGH_RISK',
+  //   },
+  // ] as InfectionAlertsQueryResponse['infectedEncounters']
 
   return (
     <>
       <Title style={styles.title}>
         <Translate text="alerts" />
       </Title>
-      {infectedEncounters.map((infectedEncounter, index) => (
+      {props.infectedEncounters.map((infectedEncounter, index) => (
         <Alert key={index} infectedEncounter={infectedEncounter!} />
       ))}
     </>
@@ -132,6 +132,7 @@ function Alert({
 }: {
   infectedEncounter: InfectionAlertsQueryResponse['infectedEncounters'][0]
 }) {
+  const howMany = infectedEncounter!.howManyEncounters
   return (
     <View style={styles.alertRoot}>
       <View
@@ -146,8 +147,12 @@ function Alert({
       </View>
       <View style={styles.alertTextContainer}>
         <Text style={styles.alertText}>
-          {infectedEncounter!.howManyEncounters}{' '}
-          <Translate text={'labelForEncounters'} />
+          {howMany}{' '}
+          {howMany > 1 ? (
+            <Translate text={'labelForEncounters'} />
+          ) : (
+            <Translate text={'labelForEncounter'} />
+          )}
         </Text>
       </View>
     </View>
