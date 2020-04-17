@@ -1,2 +1,4 @@
 .env
 .secret
+deploy.sh
+program-executable

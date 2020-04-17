@@ -7,8 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/99designs/gqlgen/graphql/playground"
-
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -98,7 +96,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(tbc.LimitHandler(lmt))
 	r.Use(auth.Middleware(db))
-	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	// r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 
 	r.Handle("/graphql", srv)
 
