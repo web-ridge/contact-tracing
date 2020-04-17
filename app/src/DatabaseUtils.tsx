@@ -3,6 +3,7 @@ import { getDatabase, EncounterSchema } from './Database'
 import RNSimpleCrypto from 'react-native-simple-crypto'
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
+import { getAnonymizedTimestamp } from './Utils'
 
 export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
   try {
@@ -33,7 +34,7 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
       hash,
       rssi: rssiValue.rssi,
       hits: rssiValue.hits,
-      time: Math.round(new Date().getTime() / 1000),
+      time: getAnonymizedTimestamp(),
     })
   }
 

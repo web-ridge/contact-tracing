@@ -21,9 +21,6 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Meertaligheid
 - Het werkt dus voor iOS en Android.
 
-
-
-
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
 Bob installeert de tracing app via de Play Store.
@@ -71,7 +68,7 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 ## Security / data
 
 - Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
-- De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
+- De lokale data van hashes en datums worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
 - Stricte controle van SSL certificaat (HTS)
@@ -84,7 +81,6 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
-
 
 Mogelijke oplossing:
 _

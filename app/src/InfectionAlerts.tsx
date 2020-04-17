@@ -14,7 +14,7 @@ import {
 } from './__generated__/InfectionAlertsQuery.graphql'
 
 const styles = StyleSheet.create({
-  root: { paddingTop: 10, paddingBottom: 10 },
+  root: { paddingTop: 10, paddingBottom: 10, minHeight: 300 },
   title: { fontWeight: 'bold', margin: 12, textAlign: 'center' },
   alertRoot: {
     backgroundColor: '#fff',

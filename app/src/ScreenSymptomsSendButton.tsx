@@ -6,6 +6,7 @@ import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 import { getEncountersAfter } from './DatabaseUtils'
+import { getStartOfRiskDate } from './Utils'
 
 const mutation = graphql`
   mutation ScreenSymptomsSendButtonMutation(
@@ -27,11 +28,10 @@ export default function ScreenSymptomsSendButton({
     const sendContactsAsync = async () => {
       // TODO: fetch contact from encrypted database in the previous 2 weeks
       setError(false)
-      const twoWeeksAgo = Math.round(
-        new Date(Date.now() - 12096e5).getTime() / 1000
+
+      const encountersFromLast2Weeks = await getEncountersAfter(
+        getStartOfRiskDate()
       )
-      console.log({ twoWeeksAgo })
-      const encountersFromLast2Weeks = await getEncountersAfter(twoWeeksAgo)
       console.log('COMMIT MUTATION')
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,
