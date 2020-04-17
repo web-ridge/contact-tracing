@@ -19,7 +19,6 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Achteraf logica wijzigen van kans op besmetting;
 - iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
 - Meertaligheid
-- Het werkt dus voor iOS en Android.
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
