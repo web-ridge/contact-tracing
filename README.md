@@ -25,12 +25,11 @@ _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
 Bob installeert de tracing app via de Play Store.
 
+De applicaties genereren bij openen een random key.
+
 Bob komt Alice tegen waarmee hij een praatje maakt. Als deze personen langer met elkaar in contact staan gaat neemt de kans op besmetting toe en gaan de apparaten het volgende doen.
 
-Bob’s bluetooth ID: 00000000-0000-1000-8000-00805F9B34FB  
-Alice’s bluetooth ID: 00000000-0000-1000-8000-00203B2C20DA
-
-**Stap 1: Beide applicaties hashen elkaars Bluetooth ID met SHA256**
+**Stap 1: Beide applicaties sturen hun key door naar elkaar (niet gelukt in dit project...)**
 
 - Bob’s bluetooth hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
 - Alice’s bluetooth hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
@@ -70,12 +69,13 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
 - De lokale data van hashes en datums worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
+- De eigen key waarmee een gebruik identificeerbaar is 
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
 - Stricte controle van SSL certificaat (HTS)
 
 ## Concerns
 
-- Als je een Bluetooth MAC adres koppelt aan een persoonsgegeven is het via de API mogelijk om erachter te komen hoeveel risivolle ontmoetingen deze hash heeft gehad. Het is niet mogelijk om te zien met welke hash deze persoon contact heeft gehad (wordt ook niet opgeslagen op de server).
+- Moeilijk om keys uit te wisselen tussen apparaten.
 
 ## Blokkades
 
