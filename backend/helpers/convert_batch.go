@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/web-ridge/contact-tracing/backend/models"
@@ -15,7 +16,7 @@ var InfectedEncountersBatchCreateColumns = []string{
 	models.InfectedEncounterColumns.Time,
 }
 
-var InfectedEncountersatchCreateColumnsMarks = "('?', '?', '?', '?', '?')"
+var InfectedEncountersBatchCreateColumnsMarks = "(?, ?, ?, ?, ?)"
 
 func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter, randomString string) []interface{} {
 	return []interface{}{
@@ -31,7 +32,7 @@ func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString
 	queryMarks := make([]string, len(a))
 	values := []interface{}{}
 	for i, boilerRow := range a {
-		queryMarks[i] = InfectedEncountersatchCreateColumnsMarks
+		queryMarks[i] = InfectedEncountersBatchCreateColumnsMarks
 		values = append(values, InfectedEncounterToBatchCreateValues(boilerRow, randomString)...)
 	}
 	return queryMarks, values
@@ -40,9 +41,18 @@ func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString
 func InfectedEncountersToQuery(a []*models.InfectedEncounter, randomString string) (string, []interface{}) {
 	queryMarks, values := InfectedEncountersToBatchCreate(a, randomString)
 	// nolint: gosec -> remove warning because no user input without questions marks
-	return fmt.Sprintf(`INSERT INTO "%s" (%s) VALUES %s`,
+	return prepareSQL(fmt.Sprintf(`INSERT INTO "%s" (%s) VALUES %s`,
 		models.TableNames.InfectedEncounter,
 		strings.Join(InfectedEncountersBatchCreateColumns, ", "),
 		strings.Join(queryMarks, ", "),
-	), values
+	)), values
+}
+
+// prepareSQL replaces the instance occurrence of any string pattern with an increasing $n based sequence
+func prepareSQL(old string) string {
+	tmpCount := strings.Count(old, "?")
+	for m := 1; m <= tmpCount; m++ {
+		old = strings.Replace(old, "?", "$"+strconv.Itoa(m), 1)
+	}
+	return old
 }

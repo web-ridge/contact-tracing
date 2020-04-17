@@ -124,6 +124,5 @@ const styles = StyleSheet.create({
   sendButtonContainer: { margin: 24, marginTop: 12 },
   permissionTrust: {
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
   },
 })

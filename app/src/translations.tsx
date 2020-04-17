@@ -80,13 +80,13 @@ export default {
     en: `Nobody known who has sent the following contacts.`,
     nl: `Niemand weet wie deze contacten heeft opgestuurd.`,
   },
-  sendContactsButtonText: {
+  [`sendContactsButtonText {howManyContacts}`]: {
     en: `Send contacts`,
-    nl: `Verzend contacten`,
+    nl: `Verzend {howManyContacts} contacten`,
   },
-  resendContactsButtonText: {
+  [`resendContactsButtonText {howManyContacts}`]: {
     en: `Try sending again`,
-    nl: `Verzend contacten opnieuw`,
+    nl: `Verzend {howManyContacts} contacten opnieuw`,
   },
   sendingContactsErrorText: {
     en: `Could not send contacts. Try again later.`,

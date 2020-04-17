@@ -7,6 +7,7 @@ import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 import { getEncountersAfter } from './DatabaseUtils'
 import { getStartOfRiskDate } from './Utils'
+import { EncounterSchema, getDatabase } from './Database'
 
 const mutation = graphql`
   mutation ScreenSymptomsSendButtonMutation(
@@ -24,6 +25,8 @@ export default function ScreenSymptomsSendButton({
 }) {
   const [isSending, setIsSending] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
+  const [howManyContacts, setHowManyContacts] = useState<number>(0)
+
   const sendContacts = () => {
     const sendContactsAsync = async () => {
       // TODO: fetch contact from encrypted database in the previous 2 weeks
@@ -47,8 +50,16 @@ export default function ScreenSymptomsSendButton({
               })),
           },
         },
-        onCompleted: (response, errors) => {
-          setIsSending(false)
+        onCompleted: async (response, errors) => {
+          if (errors && errors.length > 0) {
+            setError(true)
+            return
+          }
+          const database = await getDatabase()
+          database.write(() => {
+            database.delete(database.objects(EncounterSchema.name))
+            setIsSending(false)
+          })
         },
         onError: (err) => {
           console.log({ err })
@@ -76,9 +87,15 @@ export default function ScreenSymptomsSendButton({
         onPress={disabled || isSending ? () => null : sendContacts}
       >
         {error ? (
-          <Translate text="resendContactsButtonText" />
+          <Translate
+            text="resendContactsButtonText {howManyContacts}"
+            data={{ howManyContacts: `${howManyContacts}` }}
+          />
         ) : (
-          <Translate text="sendContactsButtonText" />
+          <Translate
+            text="sendContactsButtonText {howManyContacts}"
+            data={{ howManyContacts: `${howManyContacts}` }}
+          />
         )}
       </Button>
     </>
