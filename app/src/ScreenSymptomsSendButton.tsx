@@ -6,7 +6,7 @@ import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 import { getEncountersAfter } from './DatabaseUtils'
-import { getStartOfRiskDate } from './Utils'
+import { getStartOfRiskUnix } from './Utils'
 import { EncounterSchema, getDatabase } from './Database'
 
 const mutation = graphql`
@@ -33,9 +33,9 @@ export default function ScreenSymptomsSendButton({
       setError(false)
 
       const encountersFromLast2Weeks = await getEncountersAfter(
-        getStartOfRiskDate()
+        getStartOfRiskUnix()
       )
-      console.log('COMMIT MUTATION')
+
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,
         variables: {
@@ -81,6 +81,7 @@ export default function ScreenSymptomsSendButton({
         </Text>
       )}
       <Button
+        uppercase={false}
         mode="contained"
         loading={isSending}
         disabled={disabled}

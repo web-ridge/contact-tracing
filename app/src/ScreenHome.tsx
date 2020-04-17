@@ -96,6 +96,7 @@ function ScreenHome({ componentId }: { componentId: string }) {
               </Button>
               <View style={{ height: 12 }} />
               <Button
+                uppercase={false}
                 mode="outlined"
                 onPress={() => goToSymptonsScreen(componentId)}
               >

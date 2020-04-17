@@ -1,7 +1,6 @@
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
-import node from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 
 let rssiValues: RSSIMap = {}
 
@@ -58,5 +57,3 @@ export function deviceScanned(
     }
   }
 }
-
-export function removeHashesOlderThan(unix: number) {}

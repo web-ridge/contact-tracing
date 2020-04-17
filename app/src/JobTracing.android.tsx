@@ -1,8 +1,10 @@
 import { BleManager } from 'react-native-ble-plx'
-
-import BackgroundService from 'react-native-background-actions'
-import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
 import BackgroundTimer from 'react-native-background-timer'
+import BackgroundService from 'react-native-background-actions'
+
+import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
+import { removeEncountersOlderThan } from './DatabaseUtils'
+import { getStartOfRiskUnix } from './Utils'
 import { giveAlerts } from './JobInfectionChecker'
 
 function sleep(ms: number) {
@@ -23,6 +25,7 @@ async function scanForBluetoothDevices() {
     )
 
     for (let i = 0; BackgroundService.isRunning(); i++) {
+      await removeEncountersOlderThan(getStartOfRiskUnix())
       console.log('sleep')
       await sleep(jobInterval)
       console.log('syncMap')
@@ -35,6 +38,7 @@ async function scanForBluetoothDevices() {
 }
 
 const options = {
+  // TODO: translate
   taskName: 'Contacten opslaan',
   taskTitle: 'Contacten lokaal opslaan',
   taskDesc: 'Bluetooth apparaten worden lokaal opgeslagen.',

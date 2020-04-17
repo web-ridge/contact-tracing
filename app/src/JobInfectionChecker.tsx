@@ -76,4 +76,6 @@ export async function giveAlerts() {
   }
   // so we know the next time if we need to send new notification
   await AsyncStorage.setItem(alertStorageKey, newHash)
+
+  // TODO: add last fetched date
 }

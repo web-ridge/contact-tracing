@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Image, View, StyleSheet } from 'react-native'
-import { Text, Button, Title } from 'react-native-paper'
+import { Text, Button, Title, IconButton } from 'react-native-paper'
 import DeviceInfo from 'react-native-device-info'
 import RNSimpleCrypto from 'react-native-simple-crypto'
 import { Translate } from 'react-translated'
@@ -92,13 +92,16 @@ const renderAlerts = ({
   props: InfectionAlertsQueryResponse | null
   retry: (() => void) | null
 }) => {
+  const dateString = new Date().toLocaleTimeString()
+  const lastFetched: string = dateString.substr(0, dateString.length - 3)
+
   if (error || !props) {
     return (
       <>
         <Title style={styles.title}>
           <Translate text="errorWhileFetchingAlerts" />
         </Title>
-        <Button onPress={() => retry && retry()}>
+        <Button uppercase={false} onPress={() => retry && retry()}>
           <Translate text="refetchAlerts" />
         </Button>
       </>
@@ -106,7 +109,7 @@ const renderAlerts = ({
   }
 
   if (props.infectedEncounters.length === 0) {
-    return <NoAlerts />
+    return <NoAlerts retry={retry} lastFetched={lastFetched} />
   }
   // const infectedEncounters = [
   //   {
@@ -159,12 +162,28 @@ function Alert({
   )
 }
 
-function NoAlerts() {
+function NoAlerts({
+  retry,
+  lastFetched,
+}: {
+  lastFetched: string
+  retry: (() => void) | null
+}) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <Title style={styles.title}>
-        <Translate text="noAlerts" />
-      </Title>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Title style={styles.title}>
+          <Translate text="noAlerts" />
+        </Title>
+        <Text>{lastFetched}</Text>
+        <IconButton
+          onPress={() => {
+            retry && retry()
+          }}
+          icon="refresh"
+        ></IconButton>
+      </View>
+
       <Image
         source={require('../assets/background.png')}
         style={{ height: 200, width: 300 }}

@@ -9,8 +9,9 @@ export function getAnonymizedTimestamp(): number {
 
 const twoWeeksInJavascript = 12096e5
 
-export function getStartOfRiskDate(): number {
+export function getStartOfRiskUnix(): number {
   const date = new Date(Date.now() - twoWeeksInJavascript)
+  date.setHours(0, 0, 0, 0) // remove hours, minutes, seconds and miliseconds to anonomize timestamp
   return dateToUnix(date)
 }
 

@@ -5,6 +5,21 @@ import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
 import { getAnonymizedTimestamp } from './Utils'
 
+export async function removeEncountersOlderThan(
+  unix: number
+): Promise<boolean> {
+  const database = await getDatabase()
+  try {
+    database.write(() => {
+      database.delete(database.objects('Encounter').filtered(`time < ${unix}`))
+    })
+    return true
+  } catch (error) {
+    console.log({ error })
+    return false
+  }
+}
+
 export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
   try {
     const database = await getDatabase()
