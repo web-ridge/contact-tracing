@@ -15,7 +15,7 @@ import (
 	tb "github.com/didip/tollbooth"
 	tbc "github.com/didip/tollbooth_chi"
 	"github.com/go-chi/chi"
-	"github.com/go-co-op/gocron"
+	"github.com/jasonlvhit/gocron"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -36,9 +36,16 @@ func main() {
 	db := getDatabase()
 
 	// create a cron-job to remove old data
-	scheduler := gocron.NewScheduler(time.UTC)
-	scheduler.Every(6).Hours().Do(removeOldData, db)
-	scheduler.StartAsync() // scheduler starts running jobs and current thread continues to execute
+	go func() {
+		// remove old data before starting cron-job
+		if err := removeOldData(db); err != nil {
+			log.Fatal().Err(err).Msg("could not old data which is not needed anymore")
+		}
+		log.Debug().Msg("old date removed, started cronjob in background")
+		scheduler := gocron.NewScheduler()
+		scheduler.Every(6).Hours().Do(removeOldData, db)
+		<-scheduler.Start() // scheduler starts running jobs and current thread continues to execute
+	}()
 
 	// Create a limiter to prevent DDOS'ing
 	lmt := tb.NewLimiter(100, nil)
@@ -66,9 +73,11 @@ func main() {
 
 // removeOldData executes a delete query to remove data which is not needed anymore for the purpose of the contact
 // tracing app
-func removeOldData(db *sql.DB) {
+func removeOldData(db *sql.DB) error {
+
 	//  1-14 days
 	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
+	log.Debug().Time("beginOfIncubationPeriod", beginOfIncubationPeriod).Msg("Remove old data from before")
 
 	// get infected encounters for this hash in incubation period
 	_, err := dm.InfectedEncounters(
@@ -77,7 +86,9 @@ func removeOldData(db *sql.DB) {
 	if err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
+		return err
 	}
+	return nil
 }
 
 func initLogger() {
