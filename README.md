@@ -23,10 +23,8 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Meertaligheid
 - Het werkt dus voor iOS en Android.
 
-*
-Dit kan ook nog opgelost worden door de logica op iOS andersom te doen. Dus i.p.v. bluetooth contacten op te sturen de eigen bluetooth hash op te sturen.
-De Android apparaten moeten dan wel hashes opgestuurd worden van iOS apparaten om te checken of deze besmet zijn.
-*
+
+
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
@@ -88,4 +86,10 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
-- Het is moeilijk om op basis van het signaal te bepalen hoever de gebruikers van elkaar hebben gestaan
+
+
+Mogelijke oplossing:
+_
+Dit kan ook nog opgelost worden door de logica op iOS andersom te doen. Dus i.p.v. bluetooth contacten op te sturen de eigen bluetooth hash op te sturen.
+De Android apparaten moeten dan wel hashes opgestuurd worden van iOS apparaten om te checken of deze besmet zijn.
+_
