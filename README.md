@@ -10,7 +10,7 @@
 
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Als deze beschikbaar is het mogelijk om de app gelijk om te bouwen: https://github.com/ericlewis/react-native-contact-tracing. Er is bij deze library contact met engineers binnen Apple/Android zodat de API goed gaat werken als deze uitkomt.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan.
 
 ## Voordeel aan deze oplossing
 
@@ -21,9 +21,12 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Achteraf logica wijzigen van kans op besmetting;
 - iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
 - Meertaligheid
-- Het werkt dus voor iOS en Android. Het werkt alleen niet tussen 2 iPhone besmettingen. 
+- Het werkt dus voor iOS en Android.
+
+*
 Dit kan ook nog opgelost worden door de logica op iOS andersom te doen. Dus i.p.v. bluetooth contacten op te sturen de eigen bluetooth hash op te sturen.
 De Android apparaten moeten dan wel hashes opgestuurd worden van iOS apparaten om te checken of deze besmet zijn.
+*
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
