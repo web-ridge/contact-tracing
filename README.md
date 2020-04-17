@@ -75,8 +75,8 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
 - De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
-- Server moet in veilig datacenter staat.
-- Backup encrypted opgeslagen.
+- Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
+- Stricte controle van SSL certificaat (HTS)
 
 ## Concerns
 
