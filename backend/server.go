@@ -75,6 +75,7 @@ func removeOldData(db *sql.DB) {
 		dm.InfectedEncounterWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
 	).DeleteAll(context.Background(), db)
 	if err != nil {
+		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
 	}
 }
