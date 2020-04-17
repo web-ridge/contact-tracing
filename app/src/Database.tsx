@@ -33,8 +33,9 @@ async function getEncryptionKey(): Promise<ArrayBuffer> {
 
 export const EncounterSchema = {
   name: 'Encounter',
-  primaryKey: 'hash',
+  primaryKey: 'id',
   properties: {
+    id: 'string', // primary key
     hash: 'string',
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },

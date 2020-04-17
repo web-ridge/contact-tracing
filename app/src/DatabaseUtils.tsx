@@ -1,6 +1,8 @@
 import { RSSIMap, Encounter } from './types'
 import { getDatabase, EncounterSchema } from './Database'
 import RNSimpleCrypto from 'react-native-simple-crypto'
+import 'react-native-get-random-values'
+import { nanoid } from 'nanoid'
 
 export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
   try {
@@ -18,25 +20,32 @@ export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
 }
 
 export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
-  let rssiMap: RSSIMap = {}
-  Object.keys(rssiMapUnsafe).forEach(async (bluetoothID) => {
-    const hash = await RNSimpleCrypto.SHA.sha256(bluetoothID)
-    rssiMap[hash] = rssiMapUnsafe[bluetoothID]
-  })
+  let objectsToCreate: Encounter[] = []
+
+  const keys = Object.keys(rssiMapUnsafe)
+  for (let i = 0; i < keys.length; i++) {
+    const bluetoothId: string = keys[i]
+    const rssiValue = rssiMapUnsafe[bluetoothId]
+    const hash = await RNSimpleCrypto.SHA.sha256(bluetoothId)
+
+    objectsToCreate.push({
+      id: 'id' + nanoid(),
+      hash,
+      rssi: rssiValue.rssi,
+      hits: rssiValue.hits,
+      time: Math.round(new Date().getTime() / 1000),
+    })
+  }
+
+  console.log({ objectsToCreate })
 
   try {
     const database = await getDatabase()
     // sync encounters to database with a encrypted hash of bluetooth ID
     database.write(() => {
-      Object.keys(rssiMap).forEach((bluetoothHash) => {
-        const rrsiValue = rssiMap[bluetoothHash]
-        database.create(EncounterSchema.name, {
-          hash: bluetoothHash,
-          rssi: rrsiValue.rssi,
-          hits: rrsiValue.hits,
-          time: Math.round(new Date().getTime() / 1000),
-        })
-      })
+      objectsToCreate.map((objectToCreate) =>
+        database.create(EncounterSchema.name, objectToCreate)
+      )
     })
     return true
   } catch (error) {

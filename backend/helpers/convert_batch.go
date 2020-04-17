@@ -51,10 +51,10 @@ func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString
 
 func InfectedEncountersToQuery(a []*models.InfectedEncounter, randomString string) (string, []interface{}) {
 	queryMarks, values := InfectedEncountersToBatchCreate(a, randomString)
-	// nolint: gosec -> remove warning because no user input
+	// nolint: gosec -> remove warning because no user input without questions marks
 	return fmt.Sprintf(`INSERT INTO %s (%s) VALUES %s`,
 		models.TableNames.InfectedEncounter,
-		strings.Join(InfectedEncountersBatchCreateColumns, ","),
-		strings.Join(queryMarks, ","),
+		strings.Join(InfectedEncountersBatchCreateColumns, ", "),
+		strings.Join(queryMarks, ", "),
 	), values
 }

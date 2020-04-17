@@ -1,10 +1,17 @@
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
+import node from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 
-export let rssiValues: RSSIMap = {}
+let rssiValues: RSSIMap = {}
+
+// every 15 minutes
+const hour = 1 * 1000 * 60 * 60
+const minute = 1 * 1000 * 60
+export const jobInterval = Math.round(minute)
 
 export async function syncMap() {
+  console.log({ rssiValues })
   const done = await syncRSSIMap(rssiValues)
   if (done) {
     console.log('syncing rrsi values done')
@@ -19,22 +26,16 @@ export function deviceScanned(
   scannedDevice: null | Device
 ) {
   if (error) {
-    console.log('devicescan', { error })
+    console.log('error while scanning device', { error })
     return
   }
 
   // not relevant
   if (!scannedDevice || !scannedDevice.rssi || -100 > scannedDevice.rssi) {
-    console.log('devices not good enough', { scannedDevice })
     return
   }
 
-  // we map rssi values so we can see if device did come closer
-  // Closer to zero is better!
-  // -50 (min 50) fairly good,
-  // -70 (min 70) good
-  // -100 bleghh
-
+  // we save the maximum RSSI and how many times the RSSI has changed
   const previousValue = rssiValues[scannedDevice.id]
   const latestRSSI = scannedDevice.rssi
   const didComeCloser = !previousValue || latestRSSI > previousValue.rssi
@@ -51,6 +52,11 @@ export function deviceScanned(
           hits: 1,
         }
 
-    console.log('changed', scannedDevice.id, rssiValues[scannedDevice.id])
+    // @ts-ignore
+    if (process.env.NODE_ENV === 'development') {
+      console.log('changed', scannedDevice.id, rssiValues[scannedDevice.id])
+    }
   }
 }
+
+export function removeHashesOlderThan(unix: number) {}

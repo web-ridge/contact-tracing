@@ -1,6 +1,6 @@
 import TrackPlayer, { Track } from 'react-native-track-player'
 import { BleManager } from 'react-native-ble-plx'
-import { syncMap, deviceScanned } from './JobTracingUtils'
+import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
 import { giveAlerts } from './JobInfectionChecker'
 
 const track: Track = {
@@ -57,8 +57,7 @@ async function scanForBluetoothDevices() {
 
   // sync to local database every quarter
   while (isWorkingInBackground) {
-    const hourInMs = 1 * 1000 * 60 * 60
-    await sleep(hourInMs / 4)
+    await sleep(jobInterval)
     await syncMap()
     await giveAlerts()
   }

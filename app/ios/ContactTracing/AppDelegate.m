@@ -1,7 +1,5 @@
 #import "AppDelegate.h"
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
-#import "RNNotifications.h"
-
 #import <React/RCTBundleURLProvider.h>
 
 #if DEBUG
@@ -27,7 +25,6 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-      [RNNotifications startMonitorNotifications];
 #if DEBUG
   InitializeFlipper(application);
 #endif

@@ -1,7 +1,7 @@
 import { BleManager } from 'react-native-ble-plx'
 
 import BackgroundService from 'react-native-background-actions'
-import { syncMap, deviceScanned } from './JobTracingUtils'
+import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
 import BackgroundTimer from 'react-native-background-timer'
 import { giveAlerts } from './JobInfectionChecker'
 
@@ -23,11 +23,13 @@ async function scanForBluetoothDevices() {
     )
 
     for (let i = 0; BackgroundService.isRunning(); i++) {
-      // every fifteen minutes we sync rssi values to a database
-      const hourInMs = 1 * 1000 * 60 * 60
-      await sleep(hourInMs / 4)
+      console.log('sleep')
+      await sleep(jobInterval)
+      console.log('syncMap')
       await syncMap()
+      console.log('giveAlerts')
       await giveAlerts()
+      console.log('start over')
     }
   })
 }

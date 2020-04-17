@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Button } from 'react-native-paper'
+import { Button, Text } from 'react-native-paper'
 
 import { Translate } from 'react-translated'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
 import { getEncountersAfter } from './DatabaseUtils'
+
 const mutation = graphql`
   mutation ScreenSymptomsSendButtonMutation(
     $infectedEncounters: InfectedEncountersCreateInput!
@@ -21,15 +22,17 @@ export default function ScreenSymptomsSendButton({
   disabled: boolean
 }) {
   const [isSending, setIsSending] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
   const sendContacts = () => {
     const sendContactsAsync = async () => {
       // TODO: fetch contact from encrypted database in the previous 2 weeks
-
+      setError(false)
       const twoWeeksAgo = Math.round(
         new Date(Date.now() - 12096e5).getTime() / 1000
       )
       console.log({ twoWeeksAgo })
       const encountersFromLast2Weeks = await getEncountersAfter(twoWeeksAgo)
+      console.log('COMMIT MUTATION')
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,
         variables: {
@@ -45,23 +48,39 @@ export default function ScreenSymptomsSendButton({
           },
         },
         onCompleted: (response, errors) => {
-          console.log('Response received from server.')
+          setIsSending(false)
         },
-        onError: (err) => console.error(err),
+        onError: (err) => {
+          console.log({ err })
+          setIsSending(false)
+          setError(true)
+        },
       })
+
       // TODO remove all contacts before now
     }
     setIsSending(true)
     sendContactsAsync()
   }
   return (
-    <Button
-      mode="contained"
-      loading={isSending}
-      disabled={disabled}
-      onPress={disabled || isSending ? () => null : sendContacts}
-    >
-      <Translate text="sendContactsButtonText" />
-    </Button>
+    <>
+      {error && (
+        <Text style={{ fontWeight: 'bold', paddingBottom: 12 }}>
+          <Translate text="sendingContactsErrorText" />
+        </Text>
+      )}
+      <Button
+        mode="contained"
+        loading={isSending}
+        disabled={disabled}
+        onPress={disabled || isSending ? () => null : sendContacts}
+      >
+        {error ? (
+          <Translate text="resendContactsButtonText" />
+        ) : (
+          <Translate text="sendContactsButtonText" />
+        )}
+      </Button>
+    </>
   )
 }

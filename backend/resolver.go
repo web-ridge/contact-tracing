@@ -23,6 +23,7 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 
 	boilerRows := InfectedEncounterCreateInputsToBoiler(input.InfectedEncounters)
 	if len(boilerRows) == 0 {
+		log.Debug().Msg("No encounters so returning OK=true")
 		return &fm.InfectedEncounterCreatePayload{
 			Ok: true,
 		}, nil
@@ -35,11 +36,12 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
 	fmt.Println(sql)
 	fmt.Println(values)
-	if _, err := r.db.Exec(sql, values...); err != nil {
+	fmt.Println("LENGHT OF VALUES", len(values))
+	if _, err := r.db.Exec(sql+";", values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
 		return nil, fmt.Errorf("could not sync infected encounters")
 	}
-
+	log.Debug().Int("howManyEncounters", len(boilerRows)).Msg("Inserted encounters into database")
 	return &fm.InfectedEncounterCreatePayload{
 		Ok: true,
 	}, nil

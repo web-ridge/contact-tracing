@@ -84,6 +84,14 @@ export default {
     en: `Send contacts`,
     nl: `Verzend contacten`,
   },
+  resendContactsButtonText: {
+    en: `Try sending again`,
+    nl: `Verzend contacten opnieuw`,
+  },
+  sendingContactsErrorText: {
+    en: `Could not send contacts. Try again later.`,
+    nl: `Kon contacten niet verzenden. Probeer later opnieuw.`,
+  },
   HIGH_RISK: {
     en: 'High risk',
     nl: 'Hoog risico',

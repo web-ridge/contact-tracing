@@ -7,7 +7,7 @@ import {
   JobInfectionCheckerQueryResponse,
 } from './__generated__/JobInfectionCheckerQuery.graphql'
 import AsyncStorage from '@react-native-community/async-storage'
-import { Notifications } from 'react-native-notifications'
+// import { Notifications } from 'react-native-notifications'
 
 // we use this to see if alerts changed since previous alert
 const alertStorageKey = 'alertStorageKeyContactTracing'
@@ -61,17 +61,18 @@ export async function giveAlerts() {
 
   // no previous notifications or changed alerts
   if (previousDataHash !== newHash || !previousDataHash) {
+    // TODO -> find library without all firebase shizzle to just do local notifications
     //@ts-ignore
-    let localNotification = Notifications.postLocalNotification({
-      // TODO: translate
-      body: 'Er zijn wijzigingen in besmettingsgevaar',
-      title: 'Wijzigingen in besmettingsgevaar',
-      //   sound: 'chime.aiff',
-      //   silent: false
-      silent: true,
-      category: 'SOME_CATEGORY',
-      userInfo: {},
-    })
+    // let localNotification = Notifications.postLocalNotification({
+    //   // TODO: translate
+    //   body: 'Er zijn wijzigingen in besmettingsgevaar',
+    //   title: 'Wijzigingen in besmettingsgevaar',
+    //   //   sound: 'chime.aiff',
+    //   //   silent: false
+    //   silent: true,
+    //   category: 'SOME_CATEGORY',
+    //   userInfo: {},
+    // })
   }
   // so we know the next time if we need to send new notification
   await AsyncStorage.setItem(alertStorageKey, newHash)
