@@ -7,18 +7,6 @@ import (
 	"github.com/web-ridge/contact-tracing/backend/models"
 )
 
-func columnsAsQuestionMarks(columns []string) []string {
-	params := make([]string, len(columns))
-	for i := range columns {
-		params[i] = "?"
-	}
-	return params
-}
-
-func getRowMarks(columns []string) string {
-	return fmt.Sprintf("(%v)", strings.Join(columnsAsQuestionMarks(columns), ","))
-}
-
 var InfectedEncountersBatchCreateColumns = []string{
 	models.InfectedEncounterColumns.RandomPart,
 	models.InfectedEncounterColumns.PossibleInfectedHash,
@@ -27,12 +15,12 @@ var InfectedEncountersBatchCreateColumns = []string{
 	models.InfectedEncounterColumns.Time,
 }
 
-var InfectedEncountersatchCreateColumnsMarks = getRowMarks(InfectedEncountersBatchCreateColumns)
+var InfectedEncountersatchCreateColumnsMarks = "('?', '?', '?', '?', '?')"
 
 func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter, randomString string) []interface{} {
 	return []interface{}{
 		randomString,
-		e.PossibleInfectedHash,
+		strings.TrimSpace(e.PossibleInfectedHash),
 		e.Rssi,
 		e.Hits,
 		e.Time,
@@ -52,7 +40,7 @@ func InfectedEncountersToBatchCreate(a []*models.InfectedEncounter, randomString
 func InfectedEncountersToQuery(a []*models.InfectedEncounter, randomString string) (string, []interface{}) {
 	queryMarks, values := InfectedEncountersToBatchCreate(a, randomString)
 	// nolint: gosec -> remove warning because no user input without questions marks
-	return fmt.Sprintf(`INSERT INTO %s (%s) VALUES %s`,
+	return fmt.Sprintf(`INSERT INTO "%s" (%s) VALUES %s`,
 		models.TableNames.InfectedEncounter,
 		strings.Join(InfectedEncountersBatchCreateColumns, ", "),
 		strings.Join(queryMarks, ", "),

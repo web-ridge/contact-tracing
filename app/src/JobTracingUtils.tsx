@@ -8,7 +8,7 @@ let rssiValues: RSSIMap = {}
 // every 15 minutes
 const hour = 1 * 1000 * 60 * 60
 const minute = 1 * 1000 * 60
-export const jobInterval = Math.round(minute)
+export const jobInterval = Math.round(hour / 4)
 
 export async function syncMap() {
   console.log({ rssiValues })

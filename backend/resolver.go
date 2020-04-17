@@ -37,7 +37,15 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	fmt.Println(sql)
 	fmt.Println(values)
 	fmt.Println("LENGHT OF VALUES", len(values))
-	if _, err := r.db.Exec(sql+";", values...); err != nil {
+	//prepare the statement
+	stmt, err := r.db.Prepare(sql)
+	fmt.Println(stmt, err)
+	if err != nil {
+		log.Error().Err(err).Msg("could not prepare batch create query")
+		return nil, fmt.Errorf("could not sync infected encounters")
+	}
+
+	if _, err := stmt.Exec(values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
 		return nil, fmt.Errorf("could not sync infected encounters")
 	}
