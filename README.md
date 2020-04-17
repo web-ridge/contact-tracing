@@ -4,9 +4,7 @@
 
 ## Help us
 
-- Kubernetes files for deploying to Cloud Infrastructure
-- Backup Kubernetes encrypted postgres
-- iOS note for keeping app in background
+- Adding option for Android devices to get an alert of iOS infections.
 
 ## Explain way of working
 
