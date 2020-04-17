@@ -4,13 +4,11 @@
 
 ## Help us
 
-- Kubernetes files for deploying to Cloud Infrastructure
-- Backup Kubernetes encrypted postgres
-- iOS note for keeping app in background
+- Adding option for Android devices to get an alert of iOS infections.
 
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan. Omdat de contact tracing API's van Google en Apple nog een tijdje duren zul je een tussenoplossing moeten maken. Als deze beschikbaar is het mogelijk om de app gelijk om te bouwen: https://github.com/ericlewis/react-native-contact-tracing. Er is bij deze library contact met engineers binnen Apple/Android zodat de API goed gaat werken als deze uitkomt.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan.
 
 ## Voordeel aan deze oplossing
 
@@ -21,6 +19,10 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en to
 - Achteraf logica wijzigen van kans op besmetting;
 - iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
 - Meertaligheid
+- Het werkt dus voor iOS en Android.
+
+
+
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
@@ -71,8 +73,8 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
 - De lokale data van hashes en tijdstippen worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
-- Server moet in veilig datacenter staat.
-- Backup encrypted opgeslagen.
+- Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
+- Stricte controle van SSL certificaat (HTS)
 
 ## Concerns
 
@@ -82,4 +84,10 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
-- Het is moeilijk om op basis van het signaal te bepalen hoever de gebruikers van elkaar hebben gestaan
+
+
+Mogelijke oplossing:
+_
+Dit kan ook nog opgelost worden door de logica op iOS andersom te doen. Dus i.p.v. bluetooth contacten op te sturen de eigen bluetooth hash op te sturen.
+De Android apparaten moeten dan wel hashes opgestuurd worden van iOS apparaten om te checken of deze besmet zijn.
+_
