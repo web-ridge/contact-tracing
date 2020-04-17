@@ -4,7 +4,7 @@
 
 ## Help us
 
-- Adding option for Android devices to get an alert of iOS infections.
+- Adding explain why Location permission is needed on Android to get access to Bluetooth.
 
 ## Explain way of working
 
