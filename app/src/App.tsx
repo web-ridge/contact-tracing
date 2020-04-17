@@ -3,7 +3,6 @@ import { Platform, NativeModules } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { Provider as TranslateProvider } from 'react-translated'
 import React from 'react'
-import Home from './ScreenHome'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper'
 
 import translations from './translations'

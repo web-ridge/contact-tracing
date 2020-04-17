@@ -1,17 +1,13 @@
-import { Platform } from 'react-native'
-
 import TrackPlayer, { Track } from 'react-native-track-player'
-
-// import ContactTracing from 'react-native-contact-tracing'
-// async function scanForBluetoothDevices() {
-//   contactTracing.start()
-// }
+import { BleManager } from 'react-native-ble-plx'
+import { syncMap, deviceScanned } from './JobTracingUtils'
+import { giveAlerts } from './JobInfectionChecker'
 
 const track: Track = {
   id: 'trackId',
   url: require('../assets/5-minutes-of-silence.mp3'),
-  title: 'Corona Tracing',
-  artist: 'Track Artist',
+  title: 'Contact Tracing',
+  artist: 'Keeps app in background',
   artwork: require('../assets/virus.png'),
 }
 
@@ -39,16 +35,40 @@ function play1YearOfSummer() {
   })
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export let isWorkingInBackground = false
+
 async function scanForBluetoothDevices() {
-  // TODO
-  // Example of an infinite loop task
-  if (Platform.OS === 'ios') {
-    play1YearOfSummer()
+  // play music in background so app will be kept open
+  play1YearOfSummer()
+
+  const manager = new BleManager({
+    // restoreStateIdentifier
+    // restoreStateFunction
+  })
+  manager.startDeviceScan(
+    null, // uuids
+    {}, // options
+    deviceScanned
+  )
+
+  // sync to local database every quarter
+  while (isWorkingInBackground) {
+    const hourInMs = 1 * 1000 * 60 * 60
+    await sleep(hourInMs / 4)
+    await syncMap()
+    await giveAlerts()
   }
 }
-export async function startTracing() {
-  return await scanForBluetoothDevices()
-}
+
 export async function stopTracing() {
-  return null
+  isWorkingInBackground = false
+  await syncMap()
+}
+export async function startTracing() {
+  isWorkingInBackground = true
+  return await scanForBluetoothDevices()
 }

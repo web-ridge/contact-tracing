@@ -12,6 +12,7 @@
     "relay": "relay-compiler --src ./src --schema ../schema.graphql --language typescript --artifactDirectory ./src/__generated__"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.9.0",
     "babel-plugin-relay": "^9.0.0",
     "react": "16.11.0",
     "react-native": "0.62.2",
@@ -21,6 +22,7 @@
     "react-native-contact-tracing": "^1.11.0",
     "react-native-device-info": "^5.5.5",
     "react-native-navigation": "^6.4.0",
+    "react-native-notifications": "^3.1.4",
     "react-native-paper": "^3.8.0",
     "react-native-permissions": "^2.0.10",
     "react-native-simple-crypto": "https://github.com/RichardLindhout/react-native-simple-crypto",
