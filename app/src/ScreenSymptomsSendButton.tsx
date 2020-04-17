@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Text } from 'react-native-paper'
 
 import { Translate } from 'react-translated'
@@ -26,6 +26,16 @@ export default function ScreenSymptomsSendButton({
   const [isSending, setIsSending] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
   const [howManyContacts, setHowManyContacts] = useState<number>(0)
+
+  useEffect(() => {
+    const updateCountAsync = async () => {
+      const encountersFromLast2Weeks = await getEncountersAfter(
+        getStartOfRiskUnix()
+      )
+      setHowManyContacts(encountersFromLast2Weeks.length)
+    }
+    updateCountAsync()
+  }, [error, isSending])
 
   const sendContacts = () => {
     const sendContactsAsync = async () => {

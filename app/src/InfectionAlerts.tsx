@@ -54,10 +54,16 @@ export default function InfectionAlerts() {
 
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
-    DeviceInfo.getMacAddress().then(async (mac) => {
+    const setBluetoothHashAsync = async () => {
+      // DeviceInfo is forked to change this to Bluetooth address :-)
+      const mac = await DeviceInfo.getMacAddress()
+      console.log('MY BLUETOOTH MAC', { mac })
       const bluetoothHash = await RNSimpleCrypto.SHA.sha256(mac)
+      console.log('MY BLUETOOTH HASH', { bluetoothHash })
       setBluetoothHash(bluetoothHash)
-    })
+    }
+
+    setBluetoothHashAsync()
   }, [])
 
   return (

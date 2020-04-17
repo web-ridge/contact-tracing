@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Translate } from 'react-translated'
 import {
   StyleSheet,
@@ -16,6 +16,8 @@ import {
   Permission,
 } from 'react-native-permissions'
 import BackgroundService from 'react-native-background-actions'
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
+
 import InfectionAlerts from './InfectionAlerts'
 import { startTracing, stopTracing } from './JobTracing'
 import { goToSymptonsScreen } from './Screens'
@@ -33,26 +35,53 @@ async function requestBluetoothStatus() {
   }
   return bluetoothStatus
 }
+async function requestLocationAccess(): Promise<boolean> {
+  try {
+    const data = await RNAndroidLocationEnabler.promptForEnableLocationIfNeeded(
+      { interval: 10000, fastInterval: 5000 }
+    )
+    return data === 'already-enabled' || data === 'enabled'
+  } catch (e) {
+    console.log({ e })
+    return false
+  }
+}
 
 function ScreenHome({ componentId }: { componentId: string }) {
-  const [isTracking, setIsTracking] = useState<boolean>(
-    BackgroundService.isRunning()
-  )
+  const [isTracking, setIsTracking] = useState<boolean>()
+
+  // sync background job with relation status of background job
+  useInterval(() => {
+    const isRunning = BackgroundService.isRunning()
+    if (isRunning !== isTracking) {
+      setIsTracking(isRunning)
+    }
+  }, 1000)
 
   const startTracingPressed = () => {
     const startTracingAsync = async () => {
-      // console.log('doSynced')
+      // TODO: add more information to comfort user in accepting these
+
       const bluetoothStatus = await requestBluetoothStatus()
-      // console.log({ bluetoothStatus })
-      // TODO: start background status
-      // TODO: add modals
-      if (bluetoothStatus === 'granted') {
-        startTracing()
-        setIsTracking(true)
-      } else {
-        console.log({ bluetoothStatus })
+
+      if (bluetoothStatus !== 'granted') {
+        console.log('bluetooth not enabled', { bluetoothStatus })
+        return
       }
+
+      // On Android location permissions are needed
+      if (Platform.OS === 'android') {
+        const locationEnabled = await requestLocationAccess()
+        if (!locationEnabled) {
+          console.log('location not enabled')
+          return
+        }
+      }
+
+      startTracing()
+      setIsTracking(true)
     }
+    // do this in background
     startTracingAsync()
   }
   const stopTracingPressed = () => {
@@ -131,6 +160,26 @@ function ScreenHome({ componentId }: { componentId: string }) {
       </ScrollView>
     </>
   )
+}
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef()
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay])
 }
 
 const styles = StyleSheet.create({

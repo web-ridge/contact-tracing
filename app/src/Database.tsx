@@ -8,18 +8,18 @@ async function getEncryptionKey(): Promise<ArrayBuffer> {
   const exist = await RNSecureStorage.exists(encryptionKeyID)
   if (exist) {
     const stringKey = await RNSecureStorage.get(encryptionKeyID)
-    if (stringKey) {
+    if (stringKey && stringKey.length > 0) {
       return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
     }
   }
 
   // key does not exist (yet)
-  var randomKey = await RNSimpleCrypto.utils.randomBytes(64)
+  var randomArrayBuffer = await RNSimpleCrypto.utils.randomBytes(64)
 
-  console.log({ randomKey })
+  console.log({ randomArrayBuffer })
   // to string
   var randomKeyString = RNSimpleCrypto.utils.convertArrayBufferToBase64(
-    randomKey
+    randomArrayBuffer
   )
 
   // store so we can de-crypt next time
@@ -27,8 +27,7 @@ async function getEncryptionKey(): Promise<ArrayBuffer> {
     accessible: ACCESSIBLE.ALWAYS, // we need to write, even when device is in sleep mode
   })
 
-  // return
-  return randomKey
+  return randomArrayBuffer
 }
 
 export const EncounterSchema = {

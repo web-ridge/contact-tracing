@@ -1,38 +1,62 @@
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
+import { BleManager } from 'react-native-ble-plx'
 
 let rssiValues: RSSIMap = {}
 
 // every 15 minutes
 const hour = 1 * 1000 * 60 * 60
 const minute = 1 * 1000 * 60
-export const jobInterval = Math.round(hour / 4)
+export const jobInterval = //@ts-ignore
+  process.env.NODE_ENV === 'development'
+    ? Math.round(minute)
+    : Math.round(hour / 4)
 
-export async function syncMap() {
+export async function syncMap(): boolean {
   console.log({ rssiValues })
   const done = await syncRSSIMap(rssiValues)
   if (done) {
     console.log('syncing rrsi values done')
     rssiValues = {}
+    return true
   } else {
     console.log('syncing rrsi not done')
   }
+  return false
 }
 
-export function deviceScanned(
+export async function deviceScanned(
   error: BleError | null,
-  scannedDevice: null | Device
+  scannedDevice: null | Device,
+  bleManager: BleManager
 ) {
   if (error) {
-    console.log('error while scanning device', { error })
-    return
+    throw error
   }
 
   // not relevant
   if (!scannedDevice || !scannedDevice.rssi || -100 > scannedDevice.rssi) {
     return
   }
+
+  const isConnected = scannedDevice.isConnected()
+
+  if (!isConnected) {
+    try {
+      scannedDevice = await bleManager.connectToDevice(scannedDevice.id, {
+        autoConnect: true,
+        // requestMTU: true,
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  if (!scannedDevice || !scannedDevice.rssi || -100 > scannedDevice.rssi) {
+    return
+  }
+
+  console.log({ serviceUUIDs: scannedDevice.serviceUUIDs })
 
   // we save the maximum RSSI and how many times the RSSI has changed
   const previousValue = rssiValues[scannedDevice.id]
@@ -53,7 +77,15 @@ export function deviceScanned(
 
     // @ts-ignore
     if (process.env.NODE_ENV === 'development') {
-      console.log('changed', scannedDevice.id, rssiValues[scannedDevice.id])
+      console.log(
+        'changed',
+        scannedDevice.id,
+        scannedDevice.manufacturerData,
+        scannedDevice.mtu,
+        scannedDevice.name,
+        scannedDevice.localName,
+        rssiValues[scannedDevice.id]
+      )
     }
   }
 }

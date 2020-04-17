@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -51,7 +52,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]
 
 	// get infected encounters for this hash in incubation period
 	infectedEncounters, err := dm.InfectedEncounters(
-		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(hash),
+		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(strings.TrimSpace(hash)),
 		dm.InfectedEncounterWhere.Time.GTE(int(beginOfIncubationPeriod.Unix())),
 	).All(ctx, r.db)
 
