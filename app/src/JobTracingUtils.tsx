@@ -2,6 +2,7 @@ import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 import { BleManager } from 'react-native-ble-plx'
+import Base64 from './Base64'
 
 let rssiValues: RSSIMap = {}
 
@@ -10,10 +11,10 @@ const hour = 1 * 1000 * 60 * 60
 const minute = 1 * 1000 * 60
 export const jobInterval = //@ts-ignore
   process.env.NODE_ENV === 'development'
-    ? Math.round(minute)
+    ? Math.round(hour / 4)
     : Math.round(hour / 4)
 
-export async function syncMap(): boolean {
+export async function syncMap(): Promise<boolean> {
   console.log({ rssiValues })
   const done = await syncRSSIMap(rssiValues)
   if (done) {
@@ -36,27 +37,10 @@ export async function deviceScanned(
   }
 
   // not relevant
-  if (!scannedDevice || !scannedDevice.rssi || -100 > scannedDevice.rssi) {
+  if (!scannedDevice || !scannedDevice.rssi || -70 > scannedDevice.rssi) {
+    console.log('not valid device', scannedDevice && scannedDevice.id)
     return
   }
-
-  const isConnected = scannedDevice.isConnected()
-
-  if (!isConnected) {
-    try {
-      scannedDevice = await bleManager.connectToDevice(scannedDevice.id, {
-        autoConnect: true,
-        // requestMTU: true,
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
-  if (!scannedDevice || !scannedDevice.rssi || -100 > scannedDevice.rssi) {
-    return
-  }
-
-  console.log({ serviceUUIDs: scannedDevice.serviceUUIDs })
 
   // we save the maximum RSSI and how many times the RSSI has changed
   const previousValue = rssiValues[scannedDevice.id]
@@ -87,5 +71,53 @@ export async function deviceScanned(
         rssiValues[scannedDevice.id]
       )
     }
+  }
+
+  // if many hits exchange keys
+  const hits = rssiValues[scannedDevice.id].hits
+  console.log({ serviceUUIDs: scannedDevice.serviceUUIDs })
+
+  // if (hits < 10) {
+  //   console.log('hits too low', scannedDevice.id, hits)
+  //   return
+  // }
+
+  console.log('lets exchange keys')
+
+  let isConnected = await scannedDevice.isConnected()
+  if (!isConnected) {
+    scannedDevice = await scannedDevice.connect()
+  }
+  isConnected = await scannedDevice.isConnected()
+  if (!isConnected) {
+    console.log('not connected', { scannedDevice })
+    return
+  }
+  console.log('conncted try to exchange key!', {})
+
+  try {
+    const servicesAndMore = await scannedDevice.discoverAllServicesAndCharacteristics()
+    console.log('servicesAndMore!!', { servicesAndMore })
+
+    // read from other device
+    const readCharacteristic = await servicesAndMore.readCharacteristicForService(
+      '12ab',
+      '34cd'
+    ) // assuming the device is already connected
+
+    console.log({ readValue: readCharacteristic.value })
+
+    // write unique id to each other
+    const characteristic = await servicesAndMore.writeCharacteristicWithResponseForService(
+      '12ab',
+      '34cd',
+      'aGVsbG8gbWlzcyB0YXBweQ=='
+    )
+
+    console.log('characteristic.deviceID', characteristic.deviceID)
+
+    console.log({ characteristic })
+  } catch (e) {
+    console.log('could not connect', e)
   }
 }

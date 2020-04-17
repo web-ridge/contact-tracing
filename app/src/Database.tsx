@@ -1,15 +1,18 @@
 import Realm from 'realm'
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import RNSimpleCrypto from 'react-native-simple-crypto'
-
+import Base64 from './Base64'
 const encryptionKeyID = 'contactTractingEncryptionKey'
 
 async function getEncryptionKey(): Promise<ArrayBuffer> {
   const exist = await RNSecureStorage.exists(encryptionKeyID)
+  console.log({ exist })
   if (exist) {
     const stringKey = await RNSecureStorage.get(encryptionKeyID)
+    console.log({ stringKey })
+
     if (stringKey && stringKey.length > 0) {
-      return RNSimpleCrypto.utils.convertBase64ToArrayBuffer(stringKey)
+      return Uint8Array.from(Base64.atob(stringKey), (c) => c.charCodeAt(0))
     }
   }
 
