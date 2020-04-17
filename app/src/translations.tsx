@@ -77,8 +77,8 @@ export default {
     nl: `Ik ga ermee akkoord dat mijn lokaal opgeslagen Bluetooth-contacten van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
   },
   permissionTrust: {
-    en: `Nobody known who has sent the following contacts.`,
-    nl: `Niemand weet wie deze contacten heeft opgestuurd.`,
+    en: `Nowhere will be saved wo sent the contacts.`,
+    nl: `Nergens wordt opgeslagen wie deze contacten heeft opgestuurd.`,
   },
   [`sendContactsButtonText {howManyContacts}`]: {
     en: `Send contacts`,

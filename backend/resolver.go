@@ -34,15 +34,11 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	randomString := randSeq(4)
 
 	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
-	fmt.Println(sql)
-	fmt.Println(values)
-	fmt.Println("LENGHT OF VALUES", len(values))
-
 	if _, err := r.db.Exec(sql, values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
 		return nil, fmt.Errorf("could not sync infected encounters")
 	}
-	log.Debug().Int("howManyEncounters", len(boilerRows)).Msg("Inserted encounters into database")
+	log.Debug().Int("howManyEncounters", len(boilerRows)).Msg("inserted encounters into database")
 	return &fm.InfectedEncounterCreatePayload{
 		Ok: true,
 	}, nil
@@ -51,13 +47,11 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 func (r *queryResolver) InfectedEncounters(ctx context.Context, hash string) ([]*fm.InfectionAlert, error) {
 
 	//  1-14 days, most commonly around five days.
-	now := time.Now()
-	beginOfIncubationPeriod := now.AddDate(0, 0, -14)
+	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
 
 	// get infected encounters for this hash in incubation period
 	infectedEncounters, err := dm.InfectedEncounters(
 		dm.InfectedEncounterWhere.PossibleInfectedHash.EQ(hash),
-		dm.InfectedEncounterWhere.Time.LTE(int(now.Unix())),
 		dm.InfectedEncounterWhere.Time.GTE(int(beginOfIncubationPeriod.Unix())),
 	).All(ctx, r.db)
 

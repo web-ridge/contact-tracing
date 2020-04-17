@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Image, View, StyleSheet } from 'react-native'
-import { Text, Button, Title, IconButton } from 'react-native-paper'
+import {
+  Text,
+  Button,
+  Title,
+  IconButton,
+  ProgressBar,
+} from 'react-native-paper'
 import DeviceInfo from 'react-native-device-info'
 import RNSimpleCrypto from 'react-native-simple-crypto'
 import { Translate } from 'react-translated'
@@ -95,7 +101,7 @@ const renderAlerts = ({
   const dateString = new Date().toLocaleTimeString()
   const lastFetched: string = dateString.substr(0, dateString.length - 3)
 
-  if (error || !props) {
+  if (error) {
     return (
       <>
         <Title style={styles.title}>
@@ -104,6 +110,13 @@ const renderAlerts = ({
         <Button uppercase={false} onPress={() => retry && retry()}>
           <Translate text="refetchAlerts" />
         </Button>
+      </>
+    )
+  }
+  if (!props) {
+    return (
+      <>
+        <ProgressBar />
       </>
     )
   }
@@ -186,7 +199,7 @@ function NoAlerts({
 
       <Image
         source={require('../assets/background.png')}
-        style={{ height: 200, width: 300 }}
+        style={{ height: 200, width: '90%', maxWidth: 300 }}
         resizeMode="contain"
       ></Image>
     </View>

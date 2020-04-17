@@ -91,6 +91,7 @@ function ScreenHome({ componentId }: { componentId: string }) {
                 mode="contained"
                 onPress={stopTracingPressed}
                 style={styles.button}
+                uppercase={false}
               >
                 <Translate text="stopTracking" />
               </Button>
@@ -109,7 +110,8 @@ function ScreenHome({ componentId }: { componentId: string }) {
                 source={require('../assets/privacy.png')}
                 style={{
                   height: 300,
-                  width: 300,
+                  width: '90%',
+                  maxWidth: 300,
                   marginTop: 12,
                   marginBottom: 12,
                 }}

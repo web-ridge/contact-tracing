@@ -24,6 +24,7 @@ export const defaultOptions: Options = {
     style: 'dark',
   },
   topBar: {
+    visible: false,
     elevation: 0,
     title: {
       color: '#242648',

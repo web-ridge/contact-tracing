@@ -8,6 +8,7 @@ require (
 	github.com/didip/tollbooth_chi v0.0.0-20170928041846-6ab5f3083f3d
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi v4.1.0+incompatible
+	github.com/go-co-op/gocron v0.1.1 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/kat-co/vala v0.0.0-20170210184112-42e1d8b61f12
 	github.com/lib/pq v1.3.0
