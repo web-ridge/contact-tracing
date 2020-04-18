@@ -47,7 +47,7 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 	}, nil
 }
 
-func getDeviceKeysFromParams(deviceKeysParams []fm.DeviceKeyParam) []string {
+func getDeviceKeysFromParams(deviceKeysParams []*fm.DeviceKeyParam) []string {
 	a := make([]string, len(deviceKeysParams))
 	for i, deviceKey := range deviceKeysParams {
 		a[i] = deviceKey.Hash
@@ -56,7 +56,7 @@ func getDeviceKeysFromParams(deviceKeysParams []fm.DeviceKeyParam) []string {
 }
 
 // findSecuryDeviceKey returns true if the hash and password match in database
-func isValidKeyParam(realSecureKeys dm.DeviceKeySlice, userInput fm.DeviceKeyParam) bool {
+func isValidKeyParam(realSecureKeys dm.DeviceKeySlice, userInput *fm.DeviceKeyParam) bool {
 	for _, realSecureKey := range realSecureKeys {
 		if userInput.Hash == realSecureKey.Hash &&
 			userInput.Password == realSecureKey.Password {
@@ -66,32 +66,32 @@ func isValidKeyParam(realSecureKeys dm.DeviceKeySlice, userInput fm.DeviceKeyPar
 	return false
 }
 
-func getDeviceParamForEncounter(deviceKeysParams []fm.DeviceKeyParam, encounterHash string) (fm.DeviceKeyParam, bool) {
+func getDeviceParamForEncounter(deviceKeysParams []*fm.DeviceKeyParam, encounterHash string) *fm.DeviceKeyParam {
 	for _, deviceKeysParam := range deviceKeysParams {
 		if deviceKeysParam.Hash == encounterHash {
-			return deviceKeysParam, true
+			return deviceKeysParam
 		}
 	}
-	return fm.DeviceKeyParam{}, false
+	return nil
 }
 
 // secureEncounters filters the encounters slice from database and checks it the device keys have the right hash and password
 func secureEncounters(
 	encounters dm.InfectedEncounterSlice,
-	deviceKeysParams []fm.DeviceKeyParam,
+	deviceKeysParams []*fm.DeviceKeyParam,
 	realSecureKeys dm.DeviceKeySlice,
 ) dm.InfectedEncounterSlice {
 	secureEncounters := dm.InfectedEncounterSlice{}
 	for _, encounter := range encounters {
-		deviceParam, exist := getDeviceParamForEncounter(deviceKeysParams, encounter.PossibleInfectedHash)
-		if exist && isValidKeyParam(realSecureKeys, deviceParam) {
+		deviceParam := getDeviceParamForEncounter(deviceKeysParams, encounter.PossibleInfectedHash)
+		if deviceParam != nil && isValidKeyParam(realSecureKeys, deviceParam) {
 			secureEncounters = append(secureEncounters, encounter)
 		}
 	}
 	return secureEncounters
 }
 
-func secureHashes(deviceKeysParams []fm.DeviceKeyParam,
+func secureHashes(deviceKeysParams []*fm.DeviceKeyParam,
 	realSecureKeys dm.DeviceKeySlice) []string {
 	var validHashes []string
 	for _, deviceKeyParam := range deviceKeysParams {
@@ -103,13 +103,33 @@ func secureHashes(deviceKeysParams []fm.DeviceKeyParam,
 }
 
 // getHashesFromOptionalEncounters returns all device hashes which are possible iOS
-func getHashesFromOptionalEncounters(optionalEncounters []*fm.EncounterInput)
+func getHashesFromOptionalEncounters(optionalEncounters []*fm.EncounterInput) []string {
+	a := make([]string, len(optionalEncounters))
+	for _, optionalEncounter := range optionalEncounters {
+		a = append(a, optionalEncounter.Hash)
+	}
+	return a
+}
+
+// filterOptionalEncountersByInfectedDeviceKeys only used on Android if they opt-in for iOS alert
+// User infection status is fetchable by some-one else if they know the device hash of that certain day
+func filterOptionalEncountersByInfectedDeviceKeys(optionalEncounters []*fm.EncounterInput, infectedDevices dm.DeviceKeySlice) []*fm.EncounterInput {
+	var infectedEncounters []*fm.EncounterInput
+	for _, optionalEncounter := range optionalEncounters {
+		for _, infectedDevice := range infectedDevices {
+			if optionalEncounter.Hash == infectedDevice.Hash {
+				infectedEncounters = append(infectedEncounters, optionalEncounter)
+			}
+		}
+	}
+	return infectedEncounters
+}
 
 // InfectedEncounters fetches the shared encounters of other users with my device key. Only the user will be able to fetch
 // these since the others don't have the password which is in a local persisted database
 // optionalExtraDeviceHashes is used to check infected device keys since iOS users won't be able to track in the background
 // they can register their device as being infected (and remove it every time they want)
-func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMyOwn []fm.DeviceKeyParam, optionalEncounters []*fm.EncounterInput) ([]*fm.InfectionAlert, error) {
+func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMyOwn []*fm.DeviceKeyParam, optionalEncounters []*fm.EncounterInput) ([]*fm.InfectionAlert, error) {
 
 	//  1-14 days, most commonly around five days.
 	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
@@ -133,7 +153,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 		defer wg.Done()
 		realSecureKeys, realSecureKeysError = dm.DeviceKeys(
 			dm.DeviceKeyWhere.Hash.IN(
-				getDeviceKeysFromParams(deviceKeysOfUserParams),
+				getDeviceKeysFromParams(deviceHashesOfMyOwn),
 			),
 		).All(ctx, r.db)
 	}()
@@ -143,19 +163,20 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 		defer wg.Done()
 		infectedEncounters, infectedEncountersError = dm.InfectedEncounters(
 			dm.InfectedEncounterWhere.PossibleInfectedHash.IN(
-				getDeviceKeysFromParams(deviceKeysOfUserParams),
+				getDeviceKeysFromParams(deviceHashesOfMyOwn),
 			),
 			dm.InfectedEncounterWhere.Time.GTE(int(beginOfIncubationPeriod.Unix())),
 		).All(ctx, r.db)
 	}()
 
 	// only used if user has opt-in for alerts on iOS devices
-	if optionalExtraDeviceHashes {
+	// the status of iOS infected could be publicily fetched if someone knew their character id
+	if len(optionalEncounters) > 0 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			infectedDeviceKeys, infectedDeviceKeyError = dm.DeviceKeys(
-				dm.DeviceKeyWhere.Hash.IN(optionalExtraDeviceHashes),
+				dm.DeviceKeyWhere.Hash.IN(getHashesFromOptionalEncounters(optionalEncounters)),
 				dm.DeviceKeyWhere.Infected.EQ(true), // only iOS devices are registered with their permission
 			).All(ctx, r.db)
 		}()
@@ -174,14 +195,15 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 		return nil, fmt.Errorf("could not get summary from database")
 	}
 
-	// TODO: infectedDeviceKeys or user encounters to support iOS alert for Android
+	// infectedDeviceKeys or user encounters to support iOS alert for Android
+	extraInfectedEncounters := EncountersInputsToBoiler(filterOptionalEncountersByInfectedDeviceKeys(optionalEncounters, infectedDeviceKeys))
 
 	// We filter all encounters on the persisted device keys, we can't hard remove because
 	// server could have removed them sooner than device + we don't want people to know if key exists yes/no
-	securedEncounters := secureEncounters(infectedEncounters, deviceKeysOfUserParams, realSecureKeys)
+	securedEncounters := secureEncounters(infectedEncounters, deviceHashesOfMyOwn, realSecureKeys)
 
 	// calculate risk for user based on his encounters
-	return getRiskAlerts(securedEncounters), nil
+	return getRiskAlerts(append(securedEncounters, extraInfectedEncounters...)), nil
 }
 
 const createDeviceKeyError = "could not create device key"
@@ -201,7 +223,7 @@ func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input *fm.Device
 
 const deleteInfectedEncountersOnKeysError = "could not delete infected encounters"
 
-func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam) (*fm.OkPayload, error) {
+func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),
@@ -226,7 +248,7 @@ func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, d
 
 const removeDeviceKeysError = "could not delete device keys"
 
-func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),
@@ -254,7 +276,7 @@ func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUse
 
 const registerDeviceKeysAsInfectedError = "Could not register device keys as infected"
 
-func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam) (*fm.OkPayload, error) {
+func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),

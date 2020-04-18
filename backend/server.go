@@ -88,9 +88,9 @@ func removeOldData(db *sql.DB) error {
 		return err
 	}
 
-	if_, err := dm.DeviceKeys(
+	if _, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
-	).DeleteAll(context.Background(), db);err != nil {
+	).DeleteAll(context.Background(), db); err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
 		return err
