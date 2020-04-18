@@ -1,12 +1,22 @@
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
-import { Base64 } from 'js-base64'
 
 import {
   contactTracingServiceUUID,
   contactTracingKeyCharacteristicUUID,
 } from './Utils'
+
+interface BoolMap {
+  [bluetoothID: string]: boolean
+}
+
+interface StringMap {
+  [bluetoothID: string]: string
+}
+
+let areConnecting: BoolMap = {}
+let deviceKey: StringMap = {}
 let rssiValues: RSSIMap = {}
 
 // every 15 minutes
@@ -32,11 +42,16 @@ export async function syncMap(): Promise<boolean> {
 
 export async function deviceScanned(
   error: BleError | null,
-  scannedDevice: null | Device,
-  deviceKey: string
+  scannedDevice: null | Device
 ) {
   if (error) {
-    throw error
+    if (error.errorCode >= 200) {
+      console.log('local', { error })
+    } else {
+      console.log('else', { error })
+      throw error
+    }
+    return
   }
 
   // not relevant
@@ -44,7 +59,10 @@ export async function deviceScanned(
     console.log('not valid device', scannedDevice && scannedDevice.id)
     return
   }
-
+  if (areConnecting[scannedDevice.id]) {
+    console.log('areConnecting[scannedDevice.id]', scannedDevice.id)
+    return
+  }
   // we save the maximum RSSI and how many times the RSSI has changed
   const previousValue = rssiValues[scannedDevice.id]
   const latestRSSI = scannedDevice.rssi
@@ -90,6 +108,7 @@ export async function deviceScanned(
 
   let isConnected = await scannedDevice.isConnected()
   if (!isConnected) {
+    areConnecting[scannedDevice.id] = true
     scannedDevice = await scannedDevice.connect()
   }
 

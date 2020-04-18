@@ -1,7 +1,9 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
+
 export const contactTracingServiceUUID = '48464861-d2ea-434a-aa73-b5aaf343f701'
+
 export const contactTracingKeyCharacteristicUUID =
   'bf6bdef8-6080-4507-bfbb-3fb3a83a8ea8'
 

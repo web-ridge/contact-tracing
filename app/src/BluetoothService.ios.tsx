@@ -25,7 +25,7 @@ export async function startAdvertising(deviceKey: string) {
 
   // start advertising to make your device discoverable
   Peripheral.startAdvertising({
-    name: 'Contact Tracing Device',
+    name: '-',
     serviceUuids: [contactTracingServiceUUID],
   })
 }

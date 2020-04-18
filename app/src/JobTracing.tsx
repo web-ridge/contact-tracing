@@ -16,18 +16,6 @@ function sleep(ms: number) {
   return new Promise((resolve) => BackgroundTimer.setTimeout(resolve, ms))
 }
 
-const tryScanDevice = (deviceKey: string) => (
-  error: BleError | null,
-  scannedDevice: null | Device
-): Promise<void> => {
-  try {
-    return deviceScanned(error, scannedDevice, deviceKey)
-  } catch (e) {
-    console.log({ e })
-    return BackgroundService.stop()
-  }
-}
-
 // You can do anything in your task such as network requests, timers and so on,
 // as long as it doesn't touch UI. Once your task completes (i.e. the promise is resolved),
 // React Native will go into "paused" mode (unless there are other tasks running,
@@ -41,11 +29,16 @@ async function scanForBluetoothDevices() {
     console.log('new BleManager()')
     const manager = new BleManager()
 
-    manager.startDeviceScan(
-      [contactTracingServiceUUID], // uuids
-      {},
-      tryScanDevice(deviceKey) // options
-    )
+    try {
+      manager.startDeviceScan(
+        [contactTracingServiceUUID], // uuids
+        {},
+        deviceScanned // options
+      )
+    } catch (e) {
+      console.log('could not start device scan')
+    }
+
     for (let i = 0; BackgroundService.isRunning(); i++) {
       const removed = await removeEncountersOlderThan(getStartOfRiskUnix())
 
