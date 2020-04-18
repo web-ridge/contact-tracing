@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ScrollView, View, StyleSheet } from 'react-native'
 import { Text, TouchableRipple, RadioButton } from 'react-native-paper'
-import { Checkbox } from 'react-native-paper'
+import { Checkbox, Button } from 'react-native-paper'
 import ScreenSymptomsSendButton from './ScreenSymptomsSendButton'
 import { Translate } from 'react-translated'
 
@@ -48,11 +48,15 @@ export default function ScreenSymptons() {
             ]}
           >
             <View style={styles.symptonItemInnerContent}>
+              <Button style={styles.permissionTrust} mode="outlined">
+                <Translate text="permissionTrustPrivacyTermsClickText" />
+              </Button>
               <Text>
                 <Translate text="permissionText" />{' '}
                 <Text style={styles.permissionTrust}>
                   <Translate text="permissionTrust" />
                 </Text>
+                <Translate text="permissionTrustPrivacyTermsText" />
               </Text>
             </View>
             <View style={styles.symptonItemInnerRight} pointerEvents="none">

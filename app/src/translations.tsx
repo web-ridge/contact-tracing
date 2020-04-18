@@ -73,12 +73,20 @@ export default {
     nl: 'of',
   },
   permissionText: {
-    en: `I agree that my locally saved Bluetooth contacts from the past 2 weeks will be shared so that other phones will be notified when they have been in contact with me.`,
-    nl: `Ik ga ermee akkoord dat mijn lokaal opgeslagen Bluetooth-contacten van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
+    en: `I agree that my locally saved ContactTracing Bluetooth users from the past 2 weeks will be shared so that other phones will be notified when they have been in contact with me.`,
+    nl: `Ik ga ermee akkoord dat mijn ContactTracering Bluetooth gebruikers van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
   },
   permissionTrust: {
     en: `Nowhere will be saved wo sent the contacts.`,
     nl: `Nergens wordt opgeslagen wie deze contacten heeft opgestuurd.`,
+  },
+  permissionTrustPrivacyTermsText: {
+    en: `I have read the data privacy agreement and agree to my personal data being processed and used.`,
+    nl: `Ik heb de akkoordverklaring gelezen en ga akkoord met de verwerking en het gebruik van mijn gegevens.`,
+  },
+  permissionTrustPrivacyTermsClickText: {
+    en: `Read privacy verklaring.`,
+    nl: `Lees privacy verklaring.`,
   },
   [`sendContactsButtonText {howManyContacts}`]: {
     en: `Send contacts`,
