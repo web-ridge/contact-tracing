@@ -16,12 +16,14 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en ee
 ## Voordeel aan deze oplossing
 
 - Er staat niet opgeslagen wie besmet is;
+- Het is moeilijk misbruik te plegen omdat je ContactTracingsNummer moet kloppen en deze kun je pas weten als je iemand tegen bent gekomen;
 - Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
-- Een besmet persoon mag zijn bluetooth hashes opsturen waarmee hij contact heeft gehad;
-- Om de zoveel tijd controleerd een telefoon of zijn bluetooth hash op de 'besmette' lijst staat;
+- Een besmet persoon kan vrijwillig de ContactTracingsNummer hashes opsturen waarmee contact is geweest;
+- Om de zoveel tijd controleerd een telefoon of zijn ContactTracingsNummer hash op de 'besmette' lijst staat;
 - Achteraf logica wijzigen van kans op besmetting;
-- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS.
-- Meertaligheid
+- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS;
+- Meertaligheid;
+- Gegevens worden versleuteld met LUKS en ook de databaseverbinding met SSL;
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
@@ -29,7 +31,7 @@ Bob installeert de tracing app via de Play Store.
 
 **Stap 1: Applicatie start op**
 
-De applicaties genereren een willekuerig nummer waarmee het eerste stukje indiceert dat het om een ContactTracingsNummer gaat.
+De applicaties genereren een willekeurig nummer waarmee het eerste stukje indiceert dat het om een ContactTracingsNummer gaat.
 
 Bob komt Alice tegen waarmee hij een praatje maakt. Als deze personen langer met elkaar in contact staan gaat neemt de kans op besmetting toe en gaan de apparaten het volgende doen.
 
