@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 import AsyncStorage from '@react-native-community/async-storage'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
+import { InfectionAlertsQueryVariables } from './__generated__/InfectionAlertsQuery.graphql'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -28,7 +29,9 @@ export async function removeAllEncounters(): Promise<boolean> {
 }
 
 const acceptediOSAlertsKey = 'acceptediOSAlerts'
-export async function getInfectedEncountersQueryVariables() {
+export async function getInfectedEncountersQueryVariables(): Promise<
+  InfectionAlertsQueryVariables
+> {
   const acceptediOSAlerts = await AsyncStorage.getItem(acceptediOSAlertsKey)
   const database = await getDatabase()
   let deviceKeys = await getDeviceKeys()
@@ -42,16 +45,23 @@ export async function getInfectedEncountersQueryVariables() {
 
   return {
     deviceHashesOfMyOwn: deviceKeys.map((deviceKey) => ({
-      hash: deviceKey.hash,
+      hash: sha256(deviceKey.key),
       password: deviceKey.password,
     })),
-    optionalEncounters: optionalEncountersWithiOSDevices,
+    optionalEncounters:
+      (optionalEncountersWithiOSDevices||[]).map(({ hash, rssi, hits, time ,duration }: Encounter) => ({
+        hash,
+        rssi
+        hits
+        time
+        duration
+      })),
   }
 }
 
 // getDeviceKeys fetches the keys from realm where there is risk for an infection (1-14 days)
 // it also removes device keys older than 14 days since they are not needed anymore
-export async function getDeviceKeys(): Promise<string[]> {
+export async function getDeviceKeys(): Promise<DeviceKey[]> {
   const database = await getDatabase()
   try {
     // delete old device keys
