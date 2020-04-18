@@ -11,8 +11,8 @@ type InfectionAlert {
 
 type Query {
   infectedEncounters(
-    deviceHashesOfMyOwn: [DeviceKeyParam!]! # Saved device hashes over 2 week period
-    optionalOtherHashes: [String!] # If user enabled alerts from infected iOS devices
+    deviceHashesOfMyOwn: [DeviceKeyParam!]! # User own device hashes over 2 week period
+    optionalOtherHashes: [String!] # If user enabled alerts from infected iOS devices, the need to send all the contact they have been in contact with
   ): [InfectionAlert]!
 }
 
