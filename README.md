@@ -32,7 +32,7 @@ Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en ee
 - Een besmet persoon kan vrijwillig de ContactTracingsNummer hashes opsturen waarmee contact is geweest;
 - Om de zoveel tijd controleerd een telefoon of zijn ContactTracingsNummer hash op de 'besmette' lijst staat;
 - Achteraf logica wijzigen van kans op besmetting;
-- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS;
+- iOS kan besmetting alerts ontvangen. Android apparaten krijgen binnenkort de mogelijkheid om ook meldingen te krijgen van geïnfecteerde iOS apparaten.
 - Meertaligheid;
 - Gegevens worden versleuteld met LUKS en ook de databaseverbinding met SSL;
 
