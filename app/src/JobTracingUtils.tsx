@@ -94,29 +94,4 @@ export async function deviceScanned(
       )
     }
   }
-
-  // console.log('lets exchange keys')
-
-  // let isConnected = await scannedDevice.isConnected()
-  // if (!isConnected) {
-  //   areConnecting[scannedDeviceUUID] = true
-  //   scannedDevice = await scannedDevice.connect({
-  //     autoConnect: true,
-  //   })
-  // }
-
-  // try {
-  //   const servicesAndMore = await scannedDevice.discoverAllServicesAndCharacteristics()
-  //   console.log('servicesAndMore!!', { servicesAndMore })
-
-  //   // read from other device
-  //   const readCharacteristic = await servicesAndMore.readCharacteristicForService(
-  //     contactTracingServiceUUID,
-  //     contactTracingKeyCharacteristicUUID
-  //   ) // assuming the device is already connected
-
-  //   console.log({ readValue: readCharacteristic.value })
-  // } catch (e) {
-  //   console.log('could not connect', e)
-  // }
 }

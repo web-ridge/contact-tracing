@@ -23,6 +23,8 @@ func getRiskOfEncounter(encounter *dm.InfectedEncounter) int {
 	// how many times the RSSI value changed
 	signalChanges := encounter.Hits
 
+	// TODO do something with duration
+
 	// between 0 and 1 m
 	if encounter.Rssi > FirstMeterRSSI {
 		return highRisk
