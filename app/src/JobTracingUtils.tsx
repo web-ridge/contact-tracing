@@ -2,13 +2,6 @@ import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 
-// import {
-//   contactTracingServiceUUID,
-//   contactTracingKeyCharacteristicUUID,
-// } from './Utils'
-
-// let areConnecting: BoolMap = {}
-// let deviceKey: StringMap = {}
 let rssiValues: RSSIMap = {}
 
 // every 15 minutes

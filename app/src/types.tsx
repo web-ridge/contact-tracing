@@ -12,5 +12,5 @@ export interface RSSIValue {
 }
 
 export interface RSSIMap {
-  [bluetoothID: string]: RSSIValue
+  [contactTracingDeviceUUID: string]: RSSIValue
 }

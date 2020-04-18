@@ -19,9 +19,9 @@ async function scanForBluetoothDevices() {
   await new Promise(async (resolve) => {
     // start advertising as a bluetooth service for other devices
     // console.log('startAdvertising')
-    const deviceKey = await getDeviceUUID()
+    const deviceUUID = await getDeviceUUID()
     // console.log('startAdvertising', { deviceKey })
-    await startAdvertising(deviceKey)
+    await startAdvertising(deviceUUID)
     // console.log('new BleManager()', { deviceKey })
     const manager = new BleManager()
 

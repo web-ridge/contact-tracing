@@ -50,10 +50,9 @@ export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
 
 export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
   const objectsToCreate: Encounter[] = Object.keys(rssiMapUnsafe).map(
-    (bluetoothId) => {
-      const rssiValue = rssiMapUnsafe[bluetoothId]
-      const hash = sha256(bluetoothId)
-
+    (contactTracingDeviceUUID) => {
+      const rssiValue = rssiMapUnsafe[contactTracingDeviceUUID]
+      const hash = sha256(contactTracingDeviceUUID)
       return {
         id: 'id' + nanoid(),
         hash,

@@ -1,9 +1,9 @@
 import Peripheral, { Service, Characteristic } from 'react-native-peripheral'
 
-export async function startAdvertising(deviceKey: string) {
+export async function startAdvertising(deviceUUID: string) {
   // add the characteristic to a service
   const service = new Service({
-    uuid: deviceKey,
+    uuid: deviceUUID,
   })
 
   // register GATT services that your device provides
@@ -11,7 +11,7 @@ export async function startAdvertising(deviceKey: string) {
 
   // start advertising to make your device discoverable
   Peripheral.startAdvertising({
-    name: '-',
-    serviceUuids: [deviceKey],
+    name: '',
+    serviceUuids: [deviceUUID],
   })
 }

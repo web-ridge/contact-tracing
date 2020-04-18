@@ -9,7 +9,7 @@ import {
 } from 'react-native-paper'
 
 import { Translate } from 'react-translated'
-import { getDeviceUUID } from './Utils'
+import { getDeviceHash } from './Utils'
 import { QueryRenderer, graphql } from 'react-relay'
 import RelayEnviroment from './RelayEnvironment'
 import {
@@ -19,12 +19,16 @@ import {
 } from './__generated__/InfectionAlertsQuery.graphql'
 
 const styles = StyleSheet.create({
-  root: { paddingTop: 10, paddingBottom: 10, minHeight: 300 },
+  root: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    minHeight: 300,
+    width: '100%',
+  },
   title: { fontWeight: 'bold', margin: 12, textAlign: 'center' },
   alertRoot: {
     backgroundColor: '#fff',
     margin: 12,
-
     elevation: 10,
     borderRadius: 10,
     flexDirection: 'row',
@@ -54,7 +58,7 @@ export default function InfectionAlerts() {
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
     const setBluetoothHashAsync = async () => {
-      const key = await getDeviceUUID()
+      const key = await getDeviceHash()
       setUniqueDeviceId(key)
     }
 

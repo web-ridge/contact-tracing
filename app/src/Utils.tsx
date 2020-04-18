@@ -1,12 +1,8 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
-import { nanoid } from 'nanoid'
 import { v4 as uuidv4 } from 'uuid'
-// export const contactTracingServiceUUID = '48464861-d2ea-434a-aa73-b5aaf343f701'
-
-export const contactTracingKeyCharacteristicUUID =
-  'bf6bdef8-6080-4507-bfbb-3fb3a83a8ea8'
+import { sha256 } from 'js-sha256'
 
 //getAnonymizedTimestamp removes hours seconds and milli seconds so only date is left
 // this is more anonymous since nobody can possible prove that you met someone on that specific time
@@ -37,6 +33,11 @@ export async function getDatabaseEncryptionKey(): Promise<ArrayBuffer> {
 }
 
 const encryptionDeviceUUIDKey = 'contactTractingDeviceUUID'
+export async function getDeviceHash(): Promise<string> {
+  let uuid = await getDeviceUUID()
+  return sha256(uuid)
+}
+
 export async function getDeviceUUID(): Promise<string> {
   // 87253eb2
   // f508a9ea-d62b-4199-a196-41b62237ac45
@@ -48,7 +49,7 @@ export async function getDeviceUUID(): Promise<string> {
   const contactTracingUUID = uuidParts
     .map((uuidPart, i) => (i === 0 ? 'f508a9ea' : uuidPart))
     .join('-')
-  // console.log(contactTracingUUID)
+  console.log({ contactTracingUUID })
   return contactTracingUUID
 }
 
