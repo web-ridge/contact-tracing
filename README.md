@@ -24,21 +24,23 @@ _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
 Bob installeert de tracing app via de Play Store.
 
-De applicaties genereren bij openen een random key.
+**Stap 1: Applicatie start op**
+
+De applicaties genereren een willekuerig nummer waarmee het eerste stukje indiceert dat het om een ContactTracingsNummer gaat.
 
 Bob komt Alice tegen waarmee hij een praatje maakt. Als deze personen langer met elkaar in contact staan gaat neemt de kans op besmetting toe en gaan de apparaten het volgende doen.
 
-**Stap 1: Beide applicaties sturen hun key door naar elkaar (niet gelukt in dit project...)**
+**Stap 1: Beide apparaten slaan elkaars ContactTracingsNummer op en hashen deze zodat deze niet terug te herleiden is zonder dat het ContactTracingsNummer*
 
-- Bob’s bluetooth hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
-- Alice’s bluetooth hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
+- Bob’s ContactTracingsNummer hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
+- Alice’s ContactTracingsNummer hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
 
-Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun eigen telefoon op met datum en de sterkte van het signaal (RSSI).
+Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun eigen telefoon op met datum en de sterkte van het signaal (RSSI) en het aantal keren wat dit signaal veranderd is.
 
 **Stap 2: Een mogelijke besmetting**
 
 - Alice is besmet met corona.
-- Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende)
+- Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende, anders is de mogelijkheid voor de GGD om deze schermen te bouwen)
 - Alice stuurt de hashes op met een RSSI signaal sterkte (er is niet bekend op de server wat Alice's hash is)
 
 Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash mogelijke infecties heeft.
@@ -65,24 +67,16 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 
 ## Security / data
 
-- Server verwijderd 'geinfecteerde' ontmoetingen na 2 werken.
+- Server verwijderd ContactTracingsNummer meldingen na 2 weken.
 - De lokale data van hashes en datums worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
 - De eigen key waarmee een gebruik identificeerbaar is 
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
 - Stricte controle van SSL certificaat (HTS)
 
-## Concerns
-
-- Moeilijk om keys uit te wisselen tussen apparaten.
 
 ## Blokkades
 
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
 
-Mogelijke oplossing:
-_
-Dit kan ook nog opgelost worden door de logica op iOS andersom te doen. Dus i.p.v. bluetooth contacten op te sturen de eigen bluetooth hash op te sturen.
-De Android apparaten moeten dan wel hashes opgestuurd worden van iOS apparaten om te checken of deze besmet zijn.
-_
