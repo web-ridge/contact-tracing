@@ -8,7 +8,7 @@
 
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en toch een snelle oplossing die ook werkt bij miljoenen gebruikers. ls je de privacy zoveel mogelijk wilt waarborgen zal je zoveel mogelijk data lokaal willen houden. Dit is mogelijk door middel van bluetooth tracing. Alleen je moet ook rekening houden met de batterij van het apparaat en dat de server miljoenen verzoeken aankan.
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en een snelle oplossing die ook werkt bij miljoenen gebruikers. 
 
 ## Voordeel aan deze oplossing
 
