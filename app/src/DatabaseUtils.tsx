@@ -8,6 +8,7 @@ import {
   getStartOfRiskUnix,
   beginningOfContactTracingUUID,
 } from './Utils'
+import { v4 as uuidv4 } from 'uuid'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -57,17 +58,20 @@ export async function getCurrentDeviceKeyOrRenew() {
   }
   beginningOfContactTracingUUID
   // lets generate and save a new DeviceKey
-  // Try to save directly to backend so it won't be claimed by some-one else who see's this UUID
+  // Save directly to backend so it cant't be claimed by some-one else who see's this UUID
 
+  // TODO: create password
   // TODO: create new deviceKey and password
+  let newDeviceKey = generateBluetootTraceKey()
   // TODO: register deviceKey and password
+  // TODO add to Keyschema
 }
 
-// syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
-// so no-one can see infections from someone else
-export async function syncDeviceKeys() {
-  //
-}
+// // syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
+// // so no-one can see infections from someone else
+// export async function syncDeviceKeys() {
+//   //
+// }
 
 export async function removeOldData(): Promise<boolean> {
   const oldEncountersRemoved = await removeOldEncounters()
@@ -159,7 +163,7 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
   }
 }
 
-function generateContactTracingUUID() {
+function generateBluetootTraceKey() {
   let uuid: string = uuidv4()
 
   // let others devices know this is a contact tracing device

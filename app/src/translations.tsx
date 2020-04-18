@@ -28,9 +28,9 @@ export default {
   },
   privacyTracking: {
     en:
-      'All your Bluetooth contacts will be saved locally and fully encrypted.',
+      'All your Bluetooth contactmoments will be saved locally and fully encrypted.',
     nl:
-      'Al jouw Bluetooth contacten worden lokaal opgeslagen en volledig versleuteld.',
+      'Al jouw Bluetooth contactmomenten worden lokaal opgeslagen en volledig versleuteld.',
   },
   refetchAlerts: {
     en: 'Retry',

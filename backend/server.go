@@ -80,10 +80,17 @@ func removeOldData(db *sql.DB) error {
 	log.Debug().Time("beginOfIncubationPeriod", beginOfIncubationPeriod).Msg("Remove old data from before")
 
 	// get infected encounters for this hash in incubation period
-	_, err := dm.InfectedEncounters(
+	if _, err := dm.InfectedEncounters(
 		dm.InfectedEncounterWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
-	).DeleteAll(context.Background(), db)
-	if err != nil {
+	).DeleteAll(context.Background(), db); err != nil {
+		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
+		log.Error().Err(err).Msg("issue with removing data")
+		return err
+	}
+
+	if_, err := dm.DeviceKeys(
+		dm.DeviceKeyWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
+	).DeleteAll(context.Background(), db);err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
 		return err
