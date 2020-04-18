@@ -109,7 +109,9 @@ export async function deviceScanned(
   let isConnected = await scannedDevice.isConnected()
   if (!isConnected) {
     areConnecting[scannedDevice.id] = true
-    scannedDevice = await scannedDevice.connect()
+    scannedDevice = await scannedDevice.connect({
+      autoConnect: true,
+    })
   }
 
   try {
