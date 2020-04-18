@@ -208,12 +208,9 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 
 const createDeviceKeyError = "could not create device key"
 
-func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input *fm.DeviceKeyCreateInput) (*fm.OkPayload, error) {
-	if input == nil {
-		return nil, fmt.Errorf(createDeviceKeyError)
-	}
+func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input fm.DeviceKeyCreateInput) (*fm.OkPayload, error) {
 
-	boilerModel := DeviceKeyCreateInputToBoiler(input)
+	boilerModel := DeviceKeyCreateInputToBoiler(&input)
 	if err := boilerModel.Insert(ctx, r.db, boil.Infer()); err != nil {
 		log.Error().Err(err).Msg("Could not insert device key")
 		return nil, fmt.Errorf(createDeviceKeyError)
@@ -248,7 +245,7 @@ func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, d
 
 const removeDeviceKeysError = "could not delete device keys"
 
-func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),
