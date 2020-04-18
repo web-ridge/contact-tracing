@@ -5,6 +5,11 @@
 |
 <img src="https://user-images.githubusercontent.com/6492229/79634323-0e05d080-816a-11ea-8d88-97b870d25637.jpeg" width="280" />
 
+# Jij hebt de controle
+Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. All jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.   
+   
+Als jij COVID-19 hebt kun je dit zelf melden via de app (of met een QR-code). Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
+
 ## Help us
 
 - Adding explain why Location permission is needed on Android to get access to Bluetooth.
