@@ -5,6 +5,11 @@ export interface Encounter {
   hits: number
   time: number
 }
+export interface DeviceKey {
+  id: string
+  key: string
+  password: string
+}
 
 export interface RSSIValue {
   rssi: number

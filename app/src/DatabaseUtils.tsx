@@ -1,4 +1,4 @@
-import { RSSIMap, Encounter } from './types'
+import { RSSIMap, Encounter, DeviceKey } from './types'
 import { getDatabase, EncounterSchema, KeysSchema } from './Database'
 import { sha256 } from 'js-sha256'
 import 'react-native-get-random-values'
@@ -18,7 +18,7 @@ export async function removeAllEncounters(): Promise<boolean> {
   }
 }
 
-// getDeviceKeys fetches the keys from realm where risk is for infection (1-14 days)
+// getDeviceKeys fetches the keys from realm where there is risk for an infection (1-14 days)
 // it also removes device keys older than 14 days since they are not needed anymore
 export async function getDeviceKeys(): Promise<string[]> {
   const database = await getDatabase()
@@ -33,8 +33,10 @@ export async function getDeviceKeys(): Promise<string[]> {
     })
 
     let keys = database.objects(KeysSchema.name)
-
-    return []
+    if (!keys) {
+      return []
+    }
+    return keys as any
   } catch (error) {
     console.log('getDeviceKeys', { error })
     return []
@@ -49,7 +51,6 @@ export async function getCurrentDeviceKeyOrCreate() {
   // TODO: check if device key exist for this date
   // TODO: create new deviceKey and password
   // TODO: register deviceKey and password
-  //
 }
 
 export async function removeOldEncounters(): Promise<boolean> {

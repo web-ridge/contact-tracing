@@ -20,7 +20,6 @@ export const KeysSchema = {
     id: 'string', // primary key
     key: 'string', // external identifier for other devices
     password: 'string', // used to secure risk counts on Android
-    synced: '', // used to sync keys with passwords
     time: { type: 'int', default: 0 },
   },
 }

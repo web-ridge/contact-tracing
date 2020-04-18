@@ -21,6 +21,14 @@ type InfectedEncounter struct {
 	Time                 int    `gorm:"not null"`
 }
 
+// generated in the device and used to fetch risk information
+type DeviceKey struct {
+	ID       uint   `gorm:"primary_key"`
+	Key      string `gorm:"not null;index:key"`
+	Password string `gorm:"not null;index:password"`
+	Time     int    `gorm:"not null"`
+}
+
 func main() {
 	// Start database connection
 	connStr := fmt.Sprintf(`host=%v port=%v user=%v dbname=%v password=%v sslmode=%v`,
