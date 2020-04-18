@@ -18,7 +18,7 @@ export async function startAdvertising(deviceKey: string) {
 
   // start advertising to make your device discoverable
   Peripheral.startAdvertising({
-    name: '',
+    name: 'ctrwri',
     serviceUuids: [deviceKey],
   })
 }

@@ -142,6 +142,8 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
         rssi: rssiValue.rssi,
         hits: rssiValue.hits,
         time: getAnonymizedTimestamp(),
+        duration: rssiValue.end - rssiValue.start,
+        isIos: rssiValue.isIos,
       }
     }
   )

@@ -4,6 +4,8 @@ export interface Encounter {
   rssi: number
   hits: number
   time: number
+  duration: number
+  isIos: boolean
 }
 export interface DeviceKey {
   id: string
@@ -14,8 +16,9 @@ export interface DeviceKey {
 export interface RSSIValue {
   rssi: number
   hits: number
-  start: number
-  end: number
+  start: number // used to generate duration before syncing to database
+  end: number // used to generate duration before syncing to database
+  isIos: boolean // used to fetch infected ios targets if enabled
 }
 
 export interface RSSIMap {

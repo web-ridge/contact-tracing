@@ -7,9 +7,11 @@ export const EncounterSchema = {
   properties: {
     id: 'string', // primary key
     hash: 'string',
+    isIos: 'boolean', // used to fetch infected iOS targets later on if user opted-in for that
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },
     time: { type: 'int', default: 0 }, // hours/seconds are removed, only for easy filtering with unix
+    duration: { type: 'int', default: 0 },
   },
 }
 
@@ -20,7 +22,6 @@ export const KeysSchema = {
     id: 'string', // primary key
     key: 'string', // external identifier for other devices
     password: 'string', // used to secure risk counts on Android
-    synced: 'boolean', // used to secure risk counts on Android
     time: { type: 'int', default: 0 },
   },
 }

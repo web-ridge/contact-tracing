@@ -56,3 +56,29 @@ func InfectedEncounterCreateInputToBoiler(
 	}
 	return r
 }
+
+func EncountersInputsToBoiler(am []*graphql_models.EncounterInput) []*models.InfectedEncounter {
+	ar := make([]*models.InfectedEncounter, len(am))
+	for i, m := range am {
+		ar[i] = EncounterInputToBoiler(
+			m,
+		)
+	}
+	return ar
+}
+
+func EncounterInputToBoiler(
+	m *graphql_models.EncounterInput,
+) *models.InfectedEncounter {
+	if m == nil {
+		return nil
+	}
+	r := &models.InfectedEncounter{
+		PossibleInfectedHash: m.Hash,
+		Rssi:                 m.Rssi,
+		Hits:                 m.Hits,
+		Time:                 m.Time,
+		Duration:             m.Duration,
+	}
+	return r
+}

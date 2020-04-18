@@ -64,7 +64,7 @@ export async function deviceScanned(
   const previousValue = rssiValues[scannedDeviceUUID]
   const latestRSSI = scannedDevice.rssi
   const didComeCloser = !previousValue || latestRSSI > previousValue.rssi
-
+  const isIos = scannedDevice.name === 'ctrwri'
   if (didComeCloser) {
     rssiValues[scannedDeviceUUID] = previousValue
       ? {
@@ -73,12 +73,14 @@ export async function deviceScanned(
           hits: previousValue.hits + 1,
           start: previousValue.start,
           end: now(),
+          isIos,
         }
       : {
           rssi: latestRSSI,
           hits: 1,
           start: now(),
           end: now(),
+          isIos,
         }
 
     // @ts-ignore

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/volatiletech/sqlboiler/boil"
 	fm "github.com/web-ridge/contact-tracing/backend/graphql_models"
 
 	. "github.com/web-ridge/contact-tracing/backend/helpers"
@@ -101,11 +102,14 @@ func secureHashes(deviceKeysParams []fm.DeviceKeyParam,
 	return validHashes
 }
 
+// getHashesFromOptionalEncounters returns all device hashes which are possible iOS
+func getHashesFromOptionalEncounters(optionalEncounters []*fm.EncounterInput)
+
 // InfectedEncounters fetches the shared encounters of other users with my device key. Only the user will be able to fetch
 // these since the others don't have the password which is in a local persisted database
 // optionalExtraDeviceHashes is used to check infected device keys since iOS users won't be able to track in the background
 // they can register their device as being infected (and remove it every time they want)
-func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) ([]*fm.InfectionAlert, error) {
+func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMyOwn []fm.DeviceKeyParam, optionalEncounters []*fm.EncounterInput) ([]*fm.InfectionAlert, error) {
 
 	//  1-14 days, most commonly around five days.
 	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
@@ -180,11 +184,44 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 	return getRiskAlerts(securedEncounters), nil
 }
 
-func (r *mutationResolver) CreateDeviceKey(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+const createDeviceKeyError = "could not create device key"
 
+func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input *fm.DeviceKeyCreateInput) (*fm.OkPayload, error) {
+	if input == nil {
+		return nil, fmt.Errorf(createDeviceKeyError)
+	}
+
+	boilerModel := DeviceKeyCreateInputToBoiler(input)
+	if err := boilerModel.Insert(ctx, r.db, boil.Infer()); err != nil {
+		log.Error().Err(err).Msg("Could not insert device key")
+		return nil, fmt.Errorf(createDeviceKeyError)
+	}
+	return &fm.OkPayload{Ok: true}, nil
 }
-func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
 
+const deleteInfectedEncountersOnKeysError = "could not delete infected encounters"
+
+func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam) (*fm.OkPayload, error) {
+	realSecureKeys, err := dm.DeviceKeys(
+		dm.DeviceKeyWhere.Hash.IN(
+			getDeviceKeysFromParams(deviceKeysOfUserParams),
+		),
+	).All(ctx, r.db)
+	if err != nil {
+		log.Error().Err(err).Msg("Could not fetch device keys")
+		return nil, fmt.Errorf(deleteInfectedEncountersOnKeysError)
+	}
+
+	// only use validated hashes in query
+	secureHashes := secureHashes(deviceKeysOfUserParams, realSecureKeys)
+	if len(secureHashes) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
+	if _, err := dm.InfectedEncounters(dm.InfectedEncounterWhere.PossibleInfectedHash.IN(secureHashes)).DeleteAll(ctx, r.db); err != nil {
+		log.Error().Err(err).Msg("Could not delete device keys")
+		return nil, fmt.Errorf(removeDeviceKeysError)
+	}
+	return &fm.OkPayload{Ok: true}, nil
 }
 
 const removeDeviceKeysError = "could not delete device keys"
@@ -201,7 +238,7 @@ func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUse
 		return nil, fmt.Errorf(removeDeviceKeysError)
 	}
 
-	// only use checked hashes in query
+	// only use validated hashes in query
 	secureHashes := secureHashes(deviceKeysOfUserParams, realSecureKeys)
 	if len(secureHashes) == 0 {
 		return &fm.OkPayload{Ok: true}, nil
@@ -229,7 +266,7 @@ func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, dev
 		return nil, fmt.Errorf(registerDeviceKeysAsInfectedError)
 	}
 
-	// only use checked hashes in query
+	// only use validated hashes in query
 	secureHashes := secureHashes(deviceKeysOfUserParams, realSecureKeys)
 	if len(secureHashes) == 0 {
 		return &fm.OkPayload{Ok: true}, nil
