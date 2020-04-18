@@ -42,29 +42,39 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	InfectedEncounterCreatePayload struct {
-		Ok func(childComplexity int) int
-	}
-
 	InfectionAlert struct {
 		HowManyEncounters func(childComplexity int) int
 		Risk              func(childComplexity int) int
 	}
 
 	Mutation struct {
-		CreateInfectedEncounters func(childComplexity int, input InfectedEncountersCreateInput) int
+		CreateDeviceKey                func(childComplexity int, input DeviceKeyCreateInput) int
+		CreateInfectedEncounters       func(childComplexity int, input InfectedEncountersCreateInput) int
+		DeleteInfectedEncountersOnKeys func(childComplexity int, keys []*DeviceKeyParam) int
+		RegisterDeviceKeysAsInfected   func(childComplexity int, keys []*DeviceKeyParam) int
+		RemoveDeviceKeys               func(childComplexity int, keys []*DeviceKeyParam) int
+		RemoveDeviceKeysAsInfected     func(childComplexity int, keys []*DeviceKeyParam) int
+	}
+
+	OkPayload struct {
+		Ok func(childComplexity int) int
 	}
 
 	Query struct {
-		InfectedEncounters func(childComplexity int, hash string) int
+		InfectedEncounters func(childComplexity int, deviceHashesOfMyOwn []*DeviceKeyParam, optionalOtherHashes []string) int
 	}
 }
 
 type MutationResolver interface {
-	CreateInfectedEncounters(ctx context.Context, input InfectedEncountersCreateInput) (*InfectedEncounterCreatePayload, error)
+	CreateInfectedEncounters(ctx context.Context, input InfectedEncountersCreateInput) (*OkPayload, error)
+	RegisterDeviceKeysAsInfected(ctx context.Context, keys []*DeviceKeyParam) (*OkPayload, error)
+	CreateDeviceKey(ctx context.Context, input DeviceKeyCreateInput) (*OkPayload, error)
+	DeleteInfectedEncountersOnKeys(ctx context.Context, keys []*DeviceKeyParam) (*OkPayload, error)
+	RemoveDeviceKeysAsInfected(ctx context.Context, keys []*DeviceKeyParam) (*OkPayload, error)
+	RemoveDeviceKeys(ctx context.Context, keys []*DeviceKeyParam) (*OkPayload, error)
 }
 type QueryResolver interface {
-	InfectedEncounters(ctx context.Context, hash string) ([]*InfectionAlert, error)
+	InfectedEncounters(ctx context.Context, deviceHashesOfMyOwn []*DeviceKeyParam, optionalOtherHashes []string) ([]*InfectionAlert, error)
 }
 
 type executableSchema struct {
@@ -82,13 +92,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "InfectedEncounterCreatePayload.ok":
-		if e.complexity.InfectedEncounterCreatePayload.Ok == nil {
-			break
-		}
-
-		return e.complexity.InfectedEncounterCreatePayload.Ok(childComplexity), true
-
 	case "InfectionAlert.howManyEncounters":
 		if e.complexity.InfectionAlert.HowManyEncounters == nil {
 			break
@@ -103,6 +106,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InfectionAlert.Risk(childComplexity), true
 
+	case "Mutation.createDeviceKey":
+		if e.complexity.Mutation.CreateDeviceKey == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createDeviceKey_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateDeviceKey(childComplexity, args["input"].(DeviceKeyCreateInput)), true
+
 	case "Mutation.createInfectedEncounters":
 		if e.complexity.Mutation.CreateInfectedEncounters == nil {
 			break
@@ -115,6 +130,61 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateInfectedEncounters(childComplexity, args["input"].(InfectedEncountersCreateInput)), true
 
+	case "Mutation.deleteInfectedEncountersOnKeys":
+		if e.complexity.Mutation.DeleteInfectedEncountersOnKeys == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteInfectedEncountersOnKeys_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteInfectedEncountersOnKeys(childComplexity, args["keys"].([]*DeviceKeyParam)), true
+
+	case "Mutation.registerDeviceKeysAsInfected":
+		if e.complexity.Mutation.RegisterDeviceKeysAsInfected == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_registerDeviceKeysAsInfected_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RegisterDeviceKeysAsInfected(childComplexity, args["keys"].([]*DeviceKeyParam)), true
+
+	case "Mutation.removeDeviceKeys":
+		if e.complexity.Mutation.RemoveDeviceKeys == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeDeviceKeys_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveDeviceKeys(childComplexity, args["keys"].([]*DeviceKeyParam)), true
+
+	case "Mutation.removeDeviceKeysAsInfected":
+		if e.complexity.Mutation.RemoveDeviceKeysAsInfected == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeDeviceKeysAsInfected_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveDeviceKeysAsInfected(childComplexity, args["keys"].([]*DeviceKeyParam)), true
+
+	case "OkPayload.ok":
+		if e.complexity.OkPayload.Ok == nil {
+			break
+		}
+
+		return e.complexity.OkPayload.Ok(childComplexity), true
+
 	case "Query.infectedEncounters":
 		if e.complexity.Query.InfectedEncounters == nil {
 			break
@@ -125,7 +195,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfectedEncounters(childComplexity, args["hash"].(string)), true
+		return e.complexity.Query.InfectedEncounters(childComplexity, args["deviceHashesOfMyOwn"].([]*DeviceKeyParam), args["optionalOtherHashes"].([]string)), true
 
 	}
 	return 0, false
@@ -203,7 +273,15 @@ type InfectionAlert {
 }
 
 type Query {
-  infectedEncounters(hash: String!): [InfectionAlert]!
+  infectedEncounters(
+    deviceHashesOfMyOwn: [DeviceKeyParam!]! # User own device hashes over 2 week period
+    optionalOtherHashes: [String!] # If user enabled alerts from infected iOS devices, the need to send all the contact they have been in contact with
+  ): [InfectionAlert]!
+}
+
+input DeviceKeyParam {
+  hash: String! # hash of random generated id
+  password: String! # password of this key to fetch infectedEncounters or to remove
 }
 
 input InfectedEncounterCreateInput {
@@ -211,20 +289,47 @@ input InfectedEncounterCreateInput {
   rssi: Int!
   hits: Int!
   time: Int!
+  duration: Int!
+}
+
+input InfectedEncounterUpdateInput {
+  randomPart: String
+  possibleInfectedHash: String
+  rssi: Int
+  hits: Int
+  time: Int
+  duration: Int
 }
 
 input InfectedEncountersCreateInput {
   infectedEncounters: [InfectedEncounterCreateInput!]!
 }
 
-type InfectedEncounterCreatePayload {
+input DeviceKeyCreateInput {
+  hash: String!
+  password: String!
+  time: Int!
+}
+
+type OkPayload {
   ok: Boolean!
 }
 
 type Mutation {
-  createInfectedEncounters(
-    input: InfectedEncountersCreateInput!
-  ): InfectedEncounterCreatePayload!
+  # let Android user share their contactmoments no trace back to user will be saved!
+  createInfectedEncounters(input: InfectedEncountersCreateInput!): OkPayload!
+
+  # let iOS users register their device keys of two weeks as infected
+  registerDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
+
+  # user generated a device key and password so know this uuid really belongs to that user
+  createDeviceKey(input: DeviceKeyCreateInput!): OkPayload!
+
+  ## AVG -> User should be able to always remove all their data from server
+  # Let user remove infected encounters on their device id's from database (AVG)
+  deleteInfectedEncountersOnKeys(keys: [DeviceKeyParam!]!): OkPayload!
+  removeDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
+  removeDeviceKeys(keys: [DeviceKeyParam!]!): OkPayload!
 }
 `, BuiltIn: false},
 }
@@ -233,6 +338,20 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_createDeviceKey_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 DeviceKeyCreateInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyCreateInput2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyCreateInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createInfectedEncounters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -245,6 +364,62 @@ func (ec *executionContext) field_Mutation_createInfectedEncounters_args(ctx con
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteInfectedEncountersOnKeys_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*DeviceKeyParam
+	if tmp, ok := rawArgs["keys"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keys"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_registerDeviceKeysAsInfected_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*DeviceKeyParam
+	if tmp, ok := rawArgs["keys"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keys"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeDeviceKeysAsInfected_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*DeviceKeyParam
+	if tmp, ok := rawArgs["keys"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keys"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeDeviceKeys_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*DeviceKeyParam
+	if tmp, ok := rawArgs["keys"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keys"] = arg0
 	return args, nil
 }
 
@@ -265,14 +440,22 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_infectedEncounters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["hash"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 []*DeviceKeyParam
+	if tmp, ok := rawArgs["deviceHashesOfMyOwn"]; ok {
+		arg0, err = ec.unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["hash"] = arg0
+	args["deviceHashesOfMyOwn"] = arg0
+	var arg1 []string
+	if tmp, ok := rawArgs["optionalOtherHashes"]; ok {
+		arg1, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["optionalOtherHashes"] = arg1
 	return args, nil
 }
 
@@ -311,40 +494,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _InfectedEncounterCreatePayload_ok(ctx context.Context, field graphql.CollectedField, obj *InfectedEncounterCreatePayload) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "InfectedEncounterCreatePayload",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Ok, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
 
 func (ec *executionContext) _InfectionAlert_howManyEncounters(ctx context.Context, field graphql.CollectedField, obj *InfectionAlert) (ret graphql.Marshaler) {
 	defer func() {
@@ -450,9 +599,248 @@ func (ec *executionContext) _Mutation_createInfectedEncounters(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*InfectedEncounterCreatePayload)
+	res := resTmp.(*OkPayload)
 	fc.Result = res
-	return ec.marshalNInfectedEncounterCreatePayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncounterCreatePayload(ctx, field.Selections, res)
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_registerDeviceKeysAsInfected(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_registerDeviceKeysAsInfected_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RegisterDeviceKeysAsInfected(rctx, args["keys"].([]*DeviceKeyParam))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OkPayload)
+	fc.Result = res
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createDeviceKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createDeviceKey_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateDeviceKey(rctx, args["input"].(DeviceKeyCreateInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OkPayload)
+	fc.Result = res
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteInfectedEncountersOnKeys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteInfectedEncountersOnKeys_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteInfectedEncountersOnKeys(rctx, args["keys"].([]*DeviceKeyParam))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OkPayload)
+	fc.Result = res
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeDeviceKeysAsInfected(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeDeviceKeysAsInfected_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveDeviceKeysAsInfected(rctx, args["keys"].([]*DeviceKeyParam))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OkPayload)
+	fc.Result = res
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeDeviceKeys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeDeviceKeys_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveDeviceKeys(rctx, args["keys"].([]*DeviceKeyParam))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OkPayload)
+	fc.Result = res
+	return ec.marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OkPayload_ok(ctx context.Context, field graphql.CollectedField, obj *OkPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "OkPayload",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ok, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_infectedEncounters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -479,7 +867,7 @@ func (ec *executionContext) _Query_infectedEncounters(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().InfectedEncounters(rctx, args["hash"].(string))
+		return ec.resolvers.Query().InfectedEncounters(rctx, args["deviceHashesOfMyOwn"].([]*DeviceKeyParam), args["optionalOtherHashes"].([]string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1620,6 +2008,60 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputDeviceKeyCreateInput(ctx context.Context, obj interface{}) (DeviceKeyCreateInput, error) {
+	var it DeviceKeyCreateInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "hash":
+			var err error
+			it.Hash, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "time":
+			var err error
+			it.Time, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDeviceKeyParam(ctx context.Context, obj interface{}) (DeviceKeyParam, error) {
+	var it DeviceKeyParam
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "hash":
+			var err error
+			it.Hash, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputInfectedEncounterCreateInput(ctx context.Context, obj interface{}) (InfectedEncounterCreateInput, error) {
 	var it InfectedEncounterCreateInput
 	var asMap = obj.(map[string]interface{})
@@ -1647,6 +2089,60 @@ func (ec *executionContext) unmarshalInputInfectedEncounterCreateInput(ctx conte
 		case "time":
 			var err error
 			it.Time, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+			it.Duration, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInfectedEncounterUpdateInput(ctx context.Context, obj interface{}) (InfectedEncounterUpdateInput, error) {
+	var it InfectedEncounterUpdateInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "randomPart":
+			var err error
+			it.RandomPart, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "possibleInfectedHash":
+			var err error
+			it.PossibleInfectedHash, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rssi":
+			var err error
+			it.Rssi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hits":
+			var err error
+			it.Hits, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "time":
+			var err error
+			it.Time, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+			it.Duration, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1681,33 +2177,6 @@ func (ec *executionContext) unmarshalInputInfectedEncountersCreateInput(ctx cont
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
-
-var infectedEncounterCreatePayloadImplementors = []string{"InfectedEncounterCreatePayload"}
-
-func (ec *executionContext) _InfectedEncounterCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *InfectedEncounterCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, infectedEncounterCreatePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("InfectedEncounterCreatePayload")
-		case "ok":
-			out.Values[i] = ec._InfectedEncounterCreatePayload_ok(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
 
 var infectionAlertImplementors = []string{"InfectionAlert"}
 
@@ -1758,6 +2227,58 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createInfectedEncounters":
 			out.Values[i] = ec._Mutation_createInfectedEncounters(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "registerDeviceKeysAsInfected":
+			out.Values[i] = ec._Mutation_registerDeviceKeysAsInfected(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createDeviceKey":
+			out.Values[i] = ec._Mutation_createDeviceKey(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteInfectedEncountersOnKeys":
+			out.Values[i] = ec._Mutation_deleteInfectedEncountersOnKeys(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeDeviceKeysAsInfected":
+			out.Values[i] = ec._Mutation_removeDeviceKeysAsInfected(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeDeviceKeys":
+			out.Values[i] = ec._Mutation_removeDeviceKeys(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var okPayloadImplementors = []string{"OkPayload"}
+
+func (ec *executionContext) _OkPayload(ctx context.Context, sel ast.SelectionSet, obj *OkPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, okPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OkPayload")
+		case "ok":
+			out.Values[i] = ec._OkPayload_ok(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2075,6 +2596,42 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNDeviceKeyCreateInput2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyCreateInput(ctx context.Context, v interface{}) (DeviceKeyCreateInput, error) {
+	return ec.unmarshalInputDeviceKeyCreateInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNDeviceKeyParam2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParam(ctx context.Context, v interface{}) (DeviceKeyParam, error) {
+	return ec.unmarshalInputDeviceKeyParam(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNDeviceKeyParam2ᚕᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParamᚄ(ctx context.Context, v interface{}) ([]*DeviceKeyParam, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*DeviceKeyParam, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNDeviceKeyParam2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParam(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNDeviceKeyParam2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParam(ctx context.Context, v interface{}) (*DeviceKeyParam, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNDeviceKeyParam2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐDeviceKeyParam(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) unmarshalNInfectedEncounterCreateInput2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncounterCreateInput(ctx context.Context, v interface{}) (InfectedEncounterCreateInput, error) {
 	return ec.unmarshalInputInfectedEncounterCreateInput(ctx, v)
 }
@@ -2105,20 +2662,6 @@ func (ec *executionContext) unmarshalNInfectedEncounterCreateInput2ᚖgithubᚗc
 	}
 	res, err := ec.unmarshalNInfectedEncounterCreateInput2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncounterCreateInput(ctx, v)
 	return &res, err
-}
-
-func (ec *executionContext) marshalNInfectedEncounterCreatePayload2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncounterCreatePayload(ctx context.Context, sel ast.SelectionSet, v InfectedEncounterCreatePayload) graphql.Marshaler {
-	return ec._InfectedEncounterCreatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNInfectedEncounterCreatePayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncounterCreatePayload(ctx context.Context, sel ast.SelectionSet, v *InfectedEncounterCreatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._InfectedEncounterCreatePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNInfectedEncountersCreateInput2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐInfectedEncountersCreateInput(ctx context.Context, v interface{}) (InfectedEncountersCreateInput, error) {
@@ -2174,6 +2717,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNOkPayload2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx context.Context, sel ast.SelectionSet, v OkPayload) graphql.Marshaler {
+	return ec._OkPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOkPayload2ᚖgithubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐOkPayload(ctx context.Context, sel ast.SelectionSet, v *OkPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._OkPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRisk2githubᚗcomᚋwebᚑridgeᚋcontactᚑtracingᚋbackendᚋgraphql_modelsᚐRisk(ctx context.Context, v interface{}) (Risk, error) {
@@ -2459,12 +3016,67 @@ func (ec *executionContext) marshalOInfectionAlert2ᚖgithubᚗcomᚋwebᚑridge
 	return ec._InfectionAlert(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
+	return graphql.UnmarshalInt(v)
+}
+
+func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	return graphql.MarshalInt(v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOInt2int(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOInt2int(ctx, sel, *v)
+}
+
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalString(v)
 }
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

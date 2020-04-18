@@ -17,5 +17,6 @@ require (
 	github.com/vektah/gqlparser/v2 v2.0.1
 	github.com/volatiletech/sqlboiler v3.7.0+incompatible
 	github.com/web-ridge/gqlgen-sqlboiler/examples/social-network v0.0.0-20200416094100-889354b08a01
+	github.com/web-ridge/gqlgen-sqlboiler/helper v0.0.0-20200409201443-82c6f4a43f5e
 	github.com/web-ridge/utils-go/api v0.0.0-20200415194614-3a337234e424
 )

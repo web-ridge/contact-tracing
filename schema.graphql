@@ -29,15 +29,6 @@ input InfectedEncounterCreateInput {
   duration: Int!
 }
 
-input InfectedEncounterUpdateInput {
-  randomPart: String
-  possibleInfectedHash: String
-  rssi: Int
-  hits: Int
-  time: Int
-  duration: Int
-}
-
 input InfectedEncountersCreateInput {
   infectedEncounters: [InfectedEncounterCreateInput!]!
 }

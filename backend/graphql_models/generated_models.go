@@ -8,15 +8,32 @@ import (
 	"strconv"
 )
 
+type DeviceKeyCreateInput struct {
+	Hash     string `json:"hash"`
+	Password string `json:"password"`
+	Time     int    `json:"time"`
+}
+
+type DeviceKeyParam struct {
+	Hash     string `json:"hash"`
+	Password string `json:"password"`
+}
+
 type InfectedEncounterCreateInput struct {
 	PossibleInfectedHash string `json:"possibleInfectedHash"`
 	Rssi                 int    `json:"rssi"`
 	Hits                 int    `json:"hits"`
 	Time                 int    `json:"time"`
+	Duration             int    `json:"duration"`
 }
 
-type InfectedEncounterCreatePayload struct {
-	Ok bool `json:"ok"`
+type InfectedEncounterUpdateInput struct {
+	RandomPart           *string `json:"randomPart"`
+	PossibleInfectedHash *string `json:"possibleInfectedHash"`
+	Rssi                 *int    `json:"rssi"`
+	Hits                 *int    `json:"hits"`
+	Time                 *int    `json:"time"`
+	Duration             *int    `json:"duration"`
 }
 
 type InfectedEncountersCreateInput struct {
@@ -26,6 +43,10 @@ type InfectedEncountersCreateInput struct {
 type InfectionAlert struct {
 	HowManyEncounters int  `json:"howManyEncounters"`
 	Risk              Risk `json:"risk"`
+}
+
+type OkPayload struct {
+	Ok bool `json:"ok"`
 }
 
 type Risk string
