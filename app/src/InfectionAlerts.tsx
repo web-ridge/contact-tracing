@@ -9,7 +9,7 @@ import {
 } from 'react-native-paper'
 
 import { Translate } from 'react-translated'
-import { getDeviceKey } from './Utils'
+import { getDeviceUUID } from './Utils'
 import { QueryRenderer, graphql } from 'react-relay'
 import RelayEnviroment from './RelayEnvironment'
 import {
@@ -54,7 +54,7 @@ export default function InfectionAlerts() {
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
     const setBluetoothHashAsync = async () => {
-      const key = await getDeviceKey()
+      const key = await getDeviceUUID()
       setUniqueDeviceId(key)
     }
 

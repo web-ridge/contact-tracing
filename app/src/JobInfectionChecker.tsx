@@ -2,7 +2,7 @@ import { fetchQuery, graphql } from 'relay-runtime'
 import RelayEnviroment from './RelayEnvironment'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { getDeviceKey } from './Utils'
+import { getDeviceUUID } from './Utils'
 import {
   JobInfectionCheckerQuery,
   JobInfectionCheckerQueryResponse,
@@ -26,7 +26,7 @@ async function getBluetoothHash(): Promise<string> {
   if (deviceKey) {
     return deviceKey
   }
-  deviceKey = await getDeviceKey()
+  deviceKey = await getDeviceUUID()
 
   return deviceKey
 }

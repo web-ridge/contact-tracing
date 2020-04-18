@@ -1,8 +1,9 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
-
-export const contactTracingServiceUUID = '48464861-d2ea-434a-aa73-b5aaf343f701'
+import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
+// export const contactTracingServiceUUID = '48464861-d2ea-434a-aa73-b5aaf343f701'
 
 export const contactTracingKeyCharacteristicUUID =
   'bf6bdef8-6080-4507-bfbb-3fb3a83a8ea8'
@@ -35,9 +36,20 @@ export async function getDatabaseEncryptionKey(): Promise<ArrayBuffer> {
   return getSecureKeyArrayBuffer(encryptionDatabaseKey, 64)
 }
 
-const encryptionDeviceUUIDKey = 'contactTractingDeviceID'
-export async function getDeviceKey(): Promise<string> {
-  return getSecureKey(encryptionDeviceUUIDKey, 64)
+const encryptionDeviceUUIDKey = 'contactTractingDeviceUUID'
+export async function getDeviceUUID(): Promise<string> {
+  // 87253eb2
+  // f508a9ea-d62b-4199-a196-41b62237ac45
+  // ctrcwebr
+  const uuid = await getSecureUUID(encryptionDeviceUUIDKey)
+
+  // let others devices know this is a contact tracing device
+  const uuidParts = uuid.split('-')
+  const contactTracingUUID = uuidParts
+    .map((uuidPart, i) => (i === 0 ? 'f508a9ea' : uuidPart))
+    .join('-')
+  // console.log(contactTracingUUID)
+  return contactTracingUUID
 }
 
 async function getSecureKeyArrayBuffer(
@@ -47,6 +59,25 @@ async function getSecureKeyArrayBuffer(
   const stringKey = await getSecureKey(key, howManyBytes)
   const arrayBuffer = _base64ToArrayBuffer(stringKey)
   return arrayBuffer
+}
+
+async function getSecureUUID(key: string): Promise<string> {
+  const exist = await RNSecureStorage.exists(key)
+  if (exist) {
+    const stringKey = await RNSecureStorage.get(key)
+    if (stringKey) {
+      return stringKey
+    }
+  }
+
+  // key does not exist (yet)
+  //@ts-ignore
+  let uuid: string = uuidv4()
+  // store so we can de-crypt next time
+  await RNSecureStorage.set(key, uuid, {
+    accessible: ACCESSIBLE.ALWAYS, // we need to write, even when device is in sleep mode
+  })
+  return uuid
 }
 
 async function getSecureKey(

@@ -2,21 +2,13 @@ import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 
-import {
-  contactTracingServiceUUID,
-  contactTracingKeyCharacteristicUUID,
-} from './Utils'
+// import {
+//   contactTracingServiceUUID,
+//   contactTracingKeyCharacteristicUUID,
+// } from './Utils'
 
-interface BoolMap {
-  [bluetoothID: string]: boolean
-}
-
-interface StringMap {
-  [bluetoothID: string]: string
-}
-
-let areConnecting: BoolMap = {}
-let deviceKey: StringMap = {}
+// let areConnecting: BoolMap = {}
+// let deviceKey: StringMap = {}
 let rssiValues: RSSIMap = {}
 
 // every 15 minutes
@@ -24,7 +16,7 @@ const hour = 1 * 1000 * 60 * 60
 const minute = 1 * 1000 * 60
 export const jobInterval = //@ts-ignore
   process.env.NODE_ENV === 'development'
-    ? Math.round(hour / 4)
+    ? Math.round(minute)
     : Math.round(hour / 4)
 
 export async function syncMap(): Promise<boolean> {
@@ -33,6 +25,7 @@ export async function syncMap(): Promise<boolean> {
   if (done) {
     console.log('syncing rrsi values done')
     rssiValues = {}
+
     return true
   } else {
     console.log('syncing rrsi not done')
@@ -59,17 +52,27 @@ export async function deviceScanned(
     console.log('not valid device', scannedDevice && scannedDevice.id)
     return
   }
-  if (areConnecting[scannedDevice.id]) {
-    console.log('areConnecting[scannedDevice.id]', scannedDevice.id)
+
+  const scannedDeviceUUID = (
+    scannedDevice.serviceUUIDs || []
+  ).find((su: string) => su.startsWith('f508a9ea'))
+
+  if (!scannedDeviceUUID) {
+    console.log(
+      'not a contact tracing device',
+      scannedDevice && scannedDeviceUUID
+    )
     return
   }
+  console.log({ scannedDeviceUUID })
+
   // we save the maximum RSSI and how many times the RSSI has changed
-  const previousValue = rssiValues[scannedDevice.id]
+  const previousValue = rssiValues[scannedDeviceUUID]
   const latestRSSI = scannedDevice.rssi
   const didComeCloser = !previousValue || latestRSSI > previousValue.rssi
 
   if (didComeCloser) {
-    rssiValues[scannedDevice.id] = previousValue
+    rssiValues[scannedDeviceUUID] = previousValue
       ? {
           rssi:
             latestRSSI > previousValue.rssi ? latestRSSI : previousValue.rssi,
@@ -84,48 +87,38 @@ export async function deviceScanned(
     if (process.env.NODE_ENV === 'development') {
       console.log(
         'changed',
-        scannedDevice.id,
+        scannedDeviceUUID,
         scannedDevice.manufacturerData,
         scannedDevice.mtu,
         scannedDevice.name,
         scannedDevice.localName,
-        rssiValues[scannedDevice.id]
+        rssiValues[scannedDeviceUUID]
       )
     }
   }
 
-  // if many hits exchange keys
-  const hits = rssiValues[scannedDevice.id].hits
-  const rssi = rssiValues[scannedDevice.id].rssi
-  console.log({ serviceUUIDs: scannedDevice.serviceUUIDs })
+  // console.log('lets exchange keys')
 
-  if (hits < 10 && rssi < -70) {
-    console.log('hits too low', scannedDevice.id, hits)
-    return
-  }
+  // let isConnected = await scannedDevice.isConnected()
+  // if (!isConnected) {
+  //   areConnecting[scannedDeviceUUID] = true
+  //   scannedDevice = await scannedDevice.connect({
+  //     autoConnect: true,
+  //   })
+  // }
 
-  console.log('lets exchange keys')
+  // try {
+  //   const servicesAndMore = await scannedDevice.discoverAllServicesAndCharacteristics()
+  //   console.log('servicesAndMore!!', { servicesAndMore })
 
-  let isConnected = await scannedDevice.isConnected()
-  if (!isConnected) {
-    areConnecting[scannedDevice.id] = true
-    scannedDevice = await scannedDevice.connect({
-      autoConnect: true,
-    })
-  }
+  //   // read from other device
+  //   const readCharacteristic = await servicesAndMore.readCharacteristicForService(
+  //     contactTracingServiceUUID,
+  //     contactTracingKeyCharacteristicUUID
+  //   ) // assuming the device is already connected
 
-  try {
-    const servicesAndMore = await scannedDevice.discoverAllServicesAndCharacteristics()
-    console.log('servicesAndMore!!', { servicesAndMore })
-
-    // read from other device
-    const readCharacteristic = await servicesAndMore.readCharacteristicForService(
-      contactTracingServiceUUID,
-      contactTracingKeyCharacteristicUUID
-    ) // assuming the device is already connected
-
-    console.log({ readValue: readCharacteristic.value })
-  } catch (e) {
-    console.log('could not connect', e)
-  }
+  //   console.log({ readValue: readCharacteristic.value })
+  // } catch (e) {
+  //   console.log('could not connect', e)
+  // }
 }

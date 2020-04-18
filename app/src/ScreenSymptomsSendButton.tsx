@@ -8,6 +8,7 @@ import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptoms
 import { getEncountersAfter } from './DatabaseUtils'
 import { getStartOfRiskUnix } from './Utils'
 import { EncounterSchema, getDatabase } from './Database'
+import { syncMap } from './JobTracingUtils'
 
 const mutation = graphql`
   mutation ScreenSymptomsSendButtonMutation(
@@ -29,6 +30,7 @@ export default function ScreenSymptomsSendButton({
 
   useEffect(() => {
     const updateCountAsync = async () => {
+      await syncMap()
       const encountersFromLast2Weeks = await getEncountersAfter(
         getStartOfRiskUnix()
       )
