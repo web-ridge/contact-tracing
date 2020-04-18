@@ -12,8 +12,21 @@ type InfectionAlert {
 type Query {
   infectedEncounters(
     deviceHashesOfMyOwn: [DeviceKeyParam!]! # User own device hashes over 2 week period
-    optionalOtherHashes: [String!] # If user enabled alerts from infected iOS devices, the need to send all the contact they have been in contact with
+    optionalOtherHashes: [Encounter!] # If user enabled alerts from infected iOS devices, the need to send all the contact they have been in contact with
   ): [InfectionAlert]!
+}
+
+# Encounter is used for Android devices wo have opt in for iOS alert
+# Their encounters would have otherwise stood on their device till they say they are infected
+# We do not save these encounters it's only used to find Infected=true DeviceKeys
+# iOS users share their infection status with us as stated in the PrivacyStatement
+# They can remove always remove their infection status if they still have the app installed
+input Encounter {
+  possibleInfectedHash: String!
+  rssi: Int!
+  hits: Int!
+  time: Int!
+  duration: Int!
 }
 
 input DeviceKeyParam {

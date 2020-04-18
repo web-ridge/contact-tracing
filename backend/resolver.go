@@ -136,18 +136,22 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 		infectedEncounters = infectedEncounters
 	}()
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		infectedDeviceKeys, infectedDeviceKeyError = dm.DeviceKeys(
-			dm.DeviceKeyWhere.Hash.IN(optionalExtraDeviceHashes),
-			dm.DeviceKeyWhere.Infected.EQ(true), // only iOS devices are registered with their permission
-		).All(ctx, r.db)
-	}()
+	// only used if user has opt-in for alerts on iOS devices
+	if optionalExtraDeviceHashes {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			infectedDeviceKeys, infectedDeviceKeyError = dm.DeviceKeys(
+				dm.DeviceKeyWhere.Hash.IN(optionalExtraDeviceHashes),
+				dm.DeviceKeyWhere.Infected.EQ(true), // only iOS devices are registered with their permission
+			).All(ctx, r.db)
+		}()
+	}
 
 	// wait till all queries are resolved
 	wg.Wait()
 
+	// if something went wrong, let the user know
 	if infectedEncountersError != nil || infectedDeviceKeyError != nil || realSecureKeysError != nil {
 		log.Debug().Err(infectedEncountersError).Msg("infectedEncountersError")
 		log.Debug().Err(infectedDeviceKeyError).Msg("infectedDeviceKeyError")
@@ -163,7 +167,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 	// server could have removed them sooner than device + we don't want people to know if key exists yes/no
 	securedEncounters := secureEncounters(infectedEncounters, deviceKeysOfUserParams, realSecureKeys)
 
-	// calculate risk for user
+	// calculate risk for user based on his encounters
 	return getRiskAlerts(securedEncounters), nil
 }
 
