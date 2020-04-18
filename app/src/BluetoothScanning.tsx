@@ -2,7 +2,7 @@ import { BleManager } from 'react-native-ble-plx'
 import BackgroundTimer from 'react-native-background-timer'
 import BackgroundService from 'react-native-background-actions'
 import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
-import { removeEncountersOlderThan } from './DatabaseUtils'
+import { removeOldData } from './DatabaseUtils'
 import { getStartOfRiskUnix, getDeviceKey } from './Utils'
 import { startAdvertising } from './BluetoothService'
 import { giveAlerts } from './JobInfectionChecker'
@@ -47,7 +47,7 @@ async function advertiseAndScan() {
 
     // this job will be repeated over-and-over
     for (let i = 0; BackgroundService.isRunning(); i++) {
-      const removed = await removeEncountersOlderThan(getStartOfRiskUnix())
+      const removed = await removeOldData()
       if (!removed) {
         // stop if we can not remove old data from device
         BackgroundService.stop()

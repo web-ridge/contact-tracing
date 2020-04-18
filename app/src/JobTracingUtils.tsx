@@ -1,4 +1,5 @@
 import { RSSIMap } from './types'
+import { beginningOfContactTracingUUID, now } from './Utils'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 
@@ -48,7 +49,7 @@ export async function deviceScanned(
 
   const scannedDeviceUUID = (
     scannedDevice.serviceUUIDs || []
-  ).find((su: string) => su.startsWith('f508a9ea'))
+  ).find((su: string) => su.startsWith(beginningOfContactTracingUUID))
 
   if (!scannedDeviceUUID) {
     console.log(
@@ -70,10 +71,14 @@ export async function deviceScanned(
           rssi:
             latestRSSI > previousValue.rssi ? latestRSSI : previousValue.rssi,
           hits: previousValue.hits + 1,
+          start: previousValue.start,
+          end: now(),
         }
       : {
           rssi: latestRSSI,
           hits: 1,
+          start: now(),
+          end: now(),
         }
 
     // @ts-ignore

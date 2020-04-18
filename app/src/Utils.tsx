@@ -4,6 +4,8 @@ import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
 import { sha256 } from 'js-sha256'
 
+export const beginningOfContactTracingUUID = 'f508a9ea'
+
 //getAnonymizedTimestamp removes hours seconds and milli seconds so only date is left
 // this is more anonymous since nobody can possible prove that you met someone on that specific time
 // only the date
@@ -21,6 +23,12 @@ export function getStartOfRiskUnix(): number {
   return dateToUnix(date)
 }
 
+// now function is used to calculate duration of encounter in app (backend does not know start and stop)
+export function now(): number {
+  const date = new Date()
+  return dateToUnix(date)
+}
+
 // dateToUnix ..
 export function dateToUnix(date: Date): number {
   return Math.round(date.getTime() / 1000)
@@ -30,29 +38,6 @@ const encryptionDatabaseKey = 'contactTractingEncryptionKey'
 
 export async function getDatabaseEncryptionKey(): Promise<ArrayBuffer> {
   return getSecureKeyArrayBuffer(encryptionDatabaseKey, 64)
-}
-
-const encryptionDeviceUUIDKey = 'contactTractingDeviceUUID'
-export async function getDeviceHash(): Promise<string> {
-  let uuid = await getDeviceKey()
-  return sha256(uuid)
-}
-
-export async function getDevicKey(): Promise<string> {
-  // 87253eb2
-  // f508a9ea-d62b-4199-a196-41b62237ac45
-  // ctrcwebr
-
-  // TODO fetch uuid for this data
-  let uuid: string = uuidv4()
-
-  // let others devices know this is a contact tracing device
-  const uuidParts = uuid.split('-')
-  const contactTracingUUID = uuidParts
-    .map((uuidPart, i) => (i === 0 ? 'f508a9ea' : uuidPart))
-    .join('-')
-  console.log({ contactTracingUUID })
-  return contactTracingUUID
 }
 
 async function getSecureKeyArrayBuffer(

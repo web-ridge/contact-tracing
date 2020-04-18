@@ -3,7 +3,11 @@ import { getDatabase, EncounterSchema, KeysSchema } from './Database'
 import { sha256 } from 'js-sha256'
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
-import { getAnonymizedTimestamp, getStartOfRiskUnix } from './Utils'
+import {
+  getAnonymizedTimestamp,
+  getStartOfRiskUnix,
+  beginningOfContactTracingUUID,
+} from './Utils'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -41,16 +45,51 @@ export async function getDeviceKeys(): Promise<string[]> {
     console.log('getDeviceKeys', { error })
     return []
   }
+}
+
+export async function getCurrentDeviceKeyOrRenew() {
+  // check if device key exist for this date
+  const currentDate = getAnonymizedTimestamp()
+  const database = await getDatabase()
+  const keys = database.objects(KeysSchema.name).filter(`time = ${currentDate}`)
+  if (keys.length > 0) {
+    return keys[0]
+  }
+  beginningOfContactTracingUUID
+  // lets generate and save a new DeviceKey
+  // Try to save directly to backend so it won't be claimed by some-one else who see's this UUID
 
   // TODO: create new deviceKey and password
   // TODO: register deviceKey and password
+}
+
+// syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
+// so no-one can see infections from someone else
+export async function syncDeviceKeys() {
   //
 }
 
-export async function getCurrentDeviceKeyOrCreate() {
-  // TODO: check if device key exist for this date
-  // TODO: create new deviceKey and password
-  // TODO: register deviceKey and password
+export async function removeOldData(): Promise<boolean> {
+  const oldEncountersRemoved = await removeOldEncounters()
+  const oldDeviceKeysRemoved = await removeOldDeviceKeys()
+  return oldEncountersRemoved && oldDeviceKeysRemoved
+}
+
+export async function removeOldDeviceKeys(): Promise<boolean> {
+  const database = await getDatabase()
+  try {
+    database.write(() => {
+      database.delete(
+        database
+          .objects(EncounterSchema.name)
+          .filtered(`time < ${getStartOfRiskUnix()}`)
+      )
+    })
+    return true
+  } catch (error) {
+    console.log({ error })
+    return false
+  }
 }
 
 export async function removeOldEncounters(): Promise<boolean> {
@@ -118,4 +157,16 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
     console.log({ error })
     return false
   }
+}
+
+function generateContactTracingUUID() {
+  let uuid: string = uuidv4()
+
+  // let others devices know this is a contact tracing device
+  const uuidParts = uuid.split('-')
+  const contactTracingUUID = uuidParts
+    .map((uuidPart, i) => (i === 0 ? beginningOfContactTracingUUID : uuidPart))
+    .join('-')
+
+  return contactTracingUUID
 }

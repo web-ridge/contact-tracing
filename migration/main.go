@@ -19,14 +19,15 @@ type InfectedEncounter struct {
 	RSSI                 int    `gorm:"not null"`            // how strong the signal was
 	Hits                 int    `gorm:"not null"`            // how many times this signal hit
 	Time                 int    `gorm:"not null"`            // Date of contact (no hours and seconds sent in app)
+	Duration             int    `gorm:"not null"`            // To calculate risk effect based on duration of this meeting
 }
 
 // DeviceKey generated in the device and used to fetch risk information
 type DeviceKey struct {
-	ID       uint   `gorm:"primary_key"`             // auto increment
-	Key      string `gorm:"not null;index:key"`      // This key is publicely available for other devices (Bluetooth Service UUID)
-	Password string `gorm:"not null;index:password"` // Generated at device and used to fetch alerts secure so no one else can see the alerts on their deviceKey
-	Time     int    `gorm:"not null"`                // We want to remove after 2 weeks
+	ID       uint   `gorm:"primary_key"`                     // auto increment
+	Key      string `gorm:"not null;index:key;unique_index"` // This key is publicely available for other devices, needs to be unique (Bluetooth Service UUID)
+	Password string `gorm:"not null;index:password"`         // Generated at device and used to fetch alerts secure so no one else can see the alerts on their deviceKey
+	Time     int    `gorm:"not null"`                        // We want to remove after 2 weeks
 }
 
 func main() {
@@ -60,7 +61,7 @@ func main() {
 		log.Fatal().Err(err).Msg("Could not ping database")
 	}
 
-	if err := db.AutoMigrate(&InfectedEncounter{}).Error; err != nil {
+	if err := db.AutoMigrate(&InfectedEncounter{}, DeviceKey{}).Error; err != nil {
 		log.Fatal().Err(err)
 	}
 	log.Info().Msg("Done!")

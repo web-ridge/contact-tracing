@@ -14,6 +14,8 @@ export interface DeviceKey {
 export interface RSSIValue {
   rssi: number
   hits: number
+  start: number
+  end: number
 }
 
 export interface RSSIMap {
