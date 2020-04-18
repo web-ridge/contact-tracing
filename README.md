@@ -8,7 +8,7 @@
 # Jij hebt de controle
 Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. All jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.   
    
-Als jij COVID-19 hebt kun je dit zelf melden via de app (of met een QR-code). Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
+Als jij COVID-19 hebt kun je dit zelf melden via de app. Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
 
 ## TODO
 
