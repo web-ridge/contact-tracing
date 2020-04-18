@@ -12,9 +12,11 @@ Als jij COVID-19 hebt kun je dit zelf melden via de app (of met een QR-code). Je
 
 ## TODO
 
-- Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth
-- Zorg dat er bij het ContactTracingsNummer een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft.
-- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummer en dat wachtwoord
+- Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
+- Zorg dat er bij het ContactTracingsNummer een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft;
+- Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
+- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummer en dat wachtwoord;
+- QR-code scannen voordat je symptonen kan opsturen.
 
 ## Explain way of working
 
