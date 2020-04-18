@@ -568,7 +568,7 @@ func testInfectedEncountersSelect(t *testing.T) {
 }
 
 var (
-	infectedEncounterDBTypes = map[string]string{`ID`: `integer`, `RandomPart`: `text`, `PossibleInfectedHash`: `text`, `Rssi`: `integer`, `Hits`: `integer`, `Time`: `integer`}
+	infectedEncounterDBTypes = map[string]string{`ID`: `integer`, `RandomPart`: `text`, `PossibleInfectedHash`: `text`, `Rssi`: `integer`, `Hits`: `integer`, `Time`: `integer`, `Duration`: `integer`}
 	_                        = bytes.MinRead
 )
 

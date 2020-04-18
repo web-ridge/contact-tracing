@@ -56,14 +56,15 @@ export async function getCurrentDeviceKeyOrRenew() {
   if (keys.length > 0) {
     return keys[0]
   }
-  beginningOfContactTracingUUID
+  // beginningOfContactTracingUUID
   // lets generate and save a new DeviceKey
-  // Save directly to backend so it cant't be claimed by some-one else who see's this UUID
+  // Save directly to backend so it cant't be claimed by some-one else who see's this UUID in bluetooth
 
   // TODO: create password
   // TODO: create new deviceKey and password
   let newDeviceKey = generateBluetootTraceKey()
   // TODO: register deviceKey and password
+
   // TODO add to Keyschema
 }
 

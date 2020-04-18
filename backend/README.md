@@ -12,7 +12,7 @@ sqlboiler psql
 ## Generate Schema
 
 ```
-go run github.com/web-ridge/sqlboiler-graphql-schema --output=../schema.graphql --pagination=no
+go run github.com/web-ridge/sqlboiler-graphql-schema --output=../schema.graphql
 ```
 
 ## Generate API + converts

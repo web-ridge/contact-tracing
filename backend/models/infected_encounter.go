@@ -29,6 +29,7 @@ type InfectedEncounter struct {
 	Rssi                 int    `boil:"rssi" json:"rssi" toml:"rssi" yaml:"rssi"`
 	Hits                 int    `boil:"hits" json:"hits" toml:"hits" yaml:"hits"`
 	Time                 int    `boil:"time" json:"time" toml:"time" yaml:"time"`
+	Duration             int    `boil:"duration" json:"duration" toml:"duration" yaml:"duration"`
 
 	R *infectedEncounterR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L infectedEncounterL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,6 +42,7 @@ var InfectedEncounterColumns = struct {
 	Rssi                 string
 	Hits                 string
 	Time                 string
+	Duration             string
 }{
 	ID:                   "id",
 	RandomPart:           "random_part",
@@ -48,41 +50,10 @@ var InfectedEncounterColumns = struct {
 	Rssi:                 "rssi",
 	Hits:                 "hits",
 	Time:                 "time",
+	Duration:             "duration",
 }
 
 // Generated where
-
-type whereHelperint struct{ field string }
-
-func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint) IN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
 
 var InfectedEncounterWhere = struct {
 	ID                   whereHelperint
@@ -91,6 +62,7 @@ var InfectedEncounterWhere = struct {
 	Rssi                 whereHelperint
 	Hits                 whereHelperint
 	Time                 whereHelperint
+	Duration             whereHelperint
 }{
 	ID:                   whereHelperint{field: "\"infected_encounter\".\"id\""},
 	RandomPart:           whereHelperstring{field: "\"infected_encounter\".\"random_part\""},
@@ -98,6 +70,7 @@ var InfectedEncounterWhere = struct {
 	Rssi:                 whereHelperint{field: "\"infected_encounter\".\"rssi\""},
 	Hits:                 whereHelperint{field: "\"infected_encounter\".\"hits\""},
 	Time:                 whereHelperint{field: "\"infected_encounter\".\"time\""},
+	Duration:             whereHelperint{field: "\"infected_encounter\".\"duration\""},
 }
 
 // InfectedEncounterRels is where relationship names are stored.
@@ -117,8 +90,8 @@ func (*infectedEncounterR) NewStruct() *infectedEncounterR {
 type infectedEncounterL struct{}
 
 var (
-	infectedEncounterAllColumns            = []string{"id", "random_part", "possible_infected_hash", "rssi", "hits", "time"}
-	infectedEncounterColumnsWithoutDefault = []string{"random_part", "possible_infected_hash", "rssi", "hits", "time"}
+	infectedEncounterAllColumns            = []string{"id", "random_part", "possible_infected_hash", "rssi", "hits", "time", "duration"}
+	infectedEncounterColumnsWithoutDefault = []string{"random_part", "possible_infected_hash", "rssi", "hits", "time", "duration"}
 	infectedEncounterColumnsWithDefault    = []string{"id"}
 	infectedEncounterPrimaryKeyColumns     = []string{"id"}
 )

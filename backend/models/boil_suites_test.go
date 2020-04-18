@@ -12,50 +12,63 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeys)
 	t.Run("InfectedEncounters", testInfectedEncounters)
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysDelete)
 	t.Run("InfectedEncounters", testInfectedEncountersDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysQueryDeleteAll)
 	t.Run("InfectedEncounters", testInfectedEncountersQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysSliceDeleteAll)
 	t.Run("InfectedEncounters", testInfectedEncountersSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysExists)
 	t.Run("InfectedEncounters", testInfectedEncountersExists)
 }
 
 func TestFind(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysFind)
 	t.Run("InfectedEncounters", testInfectedEncountersFind)
 }
 
 func TestBind(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysBind)
 	t.Run("InfectedEncounters", testInfectedEncountersBind)
 }
 
 func TestOne(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysOne)
 	t.Run("InfectedEncounters", testInfectedEncountersOne)
 }
 
 func TestAll(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysAll)
 	t.Run("InfectedEncounters", testInfectedEncountersAll)
 }
 
 func TestCount(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysCount)
 	t.Run("InfectedEncounters", testInfectedEncountersCount)
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysHooks)
 	t.Run("InfectedEncounters", testInfectedEncountersHooks)
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysInsert)
+	t.Run("DeviceKeys", testDeviceKeysInsertWhitelist)
 	t.Run("InfectedEncounters", testInfectedEncountersInsert)
 	t.Run("InfectedEncounters", testInfectedEncountersInsertWhitelist)
 }
@@ -101,21 +114,26 @@ func TestToManySet(t *testing.T) {}
 func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysReload)
 	t.Run("InfectedEncounters", testInfectedEncountersReload)
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysReloadAll)
 	t.Run("InfectedEncounters", testInfectedEncountersReloadAll)
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysSelect)
 	t.Run("InfectedEncounters", testInfectedEncountersSelect)
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysUpdate)
 	t.Run("InfectedEncounters", testInfectedEncountersUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("DeviceKeys", testDeviceKeysSliceUpdateAll)
 	t.Run("InfectedEncounters", testInfectedEncountersSliceUpdateAll)
 }

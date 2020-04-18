@@ -10,7 +10,15 @@ type InfectionAlert {
 }
 
 type Query {
-  infectedEncounters(hash: String!): [InfectionAlert]!
+  infectedEncounters(
+    deviceHashesOfMyOwn: [DeviceKeyParam!]! # Saved device hashes over 2 week period
+    optionalOtherHashes: [String!] # If user enabled alerts from infected iOS devices
+  ): [InfectionAlert]!
+}
+
+input DeviceKeyParam {
+  hash: String! # hash of random generated id
+  password: String! # password of this key to fetch infectedEncounters or to remove
 }
 
 input InfectedEncounterCreateInput {
@@ -18,18 +26,45 @@ input InfectedEncounterCreateInput {
   rssi: Int!
   hits: Int!
   time: Int!
+  duration: Int!
+}
+
+input InfectedEncounterUpdateInput {
+  randomPart: String
+  possibleInfectedHash: String
+  rssi: Int
+  hits: Int
+  time: Int
+  duration: Int
 }
 
 input InfectedEncountersCreateInput {
   infectedEncounters: [InfectedEncounterCreateInput!]!
 }
 
-type InfectedEncounterCreatePayload {
+input DeviceKeyCreateInput {
+  hash: String!
+  password: String!
+  time: Int!
+}
+
+type OkPayload {
   ok: Boolean!
 }
 
 type Mutation {
-  createInfectedEncounters(
-    input: InfectedEncountersCreateInput!
-  ): InfectedEncounterCreatePayload!
+  # let Android user share their contactmoments no trace back to user will be saved!
+  createInfectedEncounters(input: InfectedEncountersCreateInput!): OkPayload!
+
+  # let iOS users register their device keys of two weeks as infected
+  registerDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
+
+  # user generated a device key and password so know this uuid really belongs to that user
+  createDeviceKey(input: DeviceKeyCreateInput!): OkPayload!
+
+  ## AVG -> User should be able to always remove all their data from server
+  # Let user remove infected encounters on their device id's from database (AVG)
+  deleteInfectedEncountersOnKeys(keys: [DeviceKeyParam!]!): OkPayload!
+  removeDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
+  removeDeviceKeys(keys: [DeviceKeyParam!]!): OkPayload!
 }
