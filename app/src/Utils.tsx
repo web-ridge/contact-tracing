@@ -1,7 +1,6 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
-import { sha256 } from 'js-sha256'
 
 export const beginningOfContactTracingUUID = 'f508a9ea'
 

@@ -9,13 +9,14 @@ import {
 } from 'react-native-paper'
 
 import { Translate } from 'react-translated'
-import { getDeviceHash } from './Utils'
+import { getInfectedEncountersQueryVariables } from './DatabaseUtils'
 import { QueryRenderer, graphql } from 'react-relay'
 import RelayEnviroment from './RelayEnvironment'
 import {
   InfectionAlertsQuery,
   InfectionAlertsQueryResponse,
   Risk,
+  InfectionAlertsQueryVariables,
 } from './__generated__/InfectionAlertsQuery.graphql'
 
 const styles = StyleSheet.create({
@@ -51,43 +52,39 @@ const styles = StyleSheet.create({
 })
 
 export default function InfectionAlerts() {
-  const [uniqueDeviceId, setUniqueDeviceId] = useState<string | undefined>(
-    undefined
-  )
+  const [variables, setVariables] = useState<any>(undefined)
 
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
-    const setBluetoothHashAsync = async () => {
-      const key = await getDeviceHash()
-      setUniqueDeviceId(key)
+    const setVariablesAsync = async () => {
+      const vars = await getInfectedEncountersQueryVariables()
+      setVariables(vars)
     }
 
-    setBluetoothHashAsync()
+    setVariablesAsync()
   }, [])
 
   return (
     <View style={styles.root}>
-      {uniqueDeviceId && <AlertRoots uniqueDeviceId={uniqueDeviceId} />}
+      {variables && <AlertRoots variables={variables} />}
     </View>
   )
 }
 
 // AlertRoots fetches the query in a type-safe manner for this bluetooth hash
-function AlertRoots({ uniqueDeviceId }: { uniqueDeviceId: string }) {
+function AlertRoots(variables: InfectionAlertsQueryVariables) {
   return (
     <QueryRenderer<InfectionAlertsQuery>
       environment={RelayEnviroment}
       query={graphql`
         query InfectionAlertsQuery($uniqueDeviceId: String!) {
-          infectedEncounters(hash: $uniqueDeviceId) {
+          infectedEncounters(deviceHashesOfMyOwn: $uniqueDeviceId) {
             howManyEncounters
             risk
           }
         }
       `}
-      variables={{
-        uniqueDeviceId,
-      }}
+      variables={variables}
       render={renderAlerts}
     />
   )

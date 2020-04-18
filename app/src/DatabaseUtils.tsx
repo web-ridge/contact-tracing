@@ -9,6 +9,7 @@ import {
   beginningOfContactTracingUUID,
 } from './Utils'
 import { v4 as uuidv4 } from 'uuid'
+import AsyncStorage from '@react-native-community/async-storage'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -20,6 +21,28 @@ export async function removeAllEncounters(): Promise<boolean> {
   } catch (error) {
     console.log({ error })
     return false
+  }
+}
+
+const acceptediOSAlertsKey = 'acceptediOSAlerts'
+export async function getInfectedEncountersQueryVariables() {
+  const acceptediOSAlerts = await AsyncStorage.getItem(acceptediOSAlertsKey)
+  const database = await getDatabase()
+  let deviceKeys = await getDeviceKeys()
+
+  let optionalEncountersWithiOSDevices
+  if (acceptediOSAlerts) {
+    optionalEncountersWithiOSDevices = database
+      .objects(EncounterSchema.name)
+      .filtered(`isIos = true`)
+  }
+
+  return {
+    deviceHashesOfMyOwn: deviceKeys.map((deviceKey) => ({
+      hash: deviceKey.hash,
+      password: deviceKey.password,
+    })),
+    optionalEncounters: optionalEncountersWithiOSDevices,
   }
 }
 
@@ -63,7 +86,7 @@ export async function getCurrentDeviceKeyOrRenew() {
   // TODO: create password
   // TODO: create new deviceKey and password
   let newDeviceKey = generateBluetootTraceKey()
-  // TODO: register deviceKey and password
+  // TODO: register deviceKey and password on server :)
 
   // TODO add to Keyschema
 }

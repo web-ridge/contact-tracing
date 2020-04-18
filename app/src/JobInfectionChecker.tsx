@@ -1,8 +1,7 @@
 import { fetchQuery, graphql } from 'relay-runtime'
 import RelayEnviroment from './RelayEnvironment'
 import AsyncStorage from '@react-native-community/async-storage'
-
-import { getDeviceHash } from './Utils'
+import { getInfectedEncountersQueryVariables } from './DatabaseUtils'
 import {
   JobInfectionCheckerQuery,
   JobInfectionCheckerQueryResponse,
@@ -13,23 +12,12 @@ const alertStorageKey = 'alertStorageKeyContactTracing'
 
 const query = graphql`
   query JobInfectionCheckerQuery($bluetoothHash: String!) {
-    infectedEncounters(hash: $bluetoothHash) {
+    infectedEncounters(deviceHashesOfMyOwn: $bluetoothHash) {
       howManyEncounters
       risk
     }
   }
 `
-
-let deviceKey: string
-
-async function getBluetoothHash(): Promise<string> {
-  if (deviceKey) {
-    return deviceKey
-  }
-  deviceKey = await getDeviceHash()
-
-  return deviceKey
-}
 
 function stringifyInfectedEncounters(
   infectedEncounters: JobInfectionCheckerQueryResponse['infectedEncounters']
@@ -43,11 +31,11 @@ function stringifyInfectedEncounters(
 }
 
 export async function giveAlerts() {
-  const bluetoothHash = await getBluetoothHash()
+  const variables = await getInfectedEncountersQueryVariables()
   const data = await fetchQuery<JobInfectionCheckerQuery>(
     RelayEnviroment,
     query,
-    { bluetoothHash }
+    variables
   )
 
   // TODO: stringify response in short hash on backend side to be more efficient in network
