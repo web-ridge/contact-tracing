@@ -1,6 +1,6 @@
 import { RSSIMap, Encounter } from './types'
 import { getDatabase, EncounterSchema } from './Database'
-import RNSimpleCrypto from 'react-native-simple-crypto'
+import { sha256 } from 'js-sha256'
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
 import { getAnonymizedTimestamp } from './Utils'
@@ -49,22 +49,20 @@ export async function getEncountersAfter(unix: number): Promise<Encounter[]> {
 }
 
 export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
-  let objectsToCreate: Encounter[] = []
+  const objectsToCreate: Encounter[] = Object.keys(rssiMapUnsafe).map(
+    (bluetoothId) => {
+      const rssiValue = rssiMapUnsafe[bluetoothId]
+      const hash = sha256(bluetoothId)
 
-  const keys = Object.keys(rssiMapUnsafe)
-  for (let i = 0; i < keys.length; i++) {
-    const bluetoothId: string = keys[i]
-    const rssiValue = rssiMapUnsafe[bluetoothId]
-    const hash = await RNSimpleCrypto.SHA.sha256(bluetoothId)
-
-    objectsToCreate.push({
-      id: 'id' + nanoid(),
-      hash,
-      rssi: rssiValue.rssi,
-      hits: rssiValue.hits,
-      time: getAnonymizedTimestamp(),
-    })
-  }
+      return {
+        id: 'id' + nanoid(),
+        hash,
+        rssi: rssiValue.rssi,
+        hits: rssiValue.hits,
+        time: getAnonymizedTimestamp(),
+      }
+    }
+  )
 
   console.log({ objectsToCreate })
 

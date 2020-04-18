@@ -1,11 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash bdb99e7f9ebe20ff16d4472652ae0561 */
+/* @relayHash 1c8dda6f99c878489c59051d93a99da6 */
 
 import { ConcreteRequest } from "relay-runtime";
 export type Risk = "HIGH_RISK" | "LOW_RISK" | "MIDDLE_RISK" | "%future added value";
 export type InfectionAlertsQueryVariables = {
-    bluetoothHash: string;
+    uniqueDeviceId: string;
 };
 export type InfectionAlertsQueryResponse = {
     readonly infectedEncounters: ReadonlyArray<{
@@ -22,9 +22,9 @@ export type InfectionAlertsQuery = {
 
 /*
 query InfectionAlertsQuery(
-  $bluetoothHash: String!
+  $uniqueDeviceId: String!
 ) {
-  infectedEncounters(hash: $bluetoothHash) {
+  infectedEncounters(hash: $uniqueDeviceId) {
     howManyEncounters
     risk
   }
@@ -35,7 +35,7 @@ const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "kind": "LocalArgument",
-    "name": "bluetoothHash",
+    "name": "uniqueDeviceId",
     "type": "String!",
     "defaultValue": null
   }
@@ -50,7 +50,7 @@ v1 = [
       {
         "kind": "Variable",
         "name": "hash",
-        "variableName": "bluetoothHash"
+        "variableName": "uniqueDeviceId"
       }
     ],
     "concreteType": "InfectionAlert",
@@ -93,10 +93,10 @@ return {
     "operationKind": "query",
     "name": "InfectionAlertsQuery",
     "id": null,
-    "text": "query InfectionAlertsQuery(\n  $bluetoothHash: String!\n) {\n  infectedEncounters(hash: $bluetoothHash) {\n    howManyEncounters\n    risk\n  }\n}\n",
+    "text": "query InfectionAlertsQuery(\n  $uniqueDeviceId: String!\n) {\n  infectedEncounters(hash: $uniqueDeviceId) {\n    howManyEncounters\n    risk\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
-(node as any).hash = '55736a3d06bb991f330575833c94feb1';
+(node as any).hash = '38d8f116f5f92e79b2f8c8e1dd365b68';
 export default node;

@@ -7,10 +7,9 @@ import {
   IconButton,
   ProgressBar,
 } from 'react-native-paper'
-import DeviceInfo from 'react-native-device-info'
-import RNSimpleCrypto from 'react-native-simple-crypto'
-import { Translate } from 'react-translated'
 
+import { Translate } from 'react-translated'
+import { getDeviceKey } from './Utils'
 import { QueryRenderer, graphql } from 'react-relay'
 import RelayEnviroment from './RelayEnvironment'
 import {
@@ -48,19 +47,15 @@ const styles = StyleSheet.create({
 })
 
 export default function InfectionAlerts() {
-  const [bluetoothHash, setBluetoothHash] = useState<string | undefined>(
+  const [uniqueDeviceId, setUniqueDeviceId] = useState<string | undefined>(
     undefined
   )
 
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
     const setBluetoothHashAsync = async () => {
-      // DeviceInfo is forked to change this to Bluetooth address :-)
-      const mac = await DeviceInfo.getMacAddress()
-      console.log('MY BLUETOOTH MAC', { mac })
-      const bluetoothHash = await RNSimpleCrypto.SHA.sha256(mac)
-      console.log('MY BLUETOOTH HASH', { bluetoothHash })
-      setBluetoothHash(bluetoothHash)
+      const key = await getDeviceKey()
+      setUniqueDeviceId(key)
     }
 
     setBluetoothHashAsync()
@@ -68,26 +63,26 @@ export default function InfectionAlerts() {
 
   return (
     <View style={styles.root}>
-      {bluetoothHash && <AlertRoots bluetoothHash={bluetoothHash} />}
+      {uniqueDeviceId && <AlertRoots uniqueDeviceId={uniqueDeviceId} />}
     </View>
   )
 }
 
 // AlertRoots fetches the query in a type-safe manner for this bluetooth hash
-function AlertRoots({ bluetoothHash }: { bluetoothHash: string }) {
+function AlertRoots({ uniqueDeviceId }: { uniqueDeviceId: string }) {
   return (
     <QueryRenderer<InfectionAlertsQuery>
       environment={RelayEnviroment}
       query={graphql`
-        query InfectionAlertsQuery($bluetoothHash: String!) {
-          infectedEncounters(hash: $bluetoothHash) {
+        query InfectionAlertsQuery($uniqueDeviceId: String!) {
+          infectedEncounters(hash: $uniqueDeviceId) {
             howManyEncounters
             risk
           }
         }
       `}
       variables={{
-        bluetoothHash,
+        uniqueDeviceId,
       }}
       render={renderAlerts}
     />

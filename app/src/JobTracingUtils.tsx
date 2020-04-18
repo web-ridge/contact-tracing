@@ -1,9 +1,12 @@
 import { RSSIMap } from './types'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
-import { BleManager } from 'react-native-ble-plx'
-import Base64 from './Base64'
+import { Base64 } from 'js-base64'
 
+import {
+  contactTracingServiceUUID,
+  contactTracingKeyCharacteristicUUID,
+} from './Utils'
 let rssiValues: RSSIMap = {}
 
 // every 15 minutes
@@ -30,7 +33,7 @@ export async function syncMap(): Promise<boolean> {
 export async function deviceScanned(
   error: BleError | null,
   scannedDevice: null | Device,
-  bleManager: BleManager
+  deviceKey: string
 ) {
   if (error) {
     throw error
@@ -75,12 +78,13 @@ export async function deviceScanned(
 
   // if many hits exchange keys
   const hits = rssiValues[scannedDevice.id].hits
+  const rssi = rssiValues[scannedDevice.id].rssi
   console.log({ serviceUUIDs: scannedDevice.serviceUUIDs })
 
-  // if (hits < 10) {
-  //   console.log('hits too low', scannedDevice.id, hits)
-  //   return
-  // }
+  if (hits < 10 && rssi < -70) {
+    console.log('hits too low', scannedDevice.id, hits)
+    return
+  }
 
   console.log('lets exchange keys')
 
@@ -88,12 +92,6 @@ export async function deviceScanned(
   if (!isConnected) {
     scannedDevice = await scannedDevice.connect()
   }
-  isConnected = await scannedDevice.isConnected()
-  if (!isConnected) {
-    console.log('not connected', { scannedDevice })
-    return
-  }
-  console.log('conncted try to exchange key!', {})
 
   try {
     const servicesAndMore = await scannedDevice.discoverAllServicesAndCharacteristics()
@@ -101,22 +99,11 @@ export async function deviceScanned(
 
     // read from other device
     const readCharacteristic = await servicesAndMore.readCharacteristicForService(
-      '12ab',
-      '34cd'
+      contactTracingServiceUUID,
+      contactTracingKeyCharacteristicUUID
     ) // assuming the device is already connected
 
     console.log({ readValue: readCharacteristic.value })
-
-    // write unique id to each other
-    const characteristic = await servicesAndMore.writeCharacteristicWithResponseForService(
-      '12ab',
-      '34cd',
-      'aGVsbG8gbWlzcyB0YXBweQ=='
-    )
-
-    console.log('characteristic.deviceID', characteristic.deviceID)
-
-    console.log({ characteristic })
   } catch (e) {
     console.log('could not connect', e)
   }

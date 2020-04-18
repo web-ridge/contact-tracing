@@ -1,13 +1,12 @@
 import { fetchQuery, graphql } from 'relay-runtime'
 import RelayEnviroment from './RelayEnvironment'
-import DeviceInfo from 'react-native-device-info'
-import RNSimpleCrypto from 'react-native-simple-crypto'
+import AsyncStorage from '@react-native-community/async-storage'
+
+import { getDeviceKey } from './Utils'
 import {
   JobInfectionCheckerQuery,
   JobInfectionCheckerQueryResponse,
 } from './__generated__/JobInfectionCheckerQuery.graphql'
-import AsyncStorage from '@react-native-community/async-storage'
-// import { Notifications } from 'react-native-notifications'
 
 // we use this to see if alerts changed since previous alert
 const alertStorageKey = 'alertStorageKeyContactTracing'
@@ -21,16 +20,15 @@ const query = graphql`
   }
 `
 
-let bluetoothHash: string
+let deviceKey: string
 
 async function getBluetoothHash(): Promise<string> {
-  if (bluetoothHash) {
-    return bluetoothHash
+  if (deviceKey) {
+    return deviceKey
   }
-  const bluetoothID = await DeviceInfo.getMacAddress()
-  const bHash = await RNSimpleCrypto.SHA.sha256(bluetoothID)
-  bluetoothHash = bHash
-  return bHash
+  deviceKey = await getDeviceKey()
+
+  return deviceKey
 }
 
 function stringifyInfectedEncounters(

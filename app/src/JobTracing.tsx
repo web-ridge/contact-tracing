@@ -2,26 +2,30 @@ import { BleManager } from 'react-native-ble-plx'
 import BackgroundTimer from 'react-native-background-timer'
 import BackgroundService from 'react-native-background-actions'
 import { Device, BleError } from 'react-native-ble-plx'
-
 import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
 import { removeEncountersOlderThan } from './DatabaseUtils'
-import { getStartOfRiskUnix } from './Utils'
+import {
+  getStartOfRiskUnix,
+  contactTracingServiceUUID,
+  getDeviceKey,
+} from './Utils'
+import { startAdvertising } from './BluetoothService'
 import { giveAlerts } from './JobInfectionChecker'
 
 function sleep(ms: number) {
   return new Promise((resolve) => BackgroundTimer.setTimeout(resolve, ms))
 }
 
-const tryScanDevice = (manager: BleManager) => (
+const tryScanDevice = (deviceKey: string) => (
   error: BleError | null,
   scannedDevice: null | Device
-) => {
+): Promise<void> => {
   try {
-    return deviceScanned(error, scannedDevice, manager)
+    return deviceScanned(error, scannedDevice, deviceKey)
   } catch (e) {
-    BackgroundService.stop()
+    console.log({ e })
+    return BackgroundService.stop()
   }
-  return () => {}
 }
 
 // You can do anything in your task such as network requests, timers and so on,
@@ -30,14 +34,18 @@ const tryScanDevice = (manager: BleManager) => (
 // or there is a foreground app).
 async function scanForBluetoothDevices() {
   await new Promise(async (resolve) => {
+    // start advertising as a bluetooth service for other devices
+    console.log('startAdvertising')
+    const deviceKey = await getDeviceKey()
+    await startAdvertising(deviceKey)
+    console.log('new BleManager()')
     const manager = new BleManager()
 
     manager.startDeviceScan(
-      null, // uuids
+      [contactTracingServiceUUID], // uuids
       {},
-      tryScanDevice(manager) // options
+      tryScanDevice(deviceKey) // options
     )
-
     for (let i = 0; BackgroundService.isRunning(); i++) {
       const removed = await removeEncountersOlderThan(getStartOfRiskUnix())
 
