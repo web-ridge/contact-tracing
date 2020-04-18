@@ -18,7 +18,7 @@ Als jij COVID-19 hebt kun je dit zelf melden via de app. Je stuurt dan jouw Blue
 - Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (WIP)
 - Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
 - iOS apparaten sturen hun eigen ContactTracingsNummers op i.p.v. de hashes die ze ontmoet hebben
-- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze ContactTracingsNummers ook niet opgeslagen op de server.
+- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze doorgestuurde ContactTracingsNummers ook niet opgeslagen op de server.
 
 ## Explain way of working
 
