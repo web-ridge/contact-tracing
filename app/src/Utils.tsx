@@ -34,15 +34,17 @@ export async function getDatabaseEncryptionKey(): Promise<ArrayBuffer> {
 
 const encryptionDeviceUUIDKey = 'contactTractingDeviceUUID'
 export async function getDeviceHash(): Promise<string> {
-  let uuid = await getDeviceUUID()
+  let uuid = await getDeviceKey()
   return sha256(uuid)
 }
 
-export async function getDeviceUUID(): Promise<string> {
+export async function getDevicKey(): Promise<string> {
   // 87253eb2
   // f508a9ea-d62b-4199-a196-41b62237ac45
   // ctrcwebr
-  const uuid = await getSecureUUID(encryptionDeviceUUIDKey)
+
+  // TODO fetch uuid for this data
+  let uuid: string = uuidv4()
 
   // let others devices know this is a contact tracing device
   const uuidParts = uuid.split('-')
@@ -60,25 +62,6 @@ async function getSecureKeyArrayBuffer(
   const stringKey = await getSecureKey(key, howManyBytes)
   const arrayBuffer = _base64ToArrayBuffer(stringKey)
   return arrayBuffer
-}
-
-async function getSecureUUID(key: string): Promise<string> {
-  const exist = await RNSecureStorage.exists(key)
-  if (exist) {
-    const stringKey = await RNSecureStorage.get(key)
-    if (stringKey) {
-      return stringKey
-    }
-  }
-
-  // key does not exist (yet)
-  //@ts-ignore
-  let uuid: string = uuidv4()
-  // store so we can de-crypt next time
-  await RNSecureStorage.set(key, uuid, {
-    accessible: ACCESSIBLE.ALWAYS, // we need to write, even when device is in sleep mode
-  })
-  return uuid
 }
 
 async function getSecureKey(

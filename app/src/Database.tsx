@@ -1,5 +1,6 @@
 import Realm from 'realm'
 import { getDatabaseEncryptionKey } from './Utils'
+
 export const EncounterSchema = {
   name: 'Encounter',
   primaryKey: 'id',
@@ -8,6 +9,18 @@ export const EncounterSchema = {
     hash: 'string',
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },
+    time: { type: 'int', default: 0 }, // hours/seconds are removed, only for easy filtering with unix
+  },
+}
+
+export const KeysSchema = {
+  name: 'DeviceKey',
+  primaryKey: 'id',
+  properties: {
+    id: 'string', // primary key
+    key: 'string', // external identifier for other devices
+    password: 'string', // used to secure risk counts on Android
+    synced: '', // used to sync keys with passwords
     time: { type: 'int', default: 0 },
   },
 }
@@ -21,7 +34,6 @@ export async function getDatabase(): Promise<Realm> {
   }
 
   const encryptionKey = await getDatabaseEncryptionKey()
-  console.log({ encryptionKey })
-  realm = new Realm({ schema: [EncounterSchema], encryptionKey })
+  realm = new Realm({ schema: [EncounterSchema, KeysSchema], encryptionKey })
   return realm
 }

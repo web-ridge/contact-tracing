@@ -19,7 +19,7 @@ import BackgroundService from 'react-native-background-actions'
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
 
 import InfectionAlerts from './InfectionAlerts'
-import { startTracing, stopTracing } from './JobTracing'
+import { startTracing, stopTracing } from './BluetoothScanning'
 import { goToSymptonsScreen } from './Screens'
 
 const bluetoothPermission: Permission = Platform.select({
@@ -66,6 +66,8 @@ function ScreenHome({ componentId }: { componentId: string }) {
 
       if (bluetoothStatus !== 'granted') {
         console.log('bluetooth not enabled', { bluetoothStatus })
+        //@ts-ignore
+        alert('Bluetooth en locatie moeten aan staan')
         return
       }
 
