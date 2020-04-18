@@ -10,7 +10,7 @@ Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is
    
 Als jij COVID-19 hebt kun je dit zelf melden via de app. Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
 
-## TODO
+## Roadmap (https://github.com/web-ridge/contact-tracing/tree/development)
 
 - Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
 - Zorg dat er bij het ContactTracingsNummer een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft;
