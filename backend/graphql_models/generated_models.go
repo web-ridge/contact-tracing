@@ -27,15 +27,6 @@ type InfectedEncounterCreateInput struct {
 	Duration             int    `json:"duration"`
 }
 
-type InfectedEncounterUpdateInput struct {
-	RandomPart           *string `json:"randomPart"`
-	PossibleInfectedHash *string `json:"possibleInfectedHash"`
-	Rssi                 *int    `json:"rssi"`
-	Hits                 *int    `json:"hits"`
-	Time                 *int    `json:"time"`
-	Duration             *int    `json:"duration"`
-}
-
 type InfectedEncountersCreateInput struct {
 	InfectedEncounters []*InfectedEncounterCreateInput `json:"infectedEncounters"`
 }

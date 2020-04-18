@@ -3,10 +3,8 @@
 package helpers
 
 import (
-	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/web-ridge/contact-tracing/backend/graphql_models"
 	"github.com/web-ridge/contact-tracing/backend/models"
-	"github.com/web-ridge/gqlgen-sqlboiler/helper"
 )
 
 func DeviceKeyCreateInputsToBoiler(am []*graphql_models.DeviceKeyCreateInput) []*models.DeviceKey {
@@ -57,97 +55,4 @@ func InfectedEncounterCreateInputToBoiler(
 		Duration:             m.Duration,
 	}
 	return r
-}
-
-func InfectedEncounterCreateInputToBoilerWhitelist(input map[string]interface{}, extraColumns ...string) boil.Columns {
-	columnsWhichAreSet := []string{}
-	for key, _ := range input {
-		switch key {
-		case "possibleInfectedHash":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.PossibleInfectedHash)
-		case "rssi":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Rssi)
-		case "hits":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Hits)
-		case "time":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Time)
-		case "duration":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Duration)
-		}
-	}
-	columnsWhichAreSet = append(columnsWhichAreSet, extraColumns...)
-	return boil.Whitelist(columnsWhichAreSet...)
-}
-
-func InfectedEncounterUpdateInputsToBoiler(am []*graphql_models.InfectedEncounterUpdateInput) []*models.InfectedEncounter {
-	ar := make([]*models.InfectedEncounter, len(am))
-	for i, m := range am {
-		ar[i] = InfectedEncounterUpdateInputToBoiler(
-			m,
-		)
-	}
-	return ar
-}
-
-func InfectedEncounterUpdateInputToBoiler(
-	m *graphql_models.InfectedEncounterUpdateInput,
-) *models.InfectedEncounter {
-	if m == nil {
-		return nil
-	}
-	r := &models.InfectedEncounter{
-		RandomPart:           helper.PointerStringToString(m.RandomPart),
-		PossibleInfectedHash: helper.PointerStringToString(m.PossibleInfectedHash),
-		Rssi:                 helper.PointerIntToInt(m.Rssi),
-		Hits:                 helper.PointerIntToInt(m.Hits),
-		Time:                 helper.PointerIntToInt(m.Time),
-		Duration:             helper.PointerIntToInt(m.Duration),
-	}
-	return r
-}
-
-func InfectedEncounterUpdateInputToModelM(
-	input map[string]interface{},
-	m graphql_models.InfectedEncounterUpdateInput,
-) models.M {
-	modelM := models.M{}
-	for key, _ := range input {
-		switch key {
-		case "randomPart":
-			modelM[models.InfectedEncounterColumns.RandomPart] = helper.PointerStringToString(m.RandomPart)
-		case "possibleInfectedHash":
-			modelM[models.InfectedEncounterColumns.PossibleInfectedHash] = helper.PointerStringToString(m.PossibleInfectedHash)
-		case "rssi":
-			modelM[models.InfectedEncounterColumns.Rssi] = helper.PointerIntToInt(m.Rssi)
-		case "hits":
-			modelM[models.InfectedEncounterColumns.Hits] = helper.PointerIntToInt(m.Hits)
-		case "time":
-			modelM[models.InfectedEncounterColumns.Time] = helper.PointerIntToInt(m.Time)
-		case "duration":
-			modelM[models.InfectedEncounterColumns.Duration] = helper.PointerIntToInt(m.Duration)
-		}
-	}
-	return modelM
-}
-
-func InfectedEncounterUpdateInputToBoilerWhitelist(input map[string]interface{}, extraColumns ...string) boil.Columns {
-	columnsWhichAreSet := []string{}
-	for key, _ := range input {
-		switch key {
-		case "randomPart":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.RandomPart)
-		case "possibleInfectedHash":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.PossibleInfectedHash)
-		case "rssi":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Rssi)
-		case "hits":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Hits)
-		case "time":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Time)
-		case "duration":
-			columnsWhichAreSet = append(columnsWhichAreSet, models.InfectedEncounterColumns.Duration)
-		}
-	}
-	columnsWhichAreSet = append(columnsWhichAreSet, extraColumns...)
-	return boil.Whitelist(columnsWhichAreSet...)
 }

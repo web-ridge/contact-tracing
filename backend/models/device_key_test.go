@@ -568,7 +568,7 @@ func testDeviceKeysSelect(t *testing.T) {
 }
 
 var (
-	deviceKeyDBTypes = map[string]string{`ID`: `integer`, `Hash`: `text`, `Password`: `text`, `Time`: `integer`}
+	deviceKeyDBTypes = map[string]string{`ID`: `integer`, `Hash`: `text`, `Password`: `text`, `Time`: `integer`, `Infected`: `boolean`}
 	_                = bytes.MinRead
 )
 

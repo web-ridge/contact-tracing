@@ -14,9 +14,10 @@ var InfectedEncountersBatchCreateColumns = []string{
 	models.InfectedEncounterColumns.Rssi,
 	models.InfectedEncounterColumns.Hits,
 	models.InfectedEncounterColumns.Time,
+	models.InfectedEncounterColumns.Duration,
 }
 
-var InfectedEncountersBatchCreateColumnsMarks = "(?, ?, ?, ?, ?)"
+var InfectedEncountersBatchCreateColumnsMarks = "(?, ?, ?, ?, ?, ?)"
 
 func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter, randomString string) []interface{} {
 	return []interface{}{
@@ -25,6 +26,7 @@ func InfectedEncounterToBatchCreateValues(e *models.InfectedEncounter, randomStr
 		e.Rssi,
 		e.Hits,
 		e.Time,
+		e.Duration,
 	}
 }
 

@@ -292,15 +292,6 @@ input InfectedEncounterCreateInput {
   duration: Int!
 }
 
-input InfectedEncounterUpdateInput {
-  randomPart: String
-  possibleInfectedHash: String
-  rssi: Int
-  hits: Int
-  time: Int
-  duration: Int
-}
-
 input InfectedEncountersCreateInput {
   infectedEncounters: [InfectedEncounterCreateInput!]!
 }
@@ -2104,54 +2095,6 @@ func (ec *executionContext) unmarshalInputInfectedEncounterCreateInput(ctx conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputInfectedEncounterUpdateInput(ctx context.Context, obj interface{}) (InfectedEncounterUpdateInput, error) {
-	var it InfectedEncounterUpdateInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "randomPart":
-			var err error
-			it.RandomPart, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "possibleInfectedHash":
-			var err error
-			it.PossibleInfectedHash, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rssi":
-			var err error
-			it.Rssi, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "hits":
-			var err error
-			it.Hits, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "time":
-			var err error
-			it.Time, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "duration":
-			var err error
-			it.Duration, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputInfectedEncountersCreateInput(ctx context.Context, obj interface{}) (InfectedEncountersCreateInput, error) {
 	var it InfectedEncountersCreateInput
 	var asMap = obj.(map[string]interface{})
@@ -3014,29 +2957,6 @@ func (ec *executionContext) marshalOInfectionAlert2ᚖgithubᚗcomᚋwebᚑridge
 		return graphql.Null
 	}
 	return ec._InfectionAlert(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
-	return graphql.UnmarshalInt(v)
-}
-
-func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	return graphql.MarshalInt(v)
-}
-
-func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOInt2int(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
