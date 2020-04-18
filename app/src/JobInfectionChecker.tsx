@@ -11,8 +11,14 @@ import {
 const alertStorageKey = 'alertStorageKeyContactTracing'
 
 const query = graphql`
-  query JobInfectionCheckerQuery($bluetoothHash: String!) {
-    infectedEncounters(deviceHashesOfMyOwn: $bluetoothHash) {
+  query JobInfectionCheckerQuery(
+    $deviceHashesOfMyOwn: [DeviceKeyParam!]!
+    $optionalEncounters: [EncounterInput!]
+  ) {
+    infectedEncounters(
+      deviceHashesOfMyOwn: $deviceHashesOfMyOwn
+      optionalEncounters: $optionalEncounters
+    ) {
       howManyEncounters
       risk
     }

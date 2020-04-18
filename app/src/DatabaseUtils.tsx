@@ -7,9 +7,12 @@ import {
   getAnonymizedTimestamp,
   getStartOfRiskUnix,
   beginningOfContactTracingUUID,
+  getRandomString,
 } from './Utils'
 import { v4 as uuidv4 } from 'uuid'
 import AsyncStorage from '@react-native-community/async-storage'
+import { commitMutation, graphql } from 'react-relay'
+import RelayEnvironment from './RelayEnvironment'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -71,11 +74,22 @@ export async function getDeviceKeys(): Promise<string[]> {
   }
 }
 
+const createDeviceKeyMutation = graphql`
+  mutation DatabaseUtilsCreateDeviceKeyMutation(
+    $deviceKey: DeviceKeyCreateInput!
+  ) {
+    createDeviceKey(input: $deviceKey) {
+      ok
+    }
+  }
+`
 export async function getCurrentDeviceKeyOrRenew() {
   // check if device key exist for this date
   const currentDate = getAnonymizedTimestamp()
   const database = await getDatabase()
-  const keys = database.objects(KeysSchema.name).filter(`time = ${currentDate}`)
+  const keys = database
+    .objects(KeysSchema.name)
+    .filtered(`time = ${currentDate}`)
   if (keys.length > 0) {
     return keys[0]
   }
@@ -85,7 +99,16 @@ export async function getCurrentDeviceKeyOrRenew() {
 
   // TODO: create password
   // TODO: create new deviceKey and password
+  //@ts-ignore
+
+  let password = getRandomString()
   let newDeviceKey = generateBluetootTraceKey()
+  commitMutation(RelayEnvironment, {
+    createDeviceKeyMutation,
+    variables: {},
+    onCompleted: async (response, errors) => {},
+    onError: (err) => {},
+  })
   // TODO: register deviceKey and password on server :)
 
   // TODO add to Keyschema

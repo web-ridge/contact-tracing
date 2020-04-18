@@ -5,8 +5,7 @@ import { Translate } from 'react-translated'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
-import { getEncountersAfter } from './DatabaseUtils'
-import { getStartOfRiskUnix } from './Utils'
+import { getEncounters } from './DatabaseUtils'
 import { EncounterSchema, getDatabase } from './Database'
 import { syncMap } from './JobTracingUtils'
 
@@ -31,9 +30,7 @@ export default function ScreenSymptomsSendButton({
   useEffect(() => {
     const updateCountAsync = async () => {
       await syncMap()
-      const encountersFromLast2Weeks = await getEncountersAfter(
-        getStartOfRiskUnix()
-      )
+      const encountersFromLast2Weeks = await getEncounters()
       setHowManyContacts(encountersFromLast2Weeks.length)
     }
     updateCountAsync()
@@ -44,9 +41,7 @@ export default function ScreenSymptomsSendButton({
       // TODO: fetch contact from encrypted database in the previous 2 weeks
       setError(false)
 
-      const encountersFromLast2Weeks = await getEncountersAfter(
-        getStartOfRiskUnix()
-      )
+      const encountersFromLast2Weeks = await getEncounters()
 
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,

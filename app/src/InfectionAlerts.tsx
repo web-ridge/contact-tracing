@@ -77,8 +77,14 @@ function AlertRoots(variables: InfectionAlertsQueryVariables) {
     <QueryRenderer<InfectionAlertsQuery>
       environment={RelayEnviroment}
       query={graphql`
-        query InfectionAlertsQuery($uniqueDeviceId: String!) {
-          infectedEncounters(deviceHashesOfMyOwn: $uniqueDeviceId) {
+        query InfectionAlertsQuery(
+          $deviceHashesOfMyOwn: [DeviceKeyParam!]!
+          $optionalEncounters: [EncounterInput!]
+        ) {
+          infectedEncounters(
+            deviceHashesOfMyOwn: $deviceHashesOfMyOwn
+            optionalEncounters: $optionalEncounters
+          ) {
             howManyEncounters
             risk
           }

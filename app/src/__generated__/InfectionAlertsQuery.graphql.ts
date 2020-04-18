@@ -1,11 +1,23 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash 1c8dda6f99c878489c59051d93a99da6 */
+/* @relayHash 01962d0ceb05d8cb909be94bcdd9e74d */
 
 import { ConcreteRequest } from "relay-runtime";
 export type Risk = "HIGH_RISK" | "LOW_RISK" | "MIDDLE_RISK" | "%future added value";
+export type DeviceKeyParam = {
+    hash: string;
+    password: string;
+};
+export type EncounterInput = {
+    hash: string;
+    rssi: number;
+    hits: number;
+    time: number;
+    duration: number;
+};
 export type InfectionAlertsQueryVariables = {
-    uniqueDeviceId: string;
+    deviceHashesOfMyOwn: Array<DeviceKeyParam>;
+    optionalEncounters?: Array<EncounterInput> | null;
 };
 export type InfectionAlertsQueryResponse = {
     readonly infectedEncounters: ReadonlyArray<{
@@ -22,9 +34,10 @@ export type InfectionAlertsQuery = {
 
 /*
 query InfectionAlertsQuery(
-  $uniqueDeviceId: String!
+  $deviceHashesOfMyOwn: [DeviceKeyParam!]!
+  $optionalEncounters: [EncounterInput!]
 ) {
-  infectedEncounters(hash: $uniqueDeviceId) {
+  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {
     howManyEncounters
     risk
   }
@@ -35,8 +48,14 @@ const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "kind": "LocalArgument",
-    "name": "uniqueDeviceId",
-    "type": "String!",
+    "name": "deviceHashesOfMyOwn",
+    "type": "[DeviceKeyParam!]!",
+    "defaultValue": null
+  },
+  {
+    "kind": "LocalArgument",
+    "name": "optionalEncounters",
+    "type": "[EncounterInput!]",
     "defaultValue": null
   }
 ],
@@ -49,8 +68,13 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "hash",
-        "variableName": "uniqueDeviceId"
+        "name": "deviceHashesOfMyOwn",
+        "variableName": "deviceHashesOfMyOwn"
+      },
+      {
+        "kind": "Variable",
+        "name": "optionalEncounters",
+        "variableName": "optionalEncounters"
       }
     ],
     "concreteType": "InfectionAlert",
@@ -93,10 +117,10 @@ return {
     "operationKind": "query",
     "name": "InfectionAlertsQuery",
     "id": null,
-    "text": "query InfectionAlertsQuery(\n  $uniqueDeviceId: String!\n) {\n  infectedEncounters(hash: $uniqueDeviceId) {\n    howManyEncounters\n    risk\n  }\n}\n",
+    "text": "query InfectionAlertsQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n  $optionalEncounters: [EncounterInput!]\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {\n    howManyEncounters\n    risk\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
-(node as any).hash = '38d8f116f5f92e79b2f8c8e1dd365b68';
+(node as any).hash = '613ada24cff6aaaa4099c92d8473ea9e';
 export default node;

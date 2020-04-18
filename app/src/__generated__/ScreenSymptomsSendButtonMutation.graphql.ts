@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash f6bab9c9388e7cc6387d4c950e09aaa8 */
+/* @relayHash 80e444dddf4b821a1e36033c634036c9 */
 
 import { ConcreteRequest } from "relay-runtime";
 export type InfectedEncountersCreateInput = {
@@ -11,6 +11,7 @@ export type InfectedEncounterCreateInput = {
     rssi: number;
     hits: number;
     time: number;
+    duration: number;
 };
 export type ScreenSymptomsSendButtonMutationVariables = {
     infectedEncounters: InfectedEncountersCreateInput;
@@ -59,7 +60,7 @@ v1 = [
         "variableName": "infectedEncounters"
       }
     ],
-    "concreteType": "InfectedEncounterCreatePayload",
+    "concreteType": "OkPayload",
     "plural": false,
     "selections": [
       {

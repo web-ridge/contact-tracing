@@ -77,6 +77,17 @@ async function getSecureKey(
   return randomKeyString
 }
 
+export function getRandomString() {
+  var array = new Uint8Array(50)
+  console.log({ array })
+  //@ts-ignore
+  var randomArrayBuffer = crypto.getRandomValues(array)
+  console.log({ randomArrayBuffer })
+  var randomKeyString = _arrayBufferToBase64(randomArrayBuffer)
+  console.log({ randomKeyString })
+  return randomKeyString
+}
+
 function _arrayBufferToBase64(buffer: ArrayBuffer): string {
   var binary = ''
   var bytes = new Uint8Array(buffer)

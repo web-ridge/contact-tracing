@@ -1,11 +1,23 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash fe8d0a360f47b0ef77048d11ba092969 */
+/* @relayHash 2bfa107515737aeb32367728f558614f */
 
 import { ConcreteRequest } from "relay-runtime";
 export type Risk = "HIGH_RISK" | "LOW_RISK" | "MIDDLE_RISK" | "%future added value";
+export type DeviceKeyParam = {
+    hash: string;
+    password: string;
+};
+export type EncounterInput = {
+    hash: string;
+    rssi: number;
+    hits: number;
+    time: number;
+    duration: number;
+};
 export type JobInfectionCheckerQueryVariables = {
-    bluetoothHash: string;
+    deviceHashesOfMyOwn: Array<DeviceKeyParam>;
+    optionalEncounters?: Array<EncounterInput> | null;
 };
 export type JobInfectionCheckerQueryResponse = {
     readonly infectedEncounters: ReadonlyArray<{
@@ -22,9 +34,10 @@ export type JobInfectionCheckerQuery = {
 
 /*
 query JobInfectionCheckerQuery(
-  $bluetoothHash: String!
+  $deviceHashesOfMyOwn: [DeviceKeyParam!]!
+  $optionalEncounters: [EncounterInput!]
 ) {
-  infectedEncounters(hash: $bluetoothHash) {
+  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {
     howManyEncounters
     risk
   }
@@ -35,8 +48,14 @@ const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "kind": "LocalArgument",
-    "name": "bluetoothHash",
-    "type": "String!",
+    "name": "deviceHashesOfMyOwn",
+    "type": "[DeviceKeyParam!]!",
+    "defaultValue": null
+  },
+  {
+    "kind": "LocalArgument",
+    "name": "optionalEncounters",
+    "type": "[EncounterInput!]",
     "defaultValue": null
   }
 ],
@@ -49,8 +68,13 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "hash",
-        "variableName": "bluetoothHash"
+        "name": "deviceHashesOfMyOwn",
+        "variableName": "deviceHashesOfMyOwn"
+      },
+      {
+        "kind": "Variable",
+        "name": "optionalEncounters",
+        "variableName": "optionalEncounters"
       }
     ],
     "concreteType": "InfectionAlert",
@@ -93,10 +117,10 @@ return {
     "operationKind": "query",
     "name": "JobInfectionCheckerQuery",
     "id": null,
-    "text": "query JobInfectionCheckerQuery(\n  $bluetoothHash: String!\n) {\n  infectedEncounters(hash: $bluetoothHash) {\n    howManyEncounters\n    risk\n  }\n}\n",
+    "text": "query JobInfectionCheckerQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n  $optionalEncounters: [EncounterInput!]\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {\n    howManyEncounters\n    risk\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
-(node as any).hash = 'c41b8cb0df6e981578f0be0271debf51';
+(node as any).hash = 'f47abf875d0ea2dcc7babf5319cb364f';
 export default node;
