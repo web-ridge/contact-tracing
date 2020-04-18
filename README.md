@@ -17,6 +17,8 @@ Als jij COVID-19 hebt kun je dit zelf melden via de app (of met een QR-code). Je
 - Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
 - Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummer en dat wachtwoord;
 - QR-code scannen voordat je symptonen kan opsturen.
+- iOS apparaten sturen hun ContactTracingsNummer op i.p.v. de hashes waarmee ze besmet zijn
+- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze ContactTracingsNummers ook niet opgeslagen op de server.
 
 ## Explain way of working
 
@@ -87,10 +89,4 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - De eigen key waarmee een gebruik identificeerbaar is 
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
 
-
-
-## Blokkades
-
-- De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
-  https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
 
