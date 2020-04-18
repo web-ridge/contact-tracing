@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "ios:beta": "fastlane ios beta",
+    "android:beta": "fastlane android beta",
     "android": "cd ./android && ./gradlew app:assembleDebug && ./gradlew installDebug",
     "ios": "react-native run-ios",
     "start": "yarn run relay; concurrently --kill-others --names \"react-scripts,relay\" \"react-native start\" \"yarn run relay --watch\"",

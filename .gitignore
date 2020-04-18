@@ -2,3 +2,5 @@
 .secret
 deploy.sh
 program-executable
+.keystore
+.gradle.properties
