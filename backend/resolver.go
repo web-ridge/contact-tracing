@@ -90,6 +90,17 @@ func secureEncounters(
 	return secureEncounters
 }
 
+func secureHashes(deviceKeysParams []fm.DeviceKeyParam,
+	realSecureKeys dm.DeviceKeySlice) []string {
+	var validHashes []string
+	for _, deviceKeyParam := range deviceKeysParams {
+		if isValidKeyParam(realSecureKeys, deviceKeyParam) {
+			validHashes = append(validHashes, deviceKeyParam.Hash)
+		}
+	}
+	return validHashes
+}
+
 // InfectedEncounters fetches the shared encounters of other users with my device key. Only the user will be able to fetch
 // these since the others don't have the password which is in a local persisted database
 // optionalExtraDeviceHashes is used to check infected device keys since iOS users won't be able to track in the background
@@ -121,7 +132,6 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 				getDeviceKeysFromParams(deviceKeysOfUserParams),
 			),
 		).All(ctx, r.db)
-		infectedEncounters = infectedEncounters
 	}()
 
 	wg.Add(1)
@@ -133,7 +143,6 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 			),
 			dm.InfectedEncounterWhere.Time.GTE(int(beginOfIncubationPeriod.Unix())),
 		).All(ctx, r.db)
-		infectedEncounters = infectedEncounters
 	}()
 
 	// only used if user has opt-in for alerts on iOS devices
@@ -169,6 +178,72 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceKeysOfUser
 
 	// calculate risk for user based on his encounters
 	return getRiskAlerts(securedEncounters), nil
+}
+
+func (r *mutationResolver) CreateDeviceKey(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+
+}
+func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+
+}
+
+const removeDeviceKeysError = "could not delete device keys"
+
+func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam, optionalExtraDeviceHashes []string) (*fm.OkPayload, error) {
+	realSecureKeys, err := dm.DeviceKeys(
+		dm.DeviceKeyWhere.Hash.IN(
+			getDeviceKeysFromParams(deviceKeysOfUserParams),
+		),
+	).All(ctx, r.db)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Could not fetch device keys")
+		return nil, fmt.Errorf(removeDeviceKeysError)
+	}
+
+	// only use checked hashes in query
+	secureHashes := secureHashes(deviceKeysOfUserParams, realSecureKeys)
+	if len(secureHashes) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
+
+	if _, err := dm.DeviceKeys(dm.DeviceKeyWhere.Hash.IN(secureHashes)).DeleteAll(ctx, r.db); err != nil {
+		log.Error().Err(err).Msg("Could not delete device keys")
+		return nil, fmt.Errorf(removeDeviceKeysError)
+	}
+
+	return &fm.OkPayload{Ok: true}, nil
+}
+
+const registerDeviceKeysAsInfectedError = "Could not register device keys as infected"
+
+func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, deviceKeysOfUserParams []fm.DeviceKeyParam) (*fm.OkPayload, error) {
+	realSecureKeys, err := dm.DeviceKeys(
+		dm.DeviceKeyWhere.Hash.IN(
+			getDeviceKeysFromParams(deviceKeysOfUserParams),
+		),
+	).All(ctx, r.db)
+
+	if err != nil {
+		log.Error().Err(err).Msg("could not fetch secure keys")
+		return nil, fmt.Errorf(registerDeviceKeysAsInfectedError)
+	}
+
+	// only use checked hashes in query
+	secureHashes := secureHashes(deviceKeysOfUserParams, realSecureKeys)
+	if len(secureHashes) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
+
+	if _, err := dm.DeviceKeys(dm.DeviceKeyWhere.Hash.IN(secureHashes)).UpdateAll(ctx, r.db, dm.M{
+		dm.DeviceKeyColumns.Infected: true,
+	}); err != nil {
+		log.Error().Err(err).Msg("Could not update device keys")
+		return nil, fmt.Errorf(registerDeviceKeysAsInfectedError)
+	}
+
+	return &fm.OkPayload{Ok: true}, nil
+
 }
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

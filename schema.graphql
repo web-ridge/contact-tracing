@@ -57,18 +57,18 @@ type OkPayload {
 }
 
 type Mutation {
-  # let Android user share their contactmoments no trace back to user will be saved!
+  # Let Android user share their contactmoments no trace back to user will be saved!
   createInfectedEncounters(input: InfectedEncountersCreateInput!): OkPayload!
 
-  # let iOS users register their device keys of two weeks as infected
+  # Let iOS users register their device keys of two weeks as infected
   registerDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
 
-  # user generated a device key and password so know this uuid really belongs to that user
+  # User generated a device key and password so know this uuid really belongs to that user
   createDeviceKey(input: DeviceKeyCreateInput!): OkPayload!
 
   ## AVG -> User should be able to always remove all their data from server
-  # Let user remove infected encounters on their device id's from database (AVG)
+  # Let user remove infected encounters on their device keys from database (AVG)
   deleteInfectedEncountersOnKeys(keys: [DeviceKeyParam!]!): OkPayload!
-  removeDeviceKeysAsInfected(keys: [DeviceKeyParam!]!): OkPayload!
+
   removeDeviceKeys(keys: [DeviceKeyParam!]!): OkPayload!
 }
