@@ -82,7 +82,7 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
 - De eigen key waarmee een gebruik identificeerbaar is 
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
-- Stricte controle van SSL certificaat (HTS)
+
 
 
 ## Blokkades
