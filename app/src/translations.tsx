@@ -86,11 +86,11 @@ export default {
   },
   permissionText: {
     en: `I agree that my locally saved contactmomenten of the past 2 weeks with will be shared so that other phones will be notified when they have been in contact with me.`,
-    nl: `Ik ga ermee akkoord dat mijn contactperiodes van de afgelopen 2 weken contactmomenten worden gedeeld zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
+    nl: `Ik ga ermee akkoord dat mijn contactmomenten van de afgelopen 2 weken contactmomenten worden gedeeld zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
   },
   permissionTrust: {
-    en: `Nowhere will be saved wo sent the contactperiods.`,
-    nl: `Nergens wordt opgeslagen wie deze contact perioden heeft opgestuurd.`,
+    en: `Nowhere will be saved wo sent the contactmoments.`,
+    nl: `Nergens wordt opgeslagen wie deze contactmomenten heeft opgestuurd.`,
   },
   // permissionTrustPrivacyTermsText: {
   //   en: `I have read the data privacy agreement and agree to my personal data being processed and used.`,
@@ -101,8 +101,8 @@ export default {
     nl: `Lees privacy verklaring.`,
   },
   [`sendContactsButtonText {howManyContacts}`]: {
-    en: `Send {howManyContacts} contactperiod`,
-    nl: `Verzend {howManyContacts} contactperiode`,
+    en: `Send {howManyContacts} contactmoments`,
+    nl: `Verzend {howManyContacts} contactmomenten`,
   },
   [`resendContactsButtonText {howManyContacts}`]: {
     en: `Try sending again`,

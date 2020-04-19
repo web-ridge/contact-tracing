@@ -95,6 +95,14 @@ func removeOldData(db *sql.DB) error {
 		log.Error().Err(err).Msg("issue with removing data")
 		return err
 	}
+
+	if _, err := dm.InfectionCreateKeys(
+		dm.InfectionCreateKeyWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
+	).DeleteAll(context.Background(), db); err != nil {
+		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
+		log.Error().Err(err).Msg("issue with removing data")
+		return err
+	}
 	return nil
 }
 

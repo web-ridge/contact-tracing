@@ -36,12 +36,23 @@ type InfectedEncounterCreateInput struct {
 }
 
 type InfectedEncountersCreateInput struct {
+	InfectionCreateKey *InfectionCreateKeyInput        `json:"infectionCreateKey"`
 	InfectedEncounters []*InfectedEncounterCreateInput `json:"infectedEncounters"`
 }
 
 type InfectionAlert struct {
 	HowManyEncounters int  `json:"howManyEncounters"`
 	Risk              Risk `json:"risk"`
+}
+
+type InfectionCreateKey struct {
+	Key      string `json:"Key"`
+	Password string `json:"Password"`
+}
+
+type InfectionCreateKeyInput struct {
+	Key      string `json:"Key"`
+	Password string `json:"Password"`
 }
 
 type OkPayload struct {

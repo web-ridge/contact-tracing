@@ -14,56 +14,67 @@ import "testing"
 func TestParent(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeys)
 	t.Run("InfectedEncounters", testInfectedEncounters)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeys)
 }
 
 func TestDelete(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysDelete)
 	t.Run("InfectedEncounters", testInfectedEncountersDelete)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysQueryDeleteAll)
 	t.Run("InfectedEncounters", testInfectedEncountersQueryDeleteAll)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysSliceDeleteAll)
 	t.Run("InfectedEncounters", testInfectedEncountersSliceDeleteAll)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysExists)
 	t.Run("InfectedEncounters", testInfectedEncountersExists)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysExists)
 }
 
 func TestFind(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysFind)
 	t.Run("InfectedEncounters", testInfectedEncountersFind)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysFind)
 }
 
 func TestBind(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysBind)
 	t.Run("InfectedEncounters", testInfectedEncountersBind)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysBind)
 }
 
 func TestOne(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysOne)
 	t.Run("InfectedEncounters", testInfectedEncountersOne)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysOne)
 }
 
 func TestAll(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysAll)
 	t.Run("InfectedEncounters", testInfectedEncountersAll)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysAll)
 }
 
 func TestCount(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysCount)
 	t.Run("InfectedEncounters", testInfectedEncountersCount)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysCount)
 }
 
 func TestHooks(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysHooks)
 	t.Run("InfectedEncounters", testInfectedEncountersHooks)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysHooks)
 }
 
 func TestInsert(t *testing.T) {
@@ -71,6 +82,8 @@ func TestInsert(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysInsertWhitelist)
 	t.Run("InfectedEncounters", testInfectedEncountersInsert)
 	t.Run("InfectedEncounters", testInfectedEncountersInsertWhitelist)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysInsert)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysInsertWhitelist)
 }
 
 // TestToOne tests cannot be run in parallel
@@ -116,24 +129,29 @@ func TestToManyRemove(t *testing.T) {}
 func TestReload(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysReload)
 	t.Run("InfectedEncounters", testInfectedEncountersReload)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysReload)
 }
 
 func TestReloadAll(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysReloadAll)
 	t.Run("InfectedEncounters", testInfectedEncountersReloadAll)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysReloadAll)
 }
 
 func TestSelect(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysSelect)
 	t.Run("InfectedEncounters", testInfectedEncountersSelect)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysSelect)
 }
 
 func TestUpdate(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysUpdate)
 	t.Run("InfectedEncounters", testInfectedEncountersUpdate)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysSliceUpdateAll)
 	t.Run("InfectedEncounters", testInfectedEncountersSliceUpdateAll)
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysSliceUpdateAll)
 }

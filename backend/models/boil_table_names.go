@@ -4,9 +4,11 @@
 package models
 
 var TableNames = struct {
-	DeviceKey         string
-	InfectedEncounter string
+	DeviceKey          string
+	InfectedEncounter  string
+	InfectionCreateKey string
 }{
-	DeviceKey:         "device_key",
-	InfectedEncounter: "infected_encounter",
+	DeviceKey:          "device_key",
+	InfectedEncounter:  "infected_encounter",
+	InfectionCreateKey: "infection_create_key",
 }

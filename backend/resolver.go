@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"os"
 	"sync"
 	"time"
 
@@ -24,6 +25,27 @@ type Resolver struct {
 // CreateInfectedEncounters persists shared contacts from Android devices
 func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input fm.InfectedEncountersCreateInput) (*fm.OkPayload, error) {
 
+	if input.InfectionCreateKey != nil ||
+		len(input.InfectionCreateKey.Key) < 25 ||
+		len(input.InfectionCreateKey.Password) < 25 {
+		log.Debug().Msg("infection create key not provided")
+		return nil, publicCreateInfectedEncountersError
+	}
+
+	// verify user input with database
+	databaseKey, err := dm.InfectionCreateKeys(
+		dm.InfectionCreateKeyWhere.Key.EQ(input.InfectionCreateKey.Key),
+		dm.InfectionCreateKeyWhere.Password.EQ(input.InfectionCreateKey.Password),
+	).One(ctx, r.db)
+
+	// if key could not be found + double check
+	if err != nil ||
+		databaseKey.Key != input.InfectionCreateKey.Key || // database check is enough, but double check
+		databaseKey.Password != input.InfectionCreateKey.Password { // // database check is enough, but double check
+		log.Error().Err(err).Msg("Could not insert infected encounters from database")
+		return nil, publicCreateInfectedEncountersError
+	}
+
 	boilerRows := InfectedEncounterCreateInputsToBoiler(input.InfectedEncounters)
 	if len(boilerRows) == 0 {
 		log.Debug().Msg("No encounters so returning OK=true")
@@ -32,14 +54,14 @@ func (r *mutationResolver) CreateInfectedEncounters(ctx context.Context, input f
 		}, nil
 	}
 
-	// four random characters which are used to group infections later to filter out unique encounters
-	// will not be tracable back to a specific person since it's not nearly unique enough for that :-D
-	randomString := randSeq(4)
+	// 2 random characters which are used to group infections later to filter out unique encounters
+	// will not be tracable back to a specific person since it's not nearly unique enough for that :)
+	randomString := randSeq(2)
 
 	sql, values := InfectedEncountersToQuery(boilerRows, randomString)
 	if _, err := r.db.Exec(sql, values...); err != nil {
 		log.Error().Err(err).Msg("Could not insert infected encounters from database")
-		return nil, fmt.Errorf("could not sync infected encounters")
+		return nil, publicCreateInfectedEncountersError
 	}
 	log.Debug().Int("howManyEncounters", len(boilerRows)).Msg("inserted encounters into database")
 	return &fm.OkPayload{
@@ -197,7 +219,7 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 		log.Debug().Err(realSecureKeysError).Msg("realKeysError")
 
 		log.Error().Err(infectedEncountersError).Msg("Could not get infected encounters from database")
-		return nil, fmt.Errorf("could not get summary from database")
+		return nil, publicInfectedEncountersError
 	}
 
 	// infectedDeviceKeys or user encounters to support iOS alert for Android
@@ -211,19 +233,15 @@ func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMy
 	return getRiskAlerts(append(securedEncounters, extraInfectedEncounters...)), nil
 }
 
-const createDeviceKeyError = "could not create device key"
-
 func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input fm.DeviceKeyCreateInput) (*fm.OkPayload, error) {
 
 	boilerModel := DeviceKeyCreateInputToBoiler(&input)
 	if err := boilerModel.Insert(ctx, r.db, boil.Infer()); err != nil {
 		log.Error().Err(err).Msg("Could not insert device key")
-		return nil, fmt.Errorf(createDeviceKeyError)
+		return nil, publicCreateDeviceKeyError
 	}
 	return &fm.OkPayload{Ok: true}, nil
 }
-
-const deleteInfectedEncountersOnKeysError = "could not delete infected encounters"
 
 func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	// if no device hashes are sent, return empty request
@@ -238,7 +256,7 @@ func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, d
 	).All(ctx, r.db)
 	if err != nil {
 		log.Error().Err(err).Msg("Could not fetch device keys")
-		return nil, fmt.Errorf(deleteInfectedEncountersOnKeysError)
+		return nil, publicDeleteInfectedEncountersOnKeysError
 	}
 
 	// only use validated hashes in query
@@ -248,12 +266,10 @@ func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, d
 	}
 	if _, err := dm.InfectedEncounters(dm.InfectedEncounterWhere.PossibleInfectedHash.IN(secureHashes)).DeleteAll(ctx, r.db); err != nil {
 		log.Error().Err(err).Msg("Could not delete device keys")
-		return nil, fmt.Errorf(removeDeviceKeysError)
+		return nil, publicDeleteInfectedEncountersOnKeysError
 	}
 	return &fm.OkPayload{Ok: true}, nil
 }
-
-const removeDeviceKeysError = "could not delete device keys"
 
 func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	// if no device hashes are sent, return empty request
@@ -268,7 +284,7 @@ func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUse
 
 	if err != nil {
 		log.Error().Err(err).Msg("Could not fetch device keys")
-		return nil, fmt.Errorf(removeDeviceKeysError)
+		return nil, publicRemoveDeviceKeysError
 	}
 
 	// only use validated hashes in query
@@ -279,13 +295,11 @@ func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUse
 
 	if _, err := dm.DeviceKeys(dm.DeviceKeyWhere.Hash.IN(secureHashes)).DeleteAll(ctx, r.db); err != nil {
 		log.Error().Err(err).Msg("Could not delete device keys")
-		return nil, fmt.Errorf(removeDeviceKeysError)
+		return nil, publicRemoveDeviceKeysError
 	}
 
 	return &fm.OkPayload{Ok: true}, nil
 }
-
-const registerDeviceKeysAsInfectedError = "Could not register device keys as infected"
 
 func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
 	// if no device hashes are sent, return empty request
@@ -300,7 +314,7 @@ func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, dev
 
 	if err != nil {
 		log.Error().Err(err).Msg("could not fetch secure keys")
-		return nil, fmt.Errorf(registerDeviceKeysAsInfectedError)
+		return nil, publicRegisterDeviceKeysAsInfectedError
 	}
 
 	// only use validated hashes in query
@@ -313,11 +327,77 @@ func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, dev
 		dm.DeviceKeyColumns.Infected: true,
 	}); err != nil {
 		log.Error().Err(err).Msg("Could not update device keys")
-		return nil, fmt.Errorf(registerDeviceKeysAsInfectedError)
+		return nil, publicRegisterDeviceKeysAsInfectedError
 	}
 
 	return &fm.OkPayload{Ok: true}, nil
 
+}
+
+func getRandomInfectionCreateKey() (*dm.InfectionCreateKey, error) {
+	randomKeyBytes := make([]byte, 25)
+	randomPasswordBytes := make([]byte, 25)
+	_, randomKeyBytesError := rand.Read(randomKeyBytes)
+	if randomKeyBytesError != nil {
+		return nil, fmt.Errorf("could not generate random key for infection create: %v", randomKeyBytesError)
+	}
+	_, randomPasswordBytesError := rand.Read(randomPasswordBytes)
+	if randomPasswordBytesError != nil {
+		return nil, fmt.Errorf("could not generate random password for infection create: %v", randomPasswordBytesError)
+	}
+	return &dm.InfectionCreateKey{
+		Key:      string(randomKeyBytes),
+		Password: string(randomPasswordBytes),
+		Time:     int(time.Now().Unix()),
+	}, nil
+}
+
+func (r *mutationResolver) CreateInfectionCreateKey(ctx context.Context, singleSignOnKey string, singleSignOnSecondKey string) (*fm.InfectionCreateKey, error) {
+
+	// validate request of instance
+	// TODO in real situation should be user with password of GGD
+	// If they will work together we will build that ;)
+	realKey := os.Getenv("SINGLE_SIGN_ON_KEY")
+	realSecondKey := os.Getenv("SINGLE_SIGN_ON_SECOND_KEY")
+	wrongKey := realKey != singleSignOnKey
+	wrongSecondKey := realSecondKey != singleSignOnSecondKey
+	if wrongKey || wrongSecondKey || len(realKey) != 100 || len(realSecondKey) != 100 {
+		log.Error().
+			Bool("wrongKey", wrongKey).
+			Bool("wrongSecondKey", wrongSecondKey).
+			Msg("Could not create infection key")
+		return nil, publicCreateInfectionCreateKeyUnauthorized
+	}
+
+	createKey, err := getRandomInfectionCreateKey()
+	if err != nil {
+		log.Error().Err(err).Msg("Could not create infection key")
+		return nil, publicCreateInfectionCreateKeyUnauthorized
+	}
+	if err := createKey.Insert(ctx, r.db, boil.Infer()); err != nil {
+		log.Error().Err(err).Msg("Could insert infection key")
+		return nil, publicCreateDeviceKeyError
+	}
+
+	return InfectionCreateKeyToGraphQL(createKey), nil
+}
+func (r *mutationResolver) CreateInfectionCreateKeyUnauthorized(ctx context.Context) (*fm.InfectionCreateKey, error) {
+	// This is only possible for testing purpopes
+	isDisabled := os.Getenv("USER_INFECTION_CREATE_KEYS_ALLOWED") != "true"
+	if isDisabled {
+		return nil, publicCreateDeviceKeyError
+	}
+
+	createKey, err := getRandomInfectionCreateKey()
+	if err != nil {
+		log.Error().Err(err).Msg("Could not create infection key")
+		return nil, publicCreateInfectionCreateKeyUnauthorized
+	}
+	if err := createKey.Insert(ctx, r.db, boil.Infer()); err != nil {
+		log.Error().Err(err).Msg("Could insert infection key")
+		return nil, publicCreateDeviceKeyError
+	}
+	return InfectionCreateKeyToGraphQL(createKey), nil
 }
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

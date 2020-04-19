@@ -15,6 +15,7 @@ require (
 	github.com/rs/zerolog v1.18.0
 	github.com/spf13/viper v1.6.3
 	github.com/vektah/gqlparser/v2 v2.0.1
+	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.7.0+incompatible
 	github.com/web-ridge/gqlgen-sqlboiler/examples/social-network v0.0.0-20200416094100-889354b08a01
 	github.com/web-ridge/gqlgen-sqlboiler/helper v0.0.0-20200409201443-82c6f4a43f5e

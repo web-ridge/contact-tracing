@@ -9,4 +9,6 @@ func TestUpsert(t *testing.T) {
 	t.Run("DeviceKeys", testDeviceKeysUpsert)
 
 	t.Run("InfectedEncounters", testInfectedEncountersUpsert)
+
+	t.Run("InfectionCreateKeys", testInfectionCreateKeysUpsert)
 }

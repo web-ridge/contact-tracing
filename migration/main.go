@@ -31,6 +31,14 @@ type DeviceKey struct {
 	Infected bool   `gorm:"not null"`                   // Only used for iOS devices to register their own device as infected
 }
 
+// InfectionCreateKey will be used to validate if user can submit own contactmoments
+type InfectionCreateKey struct {
+	ID       uint   `gorm:"primary_key"`                // auto increment
+	Key      string `gorm:"unique;not null;index:key;"` // This hash is pseudo anonimized unique ContacTracingID which expires after 2 weeks available for other devices, needs to be unique (Bluetooth Service UUID)
+	Password string `gorm:"not null"`                   // unique key, password to make hacking impossible
+	Time     int    `gorm:"not null"`                   // We want to remove after 2 weeks
+}
+
 func main() {
 	// Start database connection
 	connStr := fmt.Sprintf(`host=%v port=%v user=%v dbname=%v password=%v sslmode=%v`,
@@ -62,7 +70,7 @@ func main() {
 		log.Fatal().Err(err).Msg("Could not ping database")
 	}
 
-	if err := db.AutoMigrate(&InfectedEncounter{}, DeviceKey{}).Error; err != nil {
+	if err := db.AutoMigrate(&InfectedEncounter{}, DeviceKey{}, &InfectionCreateKey{}).Error; err != nil {
 		log.Fatal().Err(err)
 	}
 	log.Info().Msg("Done!")
