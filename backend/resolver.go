@@ -226,6 +226,11 @@ func (r *mutationResolver) CreateDeviceKey(ctx context.Context, input fm.DeviceK
 const deleteInfectedEncountersOnKeysError = "could not delete infected encounters"
 
 func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
+	// if no device hashes are sent, return empty request
+	if len(deviceKeysOfUserParams) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
+
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),
@@ -251,6 +256,10 @@ func (r *mutationResolver) DeleteInfectedEncountersOnKeys(ctx context.Context, d
 const removeDeviceKeysError = "could not delete device keys"
 
 func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
+	// if no device hashes are sent, return empty request
+	if len(deviceKeysOfUserParams) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),
@@ -279,6 +288,10 @@ func (r *mutationResolver) RemoveDeviceKeys(ctx context.Context, deviceKeysOfUse
 const registerDeviceKeysAsInfectedError = "Could not register device keys as infected"
 
 func (r *mutationResolver) RegisterDeviceKeysAsInfected(ctx context.Context, deviceKeysOfUserParams []*fm.DeviceKeyParam) (*fm.OkPayload, error) {
+	// if no device hashes are sent, return empty request
+	if len(deviceKeysOfUserParams) == 0 {
+		return &fm.OkPayload{Ok: true}, nil
+	}
 	realSecureKeys, err := dm.DeviceKeys(
 		dm.DeviceKeyWhere.Hash.IN(
 			getDeviceKeysFromParams(deviceKeysOfUserParams),

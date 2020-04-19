@@ -7,6 +7,7 @@ import {
   StatusBar,
   Platform,
   Image,
+  Linking,
 } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import {
@@ -158,6 +159,32 @@ function ScreenHome({ componentId }: { componentId: string }) {
               {privacyText}
             </>
           )}
+        </View>
+        <View
+          style={{
+            padding: 24,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+        >
+          <Button
+            uppercase={false}
+            onPress={() => {
+              Linking.openURL(
+                'https://www.contactentraceren.nl/Privacyverklaring.pdf'
+              )
+            }}
+          >
+            Privacyverklaring
+          </Button>
+          <Button
+            uppercase={false}
+            onPress={() => {
+              // add screen to let user remove their data
+            }}
+          >
+            Mijn data
+          </Button>
         </View>
       </ScrollView>
     </>

@@ -55,8 +55,14 @@ export async function giveAlerts() {
   const previousDataHash = await AsyncStorage.getItem(alertStorageKey)
   const newHash = stringifyInfectedEncounters(data.infectedEncounters)
 
-  // no previous notifications or changed alerts
-  if (previousDataHash !== newHash || !previousDataHash) {
+  // if alerts have been changed
+  if (
+    previousDataHash !== newHash ||
+    (!previousDataHash &&
+      data &&
+      data.infectedEncounters &&
+      data.infectedEncounters.length > 0)
+  ) {
     PushNotification.localNotification({
       largeIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_launcher"
       smallIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_notification" with fallback for "ic_launcher"
