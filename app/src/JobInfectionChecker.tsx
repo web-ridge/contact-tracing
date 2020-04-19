@@ -55,6 +55,8 @@ export async function giveAlerts() {
   const previousDataHash = await AsyncStorage.getItem(alertStorageKey)
   const newHash = stringifyInfectedEncounters(data.infectedEncounters)
 
+  console.log({ previousDataHash })
+  console.log({ newHash })
   // if alerts have been changed
   if (
     previousDataHash !== newHash ||

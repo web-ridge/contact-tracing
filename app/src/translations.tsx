@@ -56,6 +56,18 @@ export default {
     en: 'encounters with someone who is probably infected',
     nl: 'contactmomenten met persoon die waarschijnlijk besmet is',
   },
+  myDataButton: {
+    en: 'My data',
+    nl: 'Mijn gegevens',
+  },
+  privacyButton: {
+    en: 'Privacy statement',
+    nl: 'Privacy verklaring',
+  },
+  symptomTitle: {
+    en: 'Symptons',
+    nl: 'Symptonen',
+  },
   symptomIntroduction: {
     en: 'I have all of the following symptoms',
     nl: 'Ik heb alle onderstaande symptomen',
@@ -73,28 +85,28 @@ export default {
     nl: 'of',
   },
   permissionText: {
-    en: `I agree that my locally saved ContactTracing Bluetooth users from the past 2 weeks will be shared so that other phones will be notified when they have been in contact with me.`,
-    nl: `Ik ga ermee akkoord dat mijn ContactTracering Bluetooth gebruikers van de afgelopen 2 weken worden doorgestuurd zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
+    en: `I agree that my locally saved contactmomenten of the past 2 weeks with will be shared so that other phones will be notified when they have been in contact with me.`,
+    nl: `Ik ga ermee akkoord dat mijn contactperiodes van de afgelopen 2 weken contactmomenten worden gedeeld zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
   },
   permissionTrust: {
-    en: `Nowhere will be saved wo sent the contacts.`,
-    nl: `Nergens wordt opgeslagen wie deze contacten heeft opgestuurd.`,
+    en: `Nowhere will be saved wo sent the contactperiods.`,
+    nl: `Nergens wordt opgeslagen wie deze contact perioden heeft opgestuurd.`,
   },
-  permissionTrustPrivacyTermsText: {
-    en: `I have read the data privacy agreement and agree to my personal data being processed and used.`,
-    nl: `Ik heb de akkoordverklaring gelezen en ga akkoord met de verwerking en het gebruik van mijn gegevens.`,
-  },
+  // permissionTrustPrivacyTermsText: {
+  //   en: `I have read the data privacy agreement and agree to my personal data being processed and used.`,
+  //   nl: `Ik heb de privacyverklar gelezen en ga akkoord met de verwerking en het gebruik van mijn gegevens.`,
+  // },
   permissionTrustPrivacyTermsClickText: {
     en: `Read privacy verklaring.`,
     nl: `Lees privacy verklaring.`,
   },
   [`sendContactsButtonText {howManyContacts}`]: {
-    en: `Send contacts`,
-    nl: `Verzend {howManyContacts} contacten`,
+    en: `Send {howManyContacts} contactperiod`,
+    nl: `Verzend {howManyContacts} contactperiode`,
   },
   [`resendContactsButtonText {howManyContacts}`]: {
     en: `Try sending again`,
-    nl: `Verzend {howManyContacts} contacten opnieuw`,
+    nl: `Probeer opnieuw`,
   },
   sendingContactsErrorText: {
     en: `Could not send contacts. Try again later.`,
@@ -111,5 +123,32 @@ export default {
   LOW_RISK: {
     en: 'Low risk',
     nl: 'Laag risico',
+  },
+  myDataTitle: {
+    en: 'My data',
+    nl: 'Mijn gegevens',
+  },
+  myDataEncounterAlerts: {
+    en:
+      'Remove eventuele infections alerts which are registered on my Bluetooth numbers',
+    nl:
+      'Verwijder eventuele besmettingsmeldingen die geregistreerd staan op mijn Bluetooth nummers',
+  },
+  myDeviceKeys: {
+    en: 'Delete my own Bluetooth numbers by which identify my to other devices',
+    nl:
+      'Verwijder mijn eigen Bluetooth nummers waarmee ik mij identificeer aan andere apparaten',
+  },
+  myDataRemovalFailed: {
+    en: 'Deleting failed',
+    nl: 'Verwijderen niet gelukt',
+  },
+  myDataRemovalButton: {
+    en: 'Delete data',
+    nl: 'Verwijder gegevens',
+  },
+  myDataRemovalButtonRetry: {
+    en: 'Delete ata',
+    nl: 'Verwijder gegevens',
   },
 } as TranslationDatabase

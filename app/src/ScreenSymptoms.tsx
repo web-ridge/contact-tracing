@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
-import { ScrollView, View, StyleSheet } from 'react-native'
+import { Linking, ScrollView, View, StyleSheet } from 'react-native'
 import { Text, TouchableRipple, RadioButton } from 'react-native-paper'
 import { Checkbox, Button } from 'react-native-paper'
 import ScreenSymptomsSendButton from './ScreenSymptomsSendButton'
 import { Translate } from 'react-translated'
+import Header from './Header'
 
-export default function ScreenSymptons() {
+export default function ScreenSymptons({
+  componentId,
+}: {
+  componentId: string
+}) {
   const [checkedSympton, setCheckedSympton] = useState<'symptons' | 'tested'>(
     'symptons'
   )
@@ -13,67 +18,81 @@ export default function ScreenSymptons() {
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false)
 
   return (
-    <ScrollView>
-      <CheckItem
-        onPress={() => setCheckedSympton('symptons')}
-        checked={checkedSympton === 'symptons'}
-      >
-        <Text style={{ fontWeight: 'bold' }}>
-          <Translate text="symptomIntroduction" />
-        </Text>
+    <>
+      <Header
+        componentId={componentId}
+        title={<Translate text="symptomTitle" />}
+      ></Header>
+      <ScrollView>
+        <CheckItem
+          onPress={() => setCheckedSympton('symptons')}
+          checked={checkedSympton === 'symptons'}
+        >
+          <Text style={{ fontWeight: 'bold' }}>
+            <Translate text="symptomIntroduction" />
+          </Text>
 
-        <Text>
-          <Translate text="symptomText" />
-        </Text>
-      </CheckItem>
+          <Text>
+            <Translate text="symptomText" />
+          </Text>
+        </CheckItem>
 
-      <Text style={styles.orText}>
-        <Translate text="orText" />
-      </Text>
-      <CheckItem
-        onPress={() => setCheckedSympton('tested')}
-        checked={checkedSympton === 'tested'}
-      >
-        <Text>
-          <Translate text="testedText" />
+        <Text style={styles.orText}>
+          <Translate text="orText" />
         </Text>
-      </CheckItem>
+        <CheckItem
+          onPress={() => setCheckedSympton('tested')}
+          checked={checkedSympton === 'tested'}
+        >
+          <Text>
+            <Translate text="testedText" />
+          </Text>
+        </CheckItem>
 
-      <View style={[styles.symptonItemRoot, { margin: 0, elevation: 0 }]}>
-        <TouchableRipple onPress={() => setAcceptedTerms(!acceptedTerms)}>
-          <View
-            style={[
-              styles.symptonItemInner,
-              { backgroundColor: 'transparent' },
-            ]}
-          >
-            <View style={styles.symptonItemInnerContent}>
-              <Button style={styles.permissionTrust} mode="outlined">
-                <Translate text="permissionTrustPrivacyTermsClickText" />
-              </Button>
-              <Text>
-                <Translate text="permissionText" />{' '}
-                <Text style={styles.permissionTrust}>
-                  <Translate text="permissionTrust" />
+        <Button
+          mode="outlined"
+          onPress={() =>
+            Linking.openURL(
+              'https://www.contactentraceren.nl/Privacyverklaring.pdf'
+            )
+          }
+          style={styles.privacyButton}
+        >
+          <Translate text="permissionTrustPrivacyTermsClickText" />
+        </Button>
+        <View style={[styles.symptonItemRoot, { margin: 12, elevation: 0 }]}>
+          <TouchableRipple onPress={() => setAcceptedTerms(!acceptedTerms)}>
+            <View
+              style={[
+                styles.symptonItemInner,
+                { backgroundColor: 'transparent' },
+              ]}
+            >
+              <View style={styles.symptonItemInnerContent}>
+                <Text>
+                  <Translate text="permissionText" />{' '}
+                  <Text style={styles.permissionTrust}>
+                    <Translate text="permissionTrust" />
+                  </Text>
+                  {/* <Translate text="permissionTrustPrivacyTermsText" /> */}
                 </Text>
-                <Translate text="permissionTrustPrivacyTermsText" />
-              </Text>
+              </View>
+              <View style={styles.symptonItemInnerRight} pointerEvents="none">
+                <Checkbox.Android
+                  status={acceptedTerms ? 'checked' : 'unchecked'}
+                  color="#242648"
+                  uncheckedColor="#242648"
+                />
+              </View>
             </View>
-            <View style={styles.symptonItemInnerRight} pointerEvents="none">
-              <Checkbox.Android
-                status={acceptedTerms ? 'checked' : 'unchecked'}
-                color="#242648"
-                uncheckedColor="#242648"
-              />
-            </View>
-          </View>
-        </TouchableRipple>
-      </View>
+          </TouchableRipple>
+        </View>
 
-      <View style={styles.sendButtonContainer}>
-        <ScreenSymptomsSendButton disabled={!acceptedTerms} />
-      </View>
-    </ScrollView>
+        <View style={styles.sendButtonContainer}>
+          <ScreenSymptomsSendButton disabled={!acceptedTerms} />
+        </View>
+      </ScrollView>
+    </>
   )
 }
 
@@ -113,8 +132,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   symptonItemInner: {
-    padding: 24,
-    paddingRight: 12,
+    padding: 12,
     overflow: 'hidden',
     // borderWidth: 1,
     // borderColor: '#242648',
@@ -128,5 +146,9 @@ const styles = StyleSheet.create({
   sendButtonContainer: { margin: 24, marginTop: 12 },
   permissionTrust: {
     fontWeight: 'bold',
+  },
+  privacyButton: {
+    margin: 12,
+    marginBottom: 0,
   },
 })

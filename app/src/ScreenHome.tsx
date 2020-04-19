@@ -21,7 +21,7 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
 
 import InfectionAlerts from './InfectionAlerts'
 import { startTracing, stopTracing } from './BluetoothScanning'
-import { goToSymptonsScreen } from './Screens'
+import { goToSymptonsScreen, goToDataRemovalScreen } from './Screens'
 
 const bluetoothPermission: Permission = Platform.select({
   ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
@@ -175,15 +175,13 @@ function ScreenHome({ componentId }: { componentId: string }) {
               )
             }}
           >
-            Privacyverklaring
+            <Translate text="privacyButton" />
           </Button>
           <Button
             uppercase={false}
-            onPress={() => {
-              // add screen to let user remove their data
-            }}
+            onPress={() => goToDataRemovalScreen(componentId)}
           >
-            Mijn data
+            <Translate text="myDataButton" />
           </Button>
         </View>
       </ScrollView>

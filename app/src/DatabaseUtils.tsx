@@ -13,7 +13,10 @@ import { v4 as uuidv4 } from 'uuid'
 import AsyncStorage from '@react-native-community/async-storage'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
-import { InfectionAlertsQueryVariables } from './__generated__/InfectionAlertsQuery.graphql'
+import {
+  InfectionAlertsQueryVariables,
+  DeviceKeyParam,
+} from './__generated__/InfectionAlertsQuery.graphql'
 import { DatabaseUtilsCreateDeviceKeyMutation } from './__generated__/DatabaseUtilsCreateDeviceKeyMutation.graphql'
 
 export async function removeAllEncounters(): Promise<boolean> {
@@ -54,11 +57,7 @@ export async function getInfectedEncountersQueryVariables(): Promise<
   )
 
   return {
-    deviceHashesOfMyOwn:
-      deviceKeys.map((deviceKey) => ({
-        hash: sha256(deviceKey.key),
-        password: deviceKey.password,
-      })) || [],
+    deviceHashesOfMyOwn: deviceKeysToParams(deviceKeys),
     // will only be sent if user opted in for iOS alerts
     optionalEncounters: (optionalEncountersWithiOSDevices || []).map(
       ({ hash, rssi, hits, time, duration }) => ({
@@ -70,6 +69,15 @@ export async function getInfectedEncountersQueryVariables(): Promise<
       })
     ),
   }
+}
+
+export function deviceKeysToParams(keys: DeviceKey[]): DeviceKeyParam[] {
+  return (
+    keys.map((deviceKey) => ({
+      hash: sha256(deviceKey.key),
+      password: deviceKey.password,
+    })) || []
+  )
 }
 
 // getDeviceKeys fetches the keys from realm where there is risk for an infection (1-14 days)
