@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { InfectionAlertsQueryVariables } from './__generated__/InfectionAlertsQuery.graphql'
+import { DatabaseUtilsCreateDeviceKeyMutation } from './__generated__/DatabaseUtilsCreateDeviceKeyMutation.graphql'
 
 export async function removeAllEncounters(): Promise<boolean> {
   const database = await getDatabase()
@@ -48,6 +49,7 @@ export async function getInfectedEncountersQueryVariables(): Promise<
       hash: sha256(deviceKey.key),
       password: deviceKey.password,
     })),
+    // will only be sent if user opted in for iOS alerts
     optionalEncounters: (optionalEncountersWithiOSDevices || []).map(
       ({ hash, rssi, hits, time, duration }) => ({
         hash,
@@ -112,17 +114,50 @@ export async function getCurrentDeviceKeyOrRenew() {
   // TODO: create new deviceKey and password
   //@ts-ignore
 
-  let password = getRandomString()
-  let newDeviceKey = generateBluetootTraceKey()
-  commitMutation(RelayEnvironment, {
-    createDeviceKeyMutation,
-    variables: {},
-    onCompleted: async (response, errors) => {},
-    onError: (err) => {},
-  })
-  // TODO: register deviceKey and password on server :)
+  const password = getRandomString()
+  const newDeviceKey = generateBluetootTraceKey()
+  const newDeviceHash = sha256(newDeviceKey)
+  const time = getAnonymizedTimestamp()
 
-  // TODO add to Keyschema
+  // persist key on server
+  commitMutation<DatabaseUtilsCreateDeviceKeyMutation>(RelayEnvironment, {
+    createDeviceKeyMutation,
+    variables: {
+      deviceKey: {
+        hash: newDeviceHash,
+        password,
+        time,
+      },
+    },
+    onCompleted: async (response, errors) => {
+      if (response && response.createDeviceKey && response.createDeviceKey.ok) {
+        database.write(() => {
+          database.create(KeysSchema.name, {
+            id: 'id' + nanoid(),
+            key: newDeviceKey,
+            password,
+            time,
+          })
+        })
+      }
+    },
+    onError: (err) => {
+      // keep the old key till there is internet connection
+      console.log('Could not renew device key', { err })
+    },
+  })
+
+  // TODO: Show notification?
+  console.log(
+    'Use old device key since we could not renew it (probably internet connection)'
+  )
+  const previousKeys = database.objects(KeysSchema.name)
+  if (previousKeys.length > 0) {
+    return previousKeys[0]
+  }
+
+  // just crash
+  throw Error('could get a new device key')
 }
 
 // // syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
