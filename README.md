@@ -2,6 +2,18 @@ Als je code controleert, bekijk de development branch! Deze heeft verbeterde pri
 
 Er wordt gewerkt aan een vernieuwde versie met volledige controle over eigen data en met ondersteuning voor beveiliging van aanmaken overheidinstantie infectie QR-codes of linkjes: https://github.com/web-ridge/contact-tracing/tree/development
 
+
+## Roadmap (https://github.com/web-ridge/contact-tracing/tree/development)
+
+- Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
+- Zorg dat apparaat iedere dag een ander ContactTracingsNummer krijgt (WIP)
+- Zorg dat er bij het ContactTracingsNummers een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft; (WIP)
+- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (WIP)
+- Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
+- iOS apparaten sturen hun eigen ContactTracingsNummers op i.p.v. de hashes die ze ontmoet hebben
+- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze doorgestuurde ContactTracingsNummers ook niet opgeslagen op de server.
+
+
 <img src="https://user-images.githubusercontent.com/6492229/79509074-1ad7d680-803b-11ea-840f-3cc13a7e47e8.jpeg" width="280" />|
 <img src="https://user-images.githubusercontent.com/6492229/79509077-1b706d00-803b-11ea-8a50-bbec74eb17de.jpeg" width="280" />|
 <img src="https://user-images.githubusercontent.com/6492229/79689583-16d3d080-8256-11ea-93b6-a3fd52b9607d.jpeg" width="280" />|
@@ -13,16 +25,6 @@ Er wordt gewerkt aan een vernieuwde versie met volledige controle over eigen dat
 Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. All jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.   
    
 Als jij COVID-19 hebt kun je dit zelf melden via de app. Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
-
-## Roadmap (https://github.com/web-ridge/contact-tracing/tree/development)
-
-- Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
-- Zorg dat apparaat iedere dag een ander ContactTracingsNummer krijgt (WIP)
-- Zorg dat er bij het ContactTracingsNummers een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft; (WIP)
-- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (WIP)
-- Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
-- iOS apparaten sturen hun eigen ContactTracingsNummers op i.p.v. de hashes die ze ontmoet hebben
-- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze doorgestuurde ContactTracingsNummers ook niet opgeslagen op de server.
 
 ## Explain way of working
 
