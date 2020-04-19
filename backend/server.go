@@ -28,6 +28,13 @@ import (
 
 var port = os.Getenv("PORT")
 
+var createKeysValidForDays = 7 * 24 * time.Hour
+var incubationPeriodIndays = 10 * 24 * time.Hour // 1-14 days choose a valid one
+
+// needed because user could sent in his infections later. It is filtered on front-end but just to be sure.
+var removeAfterDays = incubationPeriodIndays + createKeysValidForDays
+var howLongForTestResult = 24 * time.Hour
+
 func main() {
 	// create fast logging
 	initLogger()
@@ -76,12 +83,12 @@ func main() {
 func removeOldData(db *sql.DB) error {
 
 	//  1-14 days
-	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
-	log.Debug().Time("beginOfIncubationPeriod", beginOfIncubationPeriod).Msg("Remove old data from before")
+
+	log.Debug().Int("beginOfIncubationPeriod", getIncubationStartTimeUnix()).Msg("Remove old data from before")
 
 	// get infected encounters for this hash in incubation period
 	if _, err := dm.InfectedEncounters(
-		dm.InfectedEncounterWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
+		dm.InfectedEncounterWhere.Time.LT(getRemoveStartTimeUnix()),
 	).DeleteAll(context.Background(), db); err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
@@ -89,7 +96,7 @@ func removeOldData(db *sql.DB) error {
 	}
 
 	if _, err := dm.DeviceKeys(
-		dm.DeviceKeyWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
+		dm.DeviceKeyWhere.Time.LT(getRemoveStartTimeUnix()),
 	).DeleteAll(context.Background(), db); err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
@@ -97,7 +104,7 @@ func removeOldData(db *sql.DB) error {
 	}
 
 	if _, err := dm.InfectionCreateKeys(
-		dm.InfectionCreateKeyWhere.Time.LT(int(beginOfIncubationPeriod.Unix())),
+		dm.InfectionCreateKeyWhere.Time.LT(getRemoveStartTimeUnix()),
 	).DeleteAll(context.Background(), db); err != nil {
 		// TODO: send mail to AVG person in webRidge // os.Getenv("EMAIL")
 		log.Error().Err(err).Msg("issue with removing data")
