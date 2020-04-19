@@ -1,4 +1,4 @@
-## We use the following programs to generate our backend based on our DB scheme
+## We use the following programs to generate converts between DB and GraphQL
 
 - https://github.com/web-ridge/gqlgen-sqlboiler
 - https://github.com/web-ridge/sqlboiler-graphql-schema
@@ -15,7 +15,7 @@ sqlboiler psql
 go run github.com/web-ridge/sqlboiler-graphql-schema --output=../schema.graphql --pagination=no
 ```
 
-## Generate API + converts
+## Generate API + converts (only to copy from since it's customized now)
 
 ```
 go run convert_plugin.go
