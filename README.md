@@ -1,4 +1,4 @@
-Er wordt gewerkt aan een anoniemere app + volledige controle over eigen data: https://github.com/web-ridge/contact-tracing/tree/development
+Er wordt gewerkt aan een vernieuwde versie met volledige controle over eigen data: https://github.com/web-ridge/contact-tracing/tree/development
 
 <img src="https://user-images.githubusercontent.com/6492229/79509074-1ad7d680-803b-11ea-840f-3cc13a7e47e8.jpeg" width="280" />|
 <img src="https://user-images.githubusercontent.com/6492229/79509077-1b706d00-803b-11ea-8a50-bbec74eb17de.jpeg" width="280" />|
