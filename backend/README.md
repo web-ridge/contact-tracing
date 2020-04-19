@@ -9,7 +9,7 @@
 sqlboiler psql
 ```
 
-## Generate Schema
+## Generate Schema (only to copy from since it's customized now)
 
 ```
 go run github.com/web-ridge/sqlboiler-graphql-schema --output=../schema.graphql --pagination=no
