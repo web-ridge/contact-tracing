@@ -52,7 +52,10 @@ const styles = StyleSheet.create({
 })
 
 export default function InfectionAlerts() {
-  const [variables, setVariables] = useState<any>(undefined)
+  const [
+    variables,
+    setVariables,
+  ] = useState<InfectionAlertsQueryVariables | null>(null)
 
   // first get the local bluetooth hash of this user so we can query the alerts database
   useEffect(() => {
@@ -72,7 +75,11 @@ export default function InfectionAlerts() {
 }
 
 // AlertRoots fetches the query in a type-safe manner for this bluetooth hash
-function AlertRoots(variables: InfectionAlertsQueryVariables) {
+function AlertRoots({
+  variables,
+}: {
+  variables: InfectionAlertsQueryVariables
+}) {
   return (
     <QueryRenderer<InfectionAlertsQuery>
       environment={RelayEnviroment}

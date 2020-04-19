@@ -35,6 +35,10 @@ export async function getInfectedEncountersQueryVariables(): Promise<
 > {
   const acceptediOSAlerts = await AsyncStorage.getItem(acceptediOSAlertsKey)
   const database = await getDatabase()
+
+  // first trigger token if not yet created
+  await getCurrentDeviceKeyOrRenew()
+
   let deviceKeys = await getDeviceKeys()
 
   let optionalEncountersWithiOSDevices: Encounter[] | undefined
@@ -43,6 +47,11 @@ export async function getInfectedEncountersQueryVariables(): Promise<
       .objects(EncounterSchema.name)
       .filtered(`isIos = true`) as any
   }
+
+  console.log(
+    'deviceKeys',
+    deviceKeys.map((o) => o)
+  )
 
   return {
     deviceHashesOfMyOwn:
