@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid'
 import {
   getAnonymizedTimestamp,
   getStartOfRiskUnix,
-  beginningOfContactTracingUUID,
+  secondPartOfContactTracingUUID,
   getRandomString,
 } from './Utils'
 import { v4 as uuidv4 } from 'uuid'
@@ -153,6 +153,8 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
           database.create(KeysSchema.name, deviceKey)
         })
         return deviceKey
+      } else {
+        console.log('response is not ok')
       }
     },
     onError: (err) => {
@@ -171,7 +173,8 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
   }
 
   // just crash
-  throw Error('could get a new device key')
+
+  throw Error('could not get a new device key')
 }
 
 // // syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
@@ -277,8 +280,20 @@ function generateBluetootTraceKey() {
 
   // let others devices know this is a contact tracing device
   const uuidParts = uuid.split('-')
+
   const contactTracingUUID = uuidParts
-    .map((uuidPart, i) => (i === 0 ? beginningOfContactTracingUUID : uuidPart))
+    .map((uuidPart, i) => {
+      // e.g. we have uuid of dcef893e-f0b2-4ddc-80e6-cf4c11080848
+      // and we want it to be dcef893e-c0d0-4ddc-80e6-cf4c11080848
+      // or
+      // and we want it to be dcef893e-c0d1-4ddc-80e6-cf4c11080848
+
+      if (i === 1) {
+        return secondPartOfContactTracingUUID
+      }
+
+      return uuidPart
+    })
     .join('-')
 
   return contactTracingUUID

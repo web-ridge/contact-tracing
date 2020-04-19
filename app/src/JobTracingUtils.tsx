@@ -1,5 +1,9 @@
 import { RSSIMap } from './types'
-import { beginningOfContactTracingUUID, now } from './Utils'
+import {
+  secondPartOfContactTracingAndroidUUID,
+  secondPartOfContactTracingiOSUUID,
+  now,
+} from './Utils'
 import { syncRSSIMap } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 
@@ -47,9 +51,20 @@ export async function deviceScanned(
     return
   }
 
-  const scannedDeviceUUID = (
-    scannedDevice.serviceUUIDs || []
-  ).find((su: string) => su.startsWith(beginningOfContactTracingUUID))
+  // detect if device is contact tracing device
+  const scannedDeviceUUID = (scannedDevice.serviceUUIDs || []).find(
+    (uuid: string) => {
+      const splitted: string[] = uuid.split('-')
+      const secondPart = splitted.length > 0 && splitted[1]
+      if (
+        secondPart === secondPartOfContactTracingAndroidUUID ||
+        secondPart === secondPartOfContactTracingiOSUUID
+      ) {
+        return true
+      }
+      return false
+    }
+  )
 
   if (!scannedDeviceUUID) {
     console.log(
@@ -64,7 +79,7 @@ export async function deviceScanned(
   const previousValue = rssiValues[scannedDeviceUUID]
   const latestRSSI = scannedDevice.rssi
   const didComeCloser = !previousValue || latestRSSI > previousValue.rssi
-  const isIos = scannedDevice.name === 'ctrwri'
+  const isIos = scannedDeviceUUID.startsWith(beginningOfContactTracingiOSUUID)
   if (didComeCloser) {
     rssiValues[scannedDeviceUUID] = previousValue
       ? {

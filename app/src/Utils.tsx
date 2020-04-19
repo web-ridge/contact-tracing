@@ -1,8 +1,15 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
+import { Platform } from 'react-native'
 
-export const beginningOfContactTracingUUID = 'f508a9ea'
+// these are used to identify contact tracing device based on service UUID (Contact Tracing Device (Andriod | IOS))
+export const secondPartOfContactTracingiOSUUID = 'c0d0'
+export const secondPartOfContactTracingAndroidUUID = 'c0d1'
+export const secondPartOfContactTracingUUID = Platform.select({
+  android: secondPartOfContactTracingAndroidUUID,
+  ios: secondPartOfContactTracingiOSUUID,
+})!
 
 //getAnonymizedTimestamp removes hours seconds and milli seconds so only date is left
 // this is more anonymous since nobody can possible prove that you met someone on that specific time
