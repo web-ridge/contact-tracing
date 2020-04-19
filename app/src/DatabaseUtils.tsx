@@ -121,7 +121,7 @@ export async function getCurrentDeviceKeyOrRenew() {
 
   // persist key on server
   commitMutation<DatabaseUtilsCreateDeviceKeyMutation>(RelayEnvironment, {
-    createDeviceKeyMutation,
+    mutation: createDeviceKeyMutation,
     variables: {
       deviceKey: {
         hash: newDeviceHash,
