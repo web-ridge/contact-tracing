@@ -131,6 +131,11 @@ func filterOptionalEncountersByInfectedDeviceKeys(optionalEncounters []*fm.Encou
 // they can register their device as being infected (and remove it every time they want)
 func (r *queryResolver) InfectedEncounters(ctx context.Context, deviceHashesOfMyOwn []*fm.DeviceKeyParam, optionalEncounters []*fm.EncounterInput) ([]*fm.InfectionAlert, error) {
 
+	// if no device hashes are sent, return empty request
+	if len(deviceHashesOfMyOwn) == 0 {
+		return []*fm.InfectionAlert{}, nil
+	}
+
 	//  1-14 days, most commonly around five days.
 	beginOfIncubationPeriod := time.Now().AddDate(0, 0, -14)
 

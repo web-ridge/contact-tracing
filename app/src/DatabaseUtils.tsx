@@ -45,10 +45,11 @@ export async function getInfectedEncountersQueryVariables(): Promise<
   }
 
   return {
-    deviceHashesOfMyOwn: deviceKeys.map((deviceKey) => ({
-      hash: sha256(deviceKey.key),
-      password: deviceKey.password,
-    })),
+    deviceHashesOfMyOwn:
+      deviceKeys.map((deviceKey) => ({
+        hash: sha256(deviceKey.key),
+        password: deviceKey.password,
+      })) || [],
     // will only be sent if user opted in for iOS alerts
     optionalEncounters: (optionalEncountersWithiOSDevices || []).map(
       ({ hash, rssi, hits, time, duration }) => ({
@@ -96,7 +97,7 @@ const createDeviceKeyMutation = graphql`
     }
   }
 `
-export async function getCurrentDeviceKeyOrRenew() {
+export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
   // check if device key exist for this date
   const currentDate = getAnonymizedTimestamp()
   const database = await getDatabase()
@@ -104,7 +105,7 @@ export async function getCurrentDeviceKeyOrRenew() {
     .objects(KeysSchema.name)
     .filtered(`time = ${currentDate}`)
   if (keys.length > 0) {
-    return keys[0]
+    return keys[0] as any
   }
   // beginningOfContactTracingUUID
   // lets generate and save a new DeviceKey
@@ -119,6 +120,13 @@ export async function getCurrentDeviceKeyOrRenew() {
   const newDeviceHash = sha256(newDeviceKey)
   const time = getAnonymizedTimestamp()
 
+  const deviceKey: DeviceKey = {
+    id: 'id' + nanoid(),
+    key: newDeviceKey,
+    password,
+    time,
+  }
+
   // persist key on server
   commitMutation<DatabaseUtilsCreateDeviceKeyMutation>(RelayEnvironment, {
     mutation: createDeviceKeyMutation,
@@ -131,14 +139,11 @@ export async function getCurrentDeviceKeyOrRenew() {
     },
     onCompleted: async (response, errors) => {
       if (response && response.createDeviceKey && response.createDeviceKey.ok) {
+        console.log('wrote device key and pass to database')
         database.write(() => {
-          database.create(KeysSchema.name, {
-            id: 'id' + nanoid(),
-            key: newDeviceKey,
-            password,
-            time,
-          })
+          database.create(KeysSchema.name, deviceKey)
         })
+        return deviceKey
       }
     },
     onError: (err) => {
@@ -153,7 +158,7 @@ export async function getCurrentDeviceKeyOrRenew() {
   )
   const previousKeys = database.objects(KeysSchema.name)
   if (previousKeys.length > 0) {
-    return previousKeys[0]
+    return previousKeys[0] as any
   }
 
   // just crash

@@ -37,7 +37,9 @@ function stringifyInfectedEncounters(
 }
 
 export async function giveAlerts() {
+  // variables contains the secure keys to get own infection status and iOS encounters to check their status
   const variables = await getInfectedEncountersQueryVariables()
+
   const data = await fetchQuery<JobInfectionCheckerQuery>(
     RelayEnviroment,
     query,

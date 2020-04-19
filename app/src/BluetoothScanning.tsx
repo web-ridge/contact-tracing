@@ -2,8 +2,7 @@ import { BleManager } from 'react-native-ble-plx'
 import BackgroundTimer from 'react-native-background-timer'
 import BackgroundService from 'react-native-background-actions'
 import { syncMap, deviceScanned, jobInterval } from './JobTracingUtils'
-import { removeOldData } from './DatabaseUtils'
-import { getStartOfRiskUnix, getDeviceKey } from './Utils'
+import { removeOldData, getCurrentDeviceKeyOrRenew } from './DatabaseUtils'
 import { startAdvertising } from './BluetoothService'
 import { giveAlerts } from './JobInfectionChecker'
 import { Platform } from 'react-native'
@@ -23,30 +22,31 @@ async function advertiseAndScan() {
     async function refreshAdvertiseService() {
       // start advertising as a bluetooth service for other devices
       // so other devices will know this is an advertisable
-      let newDeviceKey = await getDeviceKey()
-      if (newDeviceKey !== deviceKey) {
-        deviceKey = newDeviceKey
-        await startAdvertising(newDeviceKey)
+      let newDeviceKey = await getCurrentDeviceKeyOrRenew()
+      if (newDeviceKey.key !== deviceKey) {
+        deviceKey = newDeviceKey.key
+        await startAdvertising(newDeviceKey.key)
       }
     }
 
-    // on Android devices we scan for other contact tracing services
-    // on iOS we do something else
-    if (Platform.OS === 'android') {
-      const manager = new BleManager()
-      try {
-        manager.startDeviceScan(
-          null, // uuids
-          {},
-          deviceScanned // options
-        )
-      } catch (e) {
-        console.log('could not start device scan')
-      }
-    }
-
+    let manager
     // this job will be repeated over-and-over
     for (let i = 0; BackgroundService.isRunning(); i++) {
+      // on Android devices we scan for other contact tracing services
+      // on iOS we do something else
+      if (Platform.OS === 'android' && !manager) {
+        manager = new BleManager()
+        try {
+          manager.startDeviceScan(
+            null, // uuids
+            {},
+            deviceScanned // options
+          )
+        } catch (e) {
+          console.log('could not start device scan')
+        }
+      }
+
       const removed = await removeOldData()
       if (!removed) {
         // stop if we can not remove old data from device

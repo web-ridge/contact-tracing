@@ -7,7 +7,7 @@ export const EncounterSchema = {
   properties: {
     id: 'string', // primary key
     hash: 'string',
-    isIos: 'boolean', // used to fetch infected iOS targets later on if user opted-in for that
+    isIos: 'bool', // used to fetch infected iOS targets later on if user opted-in for that
     rssi: { type: 'int', default: 0 },
     hits: { type: 'int', default: 0 },
     time: { type: 'int', default: 0 }, // hours/seconds are removed, only for easy filtering with unix

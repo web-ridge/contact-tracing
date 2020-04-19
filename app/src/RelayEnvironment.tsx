@@ -15,7 +15,13 @@ async function fetchGraphQL(params: any, variables: any, _cacheConfig: any) {
     'Content-Type': 'application/json',
   }
 
-  const response = await fetch('https://api.contactentraceren.nl/graphql', {
+  const url =
+    //@ts-ignore
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:8080'
+      : 'https://api.contactentraceren.nl'
+
+  const response = await fetch(url + '/graphql', {
     method: 'POST',
     headers: headers,
     body: JSON.stringify({

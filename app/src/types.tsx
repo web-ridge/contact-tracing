@@ -11,6 +11,7 @@ export interface DeviceKey {
   id: string
   key: string
   password: string
+  time: number
 }
 
 export interface RSSIValue {
