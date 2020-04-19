@@ -1,3 +1,5 @@
+import PushNotification from 'react-native-push-notification'
+
 import { fetchQuery, graphql } from 'relay-runtime'
 import RelayEnviroment from './RelayEnvironment'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -55,18 +57,20 @@ export async function giveAlerts() {
 
   // no previous notifications or changed alerts
   if (previousDataHash !== newHash || !previousDataHash) {
-    // TODO -> find library without all firebase shizzle to just do local notifications
-    //@ts-ignore
-    // let localNotification = Notifications.postLocalNotification({
-    //   // TODO: translate
-    //   body: 'Er zijn wijzigingen in besmettingsgevaar',
-    //   title: 'Wijzigingen in besmettingsgevaar',
-    //   //   sound: 'chime.aiff',
-    //   //   silent: false
-    //   silent: true,
-    //   category: 'SOME_CATEGORY',
-    //   userInfo: {},
-    // })
+    PushNotification.localNotification({
+      largeIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_launcher"
+      smallIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+
+      title: 'Infectiestatus', // (optional)
+      message: 'Uw infectiestatus is gewijzigd', // (required)
+      // subText: 'This is a subText', // (optional) default: none
+      priority: 'high',
+      visibility: 'private', // (optional) set notification visibility, default: private
+      importance: 'high',
+      playSound: true,
+      // repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+      // actions: '["Yes", "No"]',
+    })
   }
   // so we know the next time if we need to send new notification
   await AsyncStorage.setItem(alertStorageKey, newHash)
