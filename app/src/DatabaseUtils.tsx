@@ -36,11 +36,11 @@ export async function getInfectedEncountersQueryVariables(): Promise<
   const database = await getDatabase()
   let deviceKeys = await getDeviceKeys()
 
-  let optionalEncountersWithiOSDevices
+  let optionalEncountersWithiOSDevices: Encounter[] | undefined
   if (acceptediOSAlerts) {
     optionalEncountersWithiOSDevices = database
       .objects(EncounterSchema.name)
-      .filtered(`isIos = true`)
+      .filtered(`isIos = true`) as any
   }
 
   return {
@@ -48,14 +48,15 @@ export async function getInfectedEncountersQueryVariables(): Promise<
       hash: sha256(deviceKey.key),
       password: deviceKey.password,
     })),
-    optionalEncounters:
-      (optionalEncountersWithiOSDevices||[]).map(({ hash, rssi, hits, time ,duration }: Encounter) => ({
+    optionalEncounters: (optionalEncountersWithiOSDevices || []).map(
+      ({ hash, rssi, hits, time, duration }) => ({
         hash,
-        rssi
-        hits
-        time
-        duration
-      })),
+        rssi,
+        hits,
+        time,
+        duration,
+      })
+    ),
   }
 }
 
