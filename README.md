@@ -6,12 +6,15 @@ Er wordt gewerkt aan een vernieuwde versie met volledige controle over eigen dat
 ## Roadmap (https://github.com/web-ridge/contact-tracing/tree/development)
 
 - Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
-- Zorg dat apparaat iedere dag een ander ContactTracingsNummer krijgt (WIP)
-- Zorg dat er bij het ContactTracingsNummers een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft; (WIP)
-- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (WIP)
+- Zorg dat apparaat iedere {INTERVAL} een ander ContactTracingsNummer krijgt (DONE, integration test WIP)
+- Zorg dat er bij het ContactTracingsNummers een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft; (DONE, integration test WIP)
+- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (DONE, integration test WIP)
+
+## Onderstaand gaat waarschijnlijk weg in ruil voor een volledig anonieme manier.
 - Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
 - iOS apparaten sturen hun eigen ContactTracingsNummers op i.p.v. de hashes die ze ontmoet hebben (als ze besmet zijn en toestemming geven via de app)
 - Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze doorgestuurde ContactTracingsNummers ook niet opgeslagen op de server.
+
 
 
 <img src="https://user-images.githubusercontent.com/6492229/79509074-1ad7d680-803b-11ea-840f-3cc13a7e47e8.jpeg" width="280" />|
