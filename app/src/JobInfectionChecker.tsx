@@ -1,7 +1,6 @@
+// WebRidge Design
 import PushNotification from 'react-native-push-notification'
-
 import { fetchQuery, graphql } from 'relay-runtime'
-import RelayEnviroment from './RelayEnvironment'
 import AsyncStorage from '@react-native-community/async-storage'
 import { getInfectedEncountersQueryVariables } from './DatabaseUtils'
 import {
@@ -9,18 +8,14 @@ import {
   JobInfectionCheckerQueryResponse,
 } from './__generated__/JobInfectionCheckerQuery.graphql'
 
-// we use this to see if alerts changed since previous alert
+import RelayEnviroment from './RelayEnvironment'
+
+// we use this to see if alerts changed since previous aflert
 const alertStorageKey = 'alertStorageKeyContactTracing'
 
 const query = graphql`
-  query JobInfectionCheckerQuery(
-    $deviceHashesOfMyOwn: [DeviceKeyParam!]!
-    $optionalEncounters: [EncounterInput!]
-  ) {
-    infectedEncounters(
-      deviceHashesOfMyOwn: $deviceHashesOfMyOwn
-      optionalEncounters: $optionalEncounters
-    ) {
+  query JobInfectionCheckerQuery($deviceHashesOfMyOwn: [DeviceKeyParam!]!) {
+    infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {
       howManyEncounters
       risk
     }
@@ -30,12 +25,12 @@ const query = graphql`
 function stringifyInfectedEncounters(
   infectedEncounters: JobInfectionCheckerQueryResponse['infectedEncounters']
 ) {
-  return infectedEncounters
-    .map(
-      (infectedEncounter) =>
-        `${infectedEncounter?.howManyEncounters}_${infectedEncounter?.risk}`
-    )
-    .join(',')
+  let a = infectedEncounters.map(
+    (infectedEncounter) =>
+      `${infectedEncounter?.howManyEncounters}_${infectedEncounter?.risk}`
+  )
+  a.sort()
+  return a.join(',')
 }
 
 export async function giveAlerts() {
@@ -68,7 +63,6 @@ export async function giveAlerts() {
     PushNotification.localNotification({
       largeIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_launcher"
       smallIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_notification" with fallback for "ic_launcher"
-
       title: 'Infectiestatus', // (optional)
       message: 'Uw infectiestatus is gewijzigd', // (required)
       // subText: 'This is a subText', // (optional) default: none

@@ -1,3 +1,5 @@
+// WebRidge Design
+import PushNotification from 'react-native-push-notification'
 import { RSSIMap, Encounter, DeviceKey } from './types'
 import { getDatabase, EncounterSchema, KeysSchema } from './Database'
 import { sha256 } from 'js-sha256'
@@ -8,9 +10,13 @@ import {
   getStartOfRiskUnix,
   secondPartOfContactTracingUUID,
   getRandomString,
+  getExpireDateOfDeviceKey,
+  getMaxExpireDateOfDeviceKey,
+  now,
+  safeLog,
+  commitMutationPromise,
 } from './Utils'
 import { v4 as uuidv4 } from 'uuid'
-import AsyncStorage from '@react-native-community/async-storage'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import {
@@ -32,42 +38,19 @@ export async function removeAllEncounters(): Promise<boolean> {
   }
 }
 
-const acceptediOSAlertsKey = 'acceptediOSAlerts'
 export async function getInfectedEncountersQueryVariables(): Promise<
   InfectionAlertsQueryVariables
 > {
-  const acceptediOSAlerts = await AsyncStorage.getItem(acceptediOSAlertsKey)
-  const database = await getDatabase()
-
-  // first trigger token if not yet created
-  await getCurrentDeviceKeyOrRenew()
-
   let deviceKeys = await getDeviceKeys()
+  safeLog('getInfectedEncountersQueryVariables deviceKeys', deviceKeys)
 
-  let optionalEncountersWithiOSDevices: Encounter[] | undefined
-  if (acceptediOSAlerts) {
-    optionalEncountersWithiOSDevices = database
-      .objects(EncounterSchema.name)
-      .filtered(`isIos = true`) as any
-  }
-
-  console.log(
-    'deviceKeys',
-    deviceKeys.map((o) => o)
+  let deviceHashesOfMyOwn = deviceKeysToParams(deviceKeys)
+  safeLog(
+    'getInfectedEncountersQueryVariables deviceHashesOfMyOwn',
+    deviceHashesOfMyOwn
   )
-
   return {
-    deviceHashesOfMyOwn: deviceKeysToParams(deviceKeys),
-    // will only be sent if user opted in for iOS alerts
-    optionalEncounters: (optionalEncountersWithiOSDevices || []).map(
-      ({ hash, rssi, hits, time, duration }) => ({
-        hash,
-        rssi,
-        hits,
-        time,
-        duration,
-      })
-    ),
+    deviceHashesOfMyOwn,
   }
 }
 
@@ -90,7 +73,7 @@ export async function getDeviceKeys(): Promise<DeviceKey[]> {
       database.delete(
         database
           .objects(KeysSchema.name)
-          .filtered(`time < ${getStartOfRiskUnix()}`)
+          .filtered(`internalTime < ${getExpireDateOfDeviceKey()}`)
       )
     })
 
@@ -116,73 +99,114 @@ const createDeviceKeyMutation = graphql`
 `
 export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
   // check if device key exist for this date
-  const currentDate = getAnonymizedTimestamp()
+  const expireUnix = getExpireDateOfDeviceKey()
   const database = await getDatabase()
+
+  // device keys which are not expired yet
   const keys = database
     .objects(KeysSchema.name)
-    .filtered(`time = ${currentDate}`)
+    .filtered(`internalTime > ${expireUnix}`)
+
   if (keys.length > 0) {
     return keys[0] as any
   }
-  // beginningOfContactTracingUUID
+
+  // no key found
   // lets generate and save a new DeviceKey
   // Save directly to backend so it cant't be claimed by some-one else who see's this UUID in bluetooth
 
-  // TODO: create password
-  // TODO: create new deviceKey and password
-  //@ts-ignore
-
+  // create new deviceKey and password
   const password = getRandomString()
   const newDeviceKey = generateBluetootTraceKey()
   const newDeviceHash = sha256(newDeviceKey)
-  const time = getAnonymizedTimestamp()
+
+  const anomizedDateUnix = getAnonymizedTimestamp()
 
   const deviceKey: DeviceKey = {
     id: 'id' + nanoid(),
     key: newDeviceKey,
     password,
-    time,
+    internalTime: now(),
+    externalTime: anomizedDateUnix,
   }
 
   // persist key on server
-  commitMutation<DatabaseUtilsCreateDeviceKeyMutation>(RelayEnvironment, {
-    mutation: createDeviceKeyMutation,
-    variables: {
-      deviceKey: {
-        hash: newDeviceHash,
-        password,
-        time,
+  try {
+    commitMutation<DatabaseUtilsCreateDeviceKeyMutation>(RelayEnvironment, {
+      mutation: createDeviceKeyMutation,
+      variables: {
+        deviceKey: {
+          hash: newDeviceHash,
+          password,
+          time: anomizedDateUnix, // only date no time saved
+        },
       },
-    },
-    onCompleted: async (response, errors) => {
-      if (response && response.createDeviceKey && response.createDeviceKey.ok) {
-        console.log('wrote device key and pass to database')
-        database.write(() => {
-          database.create(KeysSchema.name, deviceKey)
-        })
-        return deviceKey
-      } else {
-        console.log('response is not ok')
+      onCompleted: async (response, errors) => {
+        if (
+          response &&
+          response.createDeviceKey &&
+          response.createDeviceKey.ok
+        ) {
+          console.log('wrote device key and pass to database')
+          database.write(() => {
+            database.create(KeysSchema.name, deviceKey)
+          })
+
+          // we return device key here
+          return deviceKey
+        }
+        throw Error('no device key')
+      },
+      onError: (err) => {
+        throw Error('no device key')
+      },
+    })
+  } catch (error) {
+    // use old device key for max period of time since user could have
+    // no internet connection for a while
+    const previousKeys = database.objects(KeysSchema.name)
+    if (previousKeys.length > 0) {
+      safeLog(
+        'Use old device key since we could not renew it (probably internet connection)'
+      )
+      PushNotification.localNotification({
+        largeIcon: 'ic_stat_info', // (optional) default: "ic_launcher"
+        smallIcon: 'ic_stat_info', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+        title: 'Privacy waarschuwing', // (optional)
+        message:
+          'Zet je internet aan om je anomiteit beter te kunnen waarborgen', // (required)
+        priority: 'default',
+        visibility: 'private',
+        importance: 'default',
+        playSound: false,
+      })
+      const found = (previousKeys[0] as unknown) as DeviceKey
+
+      // e.g. 14.5 oktober vs 15 oktober
+      if (found.internalTime < getMaxExpireDateOfDeviceKey()) {
+        // Key is still somewhat valid
+        return found
       }
-    },
-    onError: (err) => {
-      // keep the old key till there is internet connection
-      console.log('Could not renew device key', { err })
-    },
-  })
+    }
 
-  // TODO: Show notification?
-  console.log(
-    'Use old device key since we could not renew it (probably internet connection)'
-  )
-  const previousKeys = database.objects(KeysSchema.name)
-  if (previousKeys.length > 0) {
-    return previousKeys[0] as any
+    // no device key could be found or is really too old
+    PushNotification.localNotification({
+      largeIcon: 'ic_stat_info', // (optional) default: "ic_launcher"
+      smallIcon: 'ic_stat_info', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+
+      title: 'Privacycontrole', // (optional)
+      message: 'Open de app om je unieke nummer te vernieuwen via internet', // (required)
+      // subText: 'This is a subText', // (optional) default: none
+      priority: 'high',
+      visibility: 'private', // (optional) set notification visibility, default: private
+      importance: 'high',
+      playSound: true,
+      // repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+      // actions: '["Yes", "No"]',
+    })
+    // just crash
+    throw Error('could not get a new device key')
   }
-
-  // just crash
-
-  throw Error('could not get a new device key')
 }
 
 // // syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
@@ -260,7 +284,7 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
         hits: rssiValue.hits,
         time: getAnonymizedTimestamp(),
         duration: rssiValue.end - rssiValue.start,
-        isIos: rssiValue.isIos,
+        // isIos: rssiValue.isIos,
       }
     }
   )
@@ -292,6 +316,7 @@ function generateBluetootTraceKey() {
   const contactTracingUUID = uuidParts
     .map((uuidPart, i) => {
       // e.g. we have uuid of dcef893e-f0b2-4ddc-80e6-cf4c11080848
+      // so we know the user has accepted the terms
       // and we want it to be dcef893e-c0d0-4ddc-80e6-cf4c11080848
       // or
       // and we want it to be dcef893e-c0d1-4ddc-80e6-cf4c11080848

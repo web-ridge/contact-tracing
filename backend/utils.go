@@ -1,14 +1,34 @@
 package main
 
 import (
+	secureRandom "crypto/rand"
+	unsafeRandom "math/rand"
+
 	"fmt"
-	"math/rand"
+	"io"
 	"time"
 
 	fm "github.com/web-ridge/contact-tracing/backend/graphql_models"
 
 	dm "github.com/web-ridge/contact-tracing/backend/models"
 )
+
+// Adapted from https://elithrar.github.io/article/generating-secure-random-numbers-crypto-rand/
+
+func init() {
+	assertAvailablePRNG()
+}
+
+func assertAvailablePRNG() {
+	// Assert that a cryptographically secure PRNG is available.
+	// Panic otherwise.
+	buf := make([]byte, 1)
+
+	_, err := io.ReadFull(secureRandom.Reader, buf)
+	if err != nil {
+		panic(fmt.Sprintf("crypto/rand is unavailable: Read() failed with %#v", err))
+	}
+}
 
 // user could send timestamp which are not at all real so we check it with the date of key
 // also we filter out alerts which are too late since the user posted his key too late
@@ -95,56 +115,21 @@ func secureHashes(deviceKeysParams []*fm.DeviceKeyParam,
 	return validHashes
 }
 
-// getHashesFromOptionalEncounters returns all device hashes which are possible iOS
-func getHashesFromOptionalEncounters(optionalEncounters []*fm.EncounterInput) []string {
-	a := make([]string, len(optionalEncounters))
-	for _, optionalEncounter := range optionalEncounters {
-		a = append(a, optionalEncounter.Hash)
-	}
-	return a
-}
-
-// filterOptionalEncountersByInfectedDeviceKeys only used on Android if they opt-in for iOS alert
-// User infection status is fetchable by some-one else if they know the device hash of that certain day
-func filterOptionalEncountersByInfectedDeviceKeys(optionalEncounters []*fm.EncounterInput, infectedDevices dm.DeviceKeySlice) []*fm.EncounterInput {
-	var infectedEncounters []*fm.EncounterInput
-	for _, optionalEncounter := range optionalEncounters {
-		for _, infectedDevice := range infectedDevices {
-			if optionalEncounter.Hash == infectedDevice.Hash {
-				infectedEncounters = append(infectedEncounters, optionalEncounter)
-			}
-		}
-	}
-	return infectedEncounters
-}
-
 func getRandomInfectionCreateKey() (*dm.InfectionCreateKey, error) {
-	randomKeyBytes := make([]byte, 25)
-	randomPasswordBytes := make([]byte, 25)
-	_, randomKeyBytesError := rand.Read(randomKeyBytes)
+
+	key, randomKeyBytesError := GenerateRandomString(50)
 	if randomKeyBytesError != nil {
 		return nil, fmt.Errorf("could not generate random key for infection create: %v", randomKeyBytesError)
 	}
-	_, randomPasswordBytesError := rand.Read(randomPasswordBytes)
+	pass, randomPasswordBytesError := GenerateRandomString(50)
 	if randomPasswordBytesError != nil {
 		return nil, fmt.Errorf("could not generate random password for infection create: %v", randomPasswordBytesError)
 	}
 	return &dm.InfectionCreateKey{
-		Key:      string(randomKeyBytes),
-		Password: string(randomPasswordBytes),
+		Key:      key,
+		Password: pass,
 		Time:     int(time.Now().Unix()),
 	}, nil
-}
-
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-// randSeq does not need be to be really unique just a tiny little bit
-func randSeq(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
 
 func getRemoveStartTimeUnix() int {
@@ -152,4 +137,46 @@ func getRemoveStartTimeUnix() int {
 }
 func getIncubationStartTimeUnix() int {
 	return int(time.Now().Unix()) - int(incubationPeriodIndays.Seconds())
+}
+
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+// unsafeRandomRandSeq does not need be to be really unique just a tiny little bit
+func unsafeRandomRandSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[unsafeRandom.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+// GenerateRandomBytes returns securely generated random bytes.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := secureRandom.Read(b)
+	// Note that err == nil only if we read len(b) bytes.
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// GenerateRandomString returns a securely generated random string.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomString(n int) (string, error) {
+	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
+	bytes, err := GenerateRandomBytes(n)
+	if err != nil {
+		return "", err
+	}
+	for i, b := range bytes {
+		bytes[i] = letters[b%byte(len(letters))]
+	}
+	return string(bytes), nil
 }

@@ -1,3 +1,6 @@
+// WebRidge Design
+// TODO: this needs component little cleanup
+
 import React, { useState, useEffect, useRef } from 'react'
 import { Translate } from 'react-translated'
 import {
@@ -10,50 +13,47 @@ import {
   Linking,
 } from 'react-native'
 import { Button, Text } from 'react-native-paper'
-import {
-  check,
-  request,
-  PERMISSIONS,
-  Permission,
-} from 'react-native-permissions'
 import BackgroundService from 'react-native-background-actions'
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
 
 import InfectionAlerts from './InfectionAlerts'
 import { startTracing, stopTracing } from './BluetoothScanning'
-import { goToSymptonsScreen, goToDataRemovalScreen } from './Screens'
-
-const bluetoothPermission: Permission = Platform.select({
-  ios: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL,
-  android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-})!
-
-async function requestBluetoothStatus() {
-  // can be done in parallel
-  let bluetoothStatus = await check(bluetoothPermission)
-  if (bluetoothStatus === 'denied') {
-    bluetoothStatus = await request(bluetoothPermission)
-  }
-  return bluetoothStatus
-}
-async function requestLocationAccess(): Promise<boolean> {
-  try {
-    const data = await RNAndroidLocationEnabler.promptForEnableLocationIfNeeded(
-      { interval: 10000, fastInterval: 5000 }
-    )
-    return data === 'already-enabled' || data === 'enabled'
-  } catch (e) {
-    console.log({ e })
-    return false
-  }
-}
+import {
+  goToSymptonsScreen,
+  goToDataRemovalScreen,
+  goToOnboardingSecureLockScreen,
+} from './Screens'
+import { requestBluetoothStatus, requestLocationAccess } from './Utils'
+import AsyncStorage from '@react-native-community/async-storage'
+import { Navigation } from 'react-native-navigation'
 
 function ScreenHome({ componentId }: { componentId: string }) {
   const [isTracking, setIsTracking] = useState<boolean>()
+  const [onboardingDone, setOnboardingDone] = useState<boolean>(false)
+  const [screenRenders, setScreenRenders] = useState<number>(0)
+
+  useEffect(() => {
+    const screenEventListener = Navigation.events().registerComponentDidAppearListener(
+      ({ componentId, componentName, passProps }) => {
+        setOnboardingDoneAsync()
+        setScreenRenders((prev) => prev + 1)
+      }
+    )
+    return () => {
+      screenEventListener.remove()
+    }
+  })
+  const setOnboardingDoneAsync = async () => {
+    const value = await AsyncStorage.getItem('contactTracingOnboardingOk')
+    setOnboardingDone(value === 'true')
+  }
+  useEffect(() => {
+    setOnboardingDoneAsync()
+  })
 
   // sync background job with relation status of background job
   useInterval(() => {
     const isRunning = BackgroundService.isRunning()
+    // console.log({ isRunning })
     if (isRunning !== isTracking) {
       setIsTracking(isRunning)
     }
@@ -115,10 +115,9 @@ function ScreenHome({ componentId }: { componentId: string }) {
           <Text style={styles.title}>
             <Translate text="title" />
           </Text> */}
-
+          {onboardingDone && <InfectionAlerts screenRenders={screenRenders} />}
           {isTracking ? (
             <>
-              <InfectionAlerts />
               <Button
                 mode="contained"
                 onPress={stopTracingPressed}
@@ -127,39 +126,57 @@ function ScreenHome({ componentId }: { componentId: string }) {
               >
                 <Translate text="stopTracking" />
               </Button>
+              {privacyText}
               <View style={{ height: 12 }} />
-              <Button
-                uppercase={false}
-                mode="outlined"
-                onPress={() => goToSymptonsScreen(componentId)}
-              >
-                <Translate text="symptomsButton" />
-              </Button>
             </>
           ) : (
             <>
-              <Image
-                source={require('../assets/privacy.png')}
-                style={{
-                  height: 300,
-                  width: '90%',
-                  maxWidth: 300,
-                  marginTop: 12,
-                  marginBottom: 12,
-                }}
-                resizeMode="contain"
-              ></Image>
-              <Button
-                mode="contained"
-                onPress={startTracingPressed}
-                style={styles.button}
-              >
-                <Translate text="startTracking" />
-              </Button>
-              {privacyText}
+              {!onboardingDone && (
+                <Image
+                  source={require('../assets/privacy.png')}
+                  style={{
+                    height: 300,
+                    width: '90%',
+                    maxWidth: 300,
+                    marginTop: 12,
+                    marginBottom: 12,
+                  }}
+                  resizeMode="contain"
+                ></Image>
+              )}
+              {/* <Text></Text> */}
+              {onboardingDone && (
+                <Button
+                  mode="contained"
+                  onPress={startTracingPressed}
+                  style={styles.button}
+                  uppercase={false}
+                >
+                  <Translate text="startTracking" />
+                </Button>
+              )}
             </>
           )}
+          {onboardingDone ? (
+            <Button
+              uppercase={false}
+              mode="outlined"
+              onPress={() => goToSymptonsScreen(componentId)}
+              style={{ marginTop: 12 }}
+            >
+              <Translate text="infectedButton" />
+            </Button>
+          ) : (
+            <Button
+              uppercase={false}
+              mode="contained"
+              onPress={() => goToOnboardingSecureLockScreen(componentId)}
+            >
+              <Translate text="startOnboarding" />
+            </Button>
+          )}
         </View>
+
         <View
           style={{
             padding: 24,

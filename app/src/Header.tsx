@@ -10,7 +10,7 @@ export default function Header({
   componentId: string
 }) {
   return (
-    <Appbar
+    <Appbar.Header
       dark={false}
       style={{ backgroundColor: 'transparent', elevation: 0 }}
     >
@@ -19,6 +19,6 @@ export default function Header({
         onPress={() => Navigation.pop(componentId)}
       />
       <Appbar.Content title={title}></Appbar.Content>
-    </Appbar>
+    </Appbar.Header>
   )
 }

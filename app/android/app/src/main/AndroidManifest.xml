@@ -1,16 +1,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.contacttracing">
 
+    <!-- Sending contacts when infected and refreshing device keys -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Scanning nearby contact tracing devices -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
      <!-- Bluetooth permission -->
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+    <!-- In background -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS" />
+
+     <!-- QR code -->
+     <uses-permission android:name="android.permission.CAMERA" />
+     <uses-permission android:name="android.permission.VIBRATE"/>
+
+
 
     <!-- Add this line if your application always requires BLE. More info can be found on:
          https://developer.android.com/guide/topics/connectivity/bluetooth-le.html#permissions

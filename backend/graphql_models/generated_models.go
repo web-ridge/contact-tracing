@@ -19,14 +19,6 @@ type DeviceKeyParam struct {
 	Password string `json:"password"`
 }
 
-type EncounterInput struct {
-	Hash     string `json:"hash"`
-	Rssi     int    `json:"rssi"`
-	Hits     int    `json:"hits"`
-	Time     int    `json:"time"`
-	Duration int    `json:"duration"`
-}
-
 type InfectedEncounterCreateInput struct {
 	PossibleInfectedHash string `json:"possibleInfectedHash"`
 	Rssi                 int    `json:"rssi"`
@@ -46,13 +38,13 @@ type InfectionAlert struct {
 }
 
 type InfectionCreateKey struct {
-	Key      string `json:"Key"`
-	Password string `json:"Password"`
+	Key      string `json:"key"`
+	Password string `json:"password"`
 }
 
 type InfectionCreateKeyInput struct {
-	Key      string `json:"Key"`
-	Password string `json:"Password"`
+	Key      string `json:"key"`
+	Password string `json:"password"`
 }
 
 type OkPayload struct {

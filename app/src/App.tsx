@@ -1,11 +1,13 @@
+// WebRidge Design
+
 import { Platform, NativeModules } from 'react-native'
 
-import { Navigation } from 'react-native-navigation'
 import { Provider as TranslateProvider } from 'react-translated'
 import React from 'react'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper'
 
 import translations from './translations'
+import { QRCodeProvider } from './QRCodeContext'
 
 const deviceLanguage =
   Platform.OS === 'ios'
@@ -34,7 +36,9 @@ export default function HOC(WrappedComponent: any) {
         translation={translations}
       >
         <PaperProvider theme={theme}>
-          <WrappedComponent {...props} />
+          <QRCodeProvider>
+            <WrappedComponent {...props} />
+          </QRCodeProvider>
         </PaperProvider>
       </TranslateProvider>
     )

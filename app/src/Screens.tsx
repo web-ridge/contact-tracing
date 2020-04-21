@@ -1,17 +1,60 @@
+// WebRidge Design
+
 import { Navigation, Options } from 'react-native-navigation'
 
 import AppHOC from './App'
 import ScreenSymptons from './ScreenSymptoms'
 import ScreenHome from './ScreenHome'
 import { ScreenDataRemoval } from './ScreenDataRemoval'
+import ScreenScanQRCode from './ScreenScanQRCode'
+import ScreenOnboardingSecureLock from './ScreenOnboardingSecureLock'
+import ScreenOnboardingPermission from './ScreenOnboardingPermission'
 
-const screenDataRemoval = 'com.contacttracing.dataRemoval'
-const screenSymptonsRoute = 'com.contacttracing.symptomsRoute'
 export const screenHomeRoute = 'com.contacttracing.home'
+const screenSymptonsRoute = 'com.contacttracing.symptomsRoute'
+const screenDataRemoval = 'com.contacttracing.dataRemoval'
+const screenSecureLock = 'com.contacttracing.secureLock'
+const screenPermission = 'com.contacttracing.permission'
+
+export const screenQRCode = 'com.contacttracing.screenQRCode'
 
 Navigation.registerComponent(screenHomeRoute, () => AppHOC(ScreenHome))
 Navigation.registerComponent(screenSymptonsRoute, () => AppHOC(ScreenSymptons))
 Navigation.registerComponent(screenDataRemoval, () => AppHOC(ScreenDataRemoval))
+Navigation.registerComponent(screenQRCode, () => AppHOC(ScreenScanQRCode))
+Navigation.registerComponent(screenSecureLock, () =>
+  AppHOC(ScreenOnboardingSecureLock)
+)
+Navigation.registerComponent(screenPermission, () =>
+  AppHOC(ScreenOnboardingPermission)
+)
+
+export const goToOnboardingSecureLockScreen = (componentId: string) => {
+  Navigation.push(componentId, {
+    component: {
+      name: screenSecureLock,
+      options: defaultOptions,
+    },
+  })
+}
+export const goToOnboardingPermissionScreen = (componentId: string) => {
+  Navigation.push(componentId, {
+    component: {
+      name: screenPermission,
+      options: defaultOptions,
+    },
+  })
+}
+
+export const goToQRCodeScreen = (componentId: string) => {
+  Navigation.push(componentId, {
+    component: {
+      name: screenQRCode,
+      options: defaultOptions,
+    },
+  })
+}
+
 export const goToDataRemovalScreen = (componentId: string) => {
   Navigation.push(componentId, {
     component: {
@@ -20,6 +63,7 @@ export const goToDataRemovalScreen = (componentId: string) => {
     },
   })
 }
+
 export const goToSymptonsScreen = (componentId: string) => {
   Navigation.push(componentId, {
     component: {
@@ -28,9 +72,10 @@ export const goToSymptonsScreen = (componentId: string) => {
     },
   })
 }
+
 export const defaultOptions: Options = {
   statusBar: {
-    backgroundColor: '#7FADF2',
+    backgroundColor: '#ffffff',
     style: 'dark',
   },
   topBar: {
@@ -47,6 +92,6 @@ export const defaultOptions: Options = {
     },
   },
   layout: {
-    backgroundColor: '#7FADF2',
+    backgroundColor: '#ffffff',
   },
 }

@@ -15,11 +15,7 @@ async function fetchGraphQL(params: any, variables: any, _cacheConfig: any) {
     'Content-Type': 'application/json',
   }
 
-  const url =
-    //@ts-ignore
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8080'
-      : 'https://api.contactentraceren.nl'
+  const url = 'https://api.contactentraceren.nl'
 
   const response = await fetch(url + '/graphql', {
     method: 'POST',

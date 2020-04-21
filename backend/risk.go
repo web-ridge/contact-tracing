@@ -1,3 +1,8 @@
+// WebRidge Design
+// Need someone with expertise in uncbation period and chance of infections
+// to make risk calculation better
+// Hit me on GitHub, LinkedIn, etc.
+
 package main
 
 import (

@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash 2bfa107515737aeb32367728f558614f */
+/* @relayHash 5740b1d8d08acb21a00cc2338c0261f8 */
 
 import { ConcreteRequest } from "relay-runtime";
 export type Risk = "HIGH_RISK" | "LOW_RISK" | "MIDDLE_RISK" | "%future added value";
@@ -8,16 +8,8 @@ export type DeviceKeyParam = {
     hash: string;
     password: string;
 };
-export type EncounterInput = {
-    hash: string;
-    rssi: number;
-    hits: number;
-    time: number;
-    duration: number;
-};
 export type JobInfectionCheckerQueryVariables = {
     deviceHashesOfMyOwn: Array<DeviceKeyParam>;
-    optionalEncounters?: Array<EncounterInput> | null;
 };
 export type JobInfectionCheckerQueryResponse = {
     readonly infectedEncounters: ReadonlyArray<{
@@ -35,9 +27,8 @@ export type JobInfectionCheckerQuery = {
 /*
 query JobInfectionCheckerQuery(
   $deviceHashesOfMyOwn: [DeviceKeyParam!]!
-  $optionalEncounters: [EncounterInput!]
 ) {
-  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {
+  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {
     howManyEncounters
     risk
   }
@@ -50,12 +41,6 @@ var v0 = [
     "kind": "LocalArgument",
     "name": "deviceHashesOfMyOwn",
     "type": "[DeviceKeyParam!]!",
-    "defaultValue": null
-  },
-  {
-    "kind": "LocalArgument",
-    "name": "optionalEncounters",
-    "type": "[EncounterInput!]",
     "defaultValue": null
   }
 ],
@@ -70,11 +55,6 @@ v1 = [
         "kind": "Variable",
         "name": "deviceHashesOfMyOwn",
         "variableName": "deviceHashesOfMyOwn"
-      },
-      {
-        "kind": "Variable",
-        "name": "optionalEncounters",
-        "variableName": "optionalEncounters"
       }
     ],
     "concreteType": "InfectionAlert",
@@ -117,10 +97,10 @@ return {
     "operationKind": "query",
     "name": "JobInfectionCheckerQuery",
     "id": null,
-    "text": "query JobInfectionCheckerQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n  $optionalEncounters: [EncounterInput!]\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn, optionalEncounters: $optionalEncounters) {\n    howManyEncounters\n    risk\n  }\n}\n",
+    "text": "query JobInfectionCheckerQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {\n    howManyEncounters\n    risk\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
-(node as any).hash = 'f47abf875d0ea2dcc7babf5319cb364f';
+(node as any).hash = 'd3052d679bf162ec5bd58a5b0fb47983';
 export default node;

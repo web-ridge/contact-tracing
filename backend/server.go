@@ -1,3 +1,5 @@
+// WebRidge Design
+
 package main
 
 import (
@@ -7,11 +9,10 @@ import (
 	"os"
 	"time"
 
-	dm "github.com/web-ridge/contact-tracing/backend/models"
-
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/99designs/gqlgen/graphql/playground"
 	tb "github.com/didip/tollbooth"
 	tbc "github.com/didip/tollbooth_chi"
 	"github.com/go-chi/chi"
@@ -22,6 +23,7 @@ import (
 	_ "github.com/volatiletech/sqlboiler/drivers"
 	_ "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver"
 	"github.com/web-ridge/contact-tracing/backend/graphql_models"
+	dm "github.com/web-ridge/contact-tracing/backend/models"
 	"github.com/web-ridge/gqlgen-sqlboiler/examples/social-network/auth"
 	"github.com/web-ridge/utils-go/api"
 )
@@ -70,6 +72,9 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(tbc.LimitHandler(lmt))
 	r.Use(auth.Middleware(db))
+	if os.Getenv("ENABLE_PLAYGROUND") == "true" {
+		r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	}
 	r.Handle("/graphql", srv)
 
 	log.Info().Str("host", "localhost").Str("port", port).Msg("Contact Tracing API started!")

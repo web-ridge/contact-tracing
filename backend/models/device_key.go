@@ -27,7 +27,6 @@ type DeviceKey struct {
 	Hash     string `boil:"hash" json:"hash" toml:"hash" yaml:"hash"`
 	Password string `boil:"password" json:"password" toml:"password" yaml:"password"`
 	Time     int    `boil:"time" json:"time" toml:"time" yaml:"time"`
-	Infected bool   `boil:"infected" json:"infected" toml:"infected" yaml:"infected"`
 
 	R *deviceKeyR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L deviceKeyL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -38,13 +37,11 @@ var DeviceKeyColumns = struct {
 	Hash     string
 	Password string
 	Time     string
-	Infected string
 }{
 	ID:       "id",
 	Hash:     "hash",
 	Password: "password",
 	Time:     "time",
-	Infected: "infected",
 }
 
 // Generated where
@@ -81,27 +78,16 @@ func (w whereHelperstring) IN(slice []string) qm.QueryMod {
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
 
-type whereHelperbool struct{ field string }
-
-func (w whereHelperbool) EQ(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperbool) NEQ(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperbool) LT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperbool) LTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-
 var DeviceKeyWhere = struct {
 	ID       whereHelperint
 	Hash     whereHelperstring
 	Password whereHelperstring
 	Time     whereHelperint
-	Infected whereHelperbool
 }{
 	ID:       whereHelperint{field: "\"device_key\".\"id\""},
 	Hash:     whereHelperstring{field: "\"device_key\".\"hash\""},
 	Password: whereHelperstring{field: "\"device_key\".\"password\""},
 	Time:     whereHelperint{field: "\"device_key\".\"time\""},
-	Infected: whereHelperbool{field: "\"device_key\".\"infected\""},
 }
 
 // DeviceKeyRels is where relationship names are stored.
@@ -121,8 +107,8 @@ func (*deviceKeyR) NewStruct() *deviceKeyR {
 type deviceKeyL struct{}
 
 var (
-	deviceKeyAllColumns            = []string{"id", "hash", "password", "time", "infected"}
-	deviceKeyColumnsWithoutDefault = []string{"hash", "password", "time", "infected"}
+	deviceKeyAllColumns            = []string{"id", "hash", "password", "time"}
+	deviceKeyColumnsWithoutDefault = []string{"hash", "password", "time"}
 	deviceKeyColumnsWithDefault    = []string{"id"}
 	deviceKeyPrimaryKeyColumns     = []string{"id"}
 )

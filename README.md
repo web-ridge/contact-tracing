@@ -6,29 +6,35 @@
 <img src="https://user-images.githubusercontent.com/6492229/79634323-0e05d080-816a-11ea-8d88-97b870d25637.jpeg" width="280" />
 
 # Jij hebt de controle
-Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. All jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.   
-   
+
+Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. All jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.
+
 Als jij COVID-19 hebt kun je dit zelf melden via de app (of met een QR-code). Je stuurt dan jouw Bluetooth contacten op zonder enige vorm van identificatie zodat er nooit is te bewijzen wie deze data verstuurd heeft.
-
-## Help us
-
-- Adding explain why Location permission is needed on Android to get access to Bluetooth.
 
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en een snelle oplossing die ook werkt bij miljoenen gebruikers. 
+Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en een snelle oplossing die ook werkt bij miljoenen gebruikers.
 
 ## Voordeel aan deze oplossing
 
-- Er staat niet opgeslagen wie besmet is;
-- Het is moeilijk misbruik te plegen omdat je ContactTracingsNummer moet kloppen en deze kun je pas weten als je iemand tegen bent gekomen;
-- Er staat niet opgeslagen wie contact heeft gehad met wie (alleen lokaal op de telefoon AES-256+SHA2 encryptie en een 64-byte encryption key);
-- Een besmet persoon kan vrijwillig de ContactTracingsNummer hashes opsturen waarmee contact is geweest;
-- Om de zoveel tijd controleerd een telefoon of zijn ContactTracingsNummer hash op de 'besmette' lijst staat;
-- Achteraf logica wijzigen van kans op besmetting;
-- iOS kan wel besmetting alerts ontvangen. Bluetooth proximity werkt alleen niet goed in achtergrond op iOS;
-- Meertaligheid;
-- Gegevens worden versleuteld met LUKS en ook de databaseverbinding met SSL;
+- Het werkt op iOS & Android;
+- Het is niet mogelijk om iemands anders meldingen in te zien;
+- Het is niet mogelijk om zonder authenticatie data in te zien;
+- Er staat nergens opgeslagen of een Bluetooth nummer besmet is;
+- Er gebeurt niets zonder jouw expliciete toestemming;
+- Als je data niet verzend naar de server staat deze lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
+- De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
+- Deze oplossing is schaalbaar en kan zonder problemen voor miljoenen gebruikers uitgerold worden.
+- De data die op de server staat bevat geen persoonsgevens.
+- De data die op de server wordt niet langer dan 4 weken opgeslagen.
+- Je kunt ten allen tijde zelf je data verwijderen via de applicatie.
+- Eventuele gegevens die naar de server verstuurd worden gebeuren via de modernste SSL beveiligingen.
+- De database wordt geëncrypt opgeslagen met <a href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>.
+- De databaseverbinding tussen de API en server gebeurt met een SSL verbinding.
+- De toegang tot de beheerconsole is direct en indirect beveiligd met 2-factor authenticatie codes en een digitale kluis.
+- Lokale gezondheidsinstanties kunnen parameters voor een melding veranderen zonder een app-update.
+- Backend open-source
+- Bewezen technieken
 
 _Voorgestelde werking van de app uitgelegd_
 Alice installeert de tracing app via de App Store.
@@ -36,11 +42,11 @@ Bob installeert de tracing app via de Play Store.
 
 **Stap 1: Applicatie start op**
 
-De applicaties genereren een willekeurig nummer waarmee het eerste stukje indiceert dat het om een ContactTracingsNummer gaat.
+De applicaties genereren ieder anderhalf uur een willekeurig nummer waarmee het tweede stukje indiceert dat het om een ContactTracingsNummer gaat.
 
 Bob komt Alice tegen waarmee hij een praatje maakt. Als deze personen langer met elkaar in contact staan gaat neemt de kans op besmetting toe en gaan de apparaten het volgende doen.
 
-**Stap 1: Beide apparaten slaan elkaars ContactTracingsNummer op en hashen deze zodat deze niet terug te herleiden is zonder dat het ContactTracingsNummer*
+\*_Stap 1: Beide apparaten slaan elkaars ContactTracingsNummer op en hashen deze zodat deze niet terug te herleiden is zonder dat het ContactTracingsNummer_
 
 - Bob’s ContactTracingsNummer hash: 8a520effd30490e592d84c0983d9a95131e94af981e50f00984b950c9fac8ebb
 - Alice’s ContactTracingsNummer hash: 51c09a1a8aa6462c8bf289f5e374285cef2428785339c7b9191887c600c85507
@@ -53,8 +59,8 @@ Bij een sterk signaal slaan beide applicaties deze 2 hashes **lokaal** op hun ei
 - Alice loopt checklist af in app. (testcapaciteit is waarschijnlijk niet voldoende, anders is de mogelijkheid voor de GGD om deze schermen te bouwen)
 - Alice stuurt de hashes op met een RSSI signaal sterkte (er is niet bekend op de server wat Alice's hash is)
 
-Bob vraagt om de zoveel tijd aan de centrale server of zijn Bluetooth hash mogelijke infecties heeft.
-Hij krijgt terug hoeveel keer contact hij heeft gehad met een bepaalde hash (gegroepeerd op eerste 5 cijfers van hash).
+Bob vraagt om de zoveel tijd aan de centrale server of er op zijn ContactTracingsNummers van de afgelopen 2 weken mogelijke besmettingen zijn toegevoegd.
+Hij krijgt terug hoeveel keer contact hij heeft gehad met een bepaalde hash (gegroepeerd op een willekeurig 2 cijfers toen de besmetting is aangemaakt).
 
 ```
 howManyEncounters: 2
@@ -80,13 +86,10 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 - Server verwijderd ContactTracingsNummer meldingen na 2 weken.
 - De lokale data van hashes en datums worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
-- De eigen key waarmee een gebruik identificeerbaar is 
+- De eigen key waarmee een gebruik identificeerbaar is
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
-
-
 
 ## Blokkades
 
 - De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
   https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
-

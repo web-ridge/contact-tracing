@@ -1,11 +1,16 @@
+// WebRidge Design
+
 import { RSSIMap } from './types'
 import {
-  secondPartOfContactTracingAndroidUUID,
-  secondPartOfContactTracingiOSUUID,
+  secondPartOfContactTracingUUID,
+  contactTracingServiceUUID,
   now,
+  safeLog,
 } from './Utils'
 import { syncRSSIMap } from './DatabaseUtils'
-import { Device, BleError } from 'react-native-ble-plx'
+import { Device, BleError, BleManager } from 'react-native-ble-plx'
+import { Platform } from 'react-native'
+import { Characteristic } from 'react-native-peripheral'
 
 let rssiValues: RSSIMap = {}
 
@@ -34,7 +39,9 @@ export async function syncMap(): Promise<boolean> {
 export async function deviceScanned(
   error: BleError | null,
   scannedDevice: null | Device
+  // manager: BleManager
 ) {
+  // console.log('deviceScanned', Platform.OS)
   if (error) {
     if (error.errorCode >= 200) {
       console.log('local', { error })
@@ -46,40 +53,42 @@ export async function deviceScanned(
   }
 
   // not relevant
-  if (!scannedDevice || !scannedDevice.rssi || -70 > scannedDevice.rssi) {
-    console.log('not valid device', scannedDevice && scannedDevice.id)
+  if (
+    !scannedDevice ||
+    !scannedDevice.rssi ||
+    -70 > scannedDevice.rssi ||
+    !scannedDevice.serviceUUIDs
+  ) {
+    // safeLog(
+    //   'not a valid contact tracing device',
+    //   scannedDevice && scannedDevice.id
+    // )
     return
   }
 
+  // console.log('scannedDevice.serviceUUIDs', scannedDevice.serviceUUIDs)
   // detect if device is contact tracing device
-  const scannedDeviceUUID = (scannedDevice.serviceUUIDs || []).find(
-    (uuid: string) => {
-      const splitted: string[] = uuid.split('-')
-      const secondPart = splitted.length > 0 && splitted[1]
-      if (
-        secondPart === secondPartOfContactTracingAndroidUUID ||
-        secondPart === secondPartOfContactTracingiOSUUID
-      ) {
-        return true
-      }
-      return false
-    }
+  // console.log(Platform.OS, { scannedDevice })
+
+  // console.log({ isAndroid, scannedDevice })
+  // const isAndroid: boolean = !!scannedDevice?.localName?.includes('-')
+  // console.log({ isAndroid, scannedDevice })
+
+  const scannedDeviceUUID = (scannedDevice.serviceUUIDs || []).find((uuid) =>
+    uuid
+      .split('-')
+      .some((part, i) => i === 1 && part === secondPartOfContactTracingUUID)
   )
 
   if (!scannedDeviceUUID) {
-    console.log(
-      'not a contact tracing device',
-      scannedDevice && scannedDeviceUUID
-    )
+    safeLog(Platform.OS, 'no device uuid found', scannedDevice.serviceUUIDs)
     return
   }
-  console.log({ scannedDeviceUUID })
 
   // we save the maximum RSSI and how many times the RSSI has changed
   const previousValue = rssiValues[scannedDeviceUUID]
   const latestRSSI = scannedDevice.rssi
   const didComeCloser = !previousValue || latestRSSI > previousValue.rssi
-  const isIos = scannedDeviceUUID.startsWith(beginningOfContactTracingiOSUUID)
   if (didComeCloser) {
     rssiValues[scannedDeviceUUID] = previousValue
       ? {
@@ -88,27 +97,23 @@ export async function deviceScanned(
           hits: previousValue.hits + 1,
           start: previousValue.start,
           end: now(),
-          isIos,
         }
       : {
           rssi: latestRSSI,
           hits: 1,
           start: now(),
           end: now(),
-          isIos,
         }
 
-    // @ts-ignore
-    if (process.env.NODE_ENV === 'development') {
-      console.log(
-        'changed',
-        scannedDeviceUUID,
-        scannedDevice.manufacturerData,
-        scannedDevice.mtu,
-        scannedDevice.name,
-        scannedDevice.localName,
-        rssiValues[scannedDeviceUUID]
-      )
-    }
+    safeLog(
+      'changed_',
+      Platform.OS,
+      scannedDeviceUUID,
+      // scannedDevice.manufacturerData,
+      // scannedDevice.mtu,
+      // scannedDevice.name,
+      // scannedDevice.localName,
+      rssiValues[scannedDeviceUUID]
+    )
   }
 }

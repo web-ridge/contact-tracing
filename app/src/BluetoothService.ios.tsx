@@ -1,4 +1,7 @@
+// WebRidge Design
+
 import Peripheral, { Service } from 'react-native-peripheral'
+import { contactTracingServiceUUID, safeLog } from './Utils'
 
 // startAdvertising registers an UUID which starts with an identifier
 // so we know this device has the contact-tracing app
@@ -8,6 +11,7 @@ export async function startAdvertising(deviceKey: string) {
   if (Peripheral.isAdvertising()) {
     await Peripheral.stopAdvertising()
   }
+
   // add the characteristic to a service
   const service = new Service({
     uuid: deviceKey,
@@ -17,8 +21,9 @@ export async function startAdvertising(deviceKey: string) {
   await Peripheral.addService(service)
 
   // start advertising to make your device discoverable
-  Peripheral.startAdvertising({
+  await Peripheral.startAdvertising({
     name: '',
-    serviceUuids: [deviceKey],
+    serviceUuids: [deviceKey, contactTracingServiceUUID],
   })
+  safeLog('started advertising iOS with deviceKey', deviceKey)
 }

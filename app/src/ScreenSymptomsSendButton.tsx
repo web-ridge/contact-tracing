@@ -1,3 +1,5 @@
+// WebRidge Design
+
 import React, { useState, useEffect } from 'react'
 import { Button, Text } from 'react-native-paper'
 
@@ -20,8 +22,12 @@ const mutation = graphql`
 `
 export default function ScreenSymptomsSendButton({
   disabled,
+  createKey,
+  password,
 }: {
   disabled: boolean
+  createKey: string
+  password: string
 }) {
   const [isSending, setIsSending] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
@@ -42,11 +48,15 @@ export default function ScreenSymptomsSendButton({
       setError(false)
 
       const encountersFromLast2Weeks = await getEncounters()
-
+      console.log({ createKey, password })
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,
         variables: {
           infectedEncounters: {
+            infectionCreateKey: {
+              key: createKey,
+              password,
+            },
             infectedEncounters: encountersFromLast2Weeks
               .filter((e) => !!e && !!e.hash && !!e.time)
               .map((e) => ({
@@ -54,11 +64,13 @@ export default function ScreenSymptomsSendButton({
                 rssi: e.rssi,
                 hits: e.hits,
                 time: e.time,
+                duration: e.duration,
               })),
           },
         },
         onCompleted: async (response, errors) => {
           if (errors && errors.length > 0) {
+            console.log({ errors })
             setError(true)
             return
           }

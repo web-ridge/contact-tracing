@@ -3,4 +3,5 @@
 deploy.sh
 program-executable
 .keystore
-.gradle.properties
+.gradle.
+program-executable

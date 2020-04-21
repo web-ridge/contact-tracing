@@ -141,6 +141,7 @@ android {
         versionCode Integer.parseInt(VERSION_CODE)
         versionName "1.0"
         multiDexEnabled true
+        missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line
     }
     splits {
         abi {

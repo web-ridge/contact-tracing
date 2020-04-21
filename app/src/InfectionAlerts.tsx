@@ -1,3 +1,5 @@
+// WebRidge Design
+
 import React, { useState, useEffect } from 'react'
 import { Image, View, StyleSheet } from 'react-native'
 import {
@@ -30,6 +32,14 @@ const styles = StyleSheet.create({
   alertRoot: {
     backgroundColor: '#fff',
     margin: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.14,
+    shadowRadius: 6.27,
+
     elevation: 10,
     borderRadius: 10,
     flexDirection: 'row',
@@ -51,7 +61,11 @@ const styles = StyleSheet.create({
   alertText: { fontWeight: 'bold' },
 })
 
-export default function InfectionAlerts() {
+export default function InfectionAlerts({
+  screenRenders,
+}: {
+  screenRenders: number
+}) {
   const [
     variables,
     setVariables,
@@ -65,11 +79,13 @@ export default function InfectionAlerts() {
     }
 
     setVariablesAsync()
-  }, [])
+  }, [screenRenders])
 
   return (
     <View style={styles.root}>
-      {variables && <AlertRoots variables={variables} />}
+      {variables && (
+        <AlertRoots variables={variables} screenRenders={screenRenders} />
+      )}
     </View>
   )
 }
@@ -77,28 +93,25 @@ export default function InfectionAlerts() {
 // AlertRoots fetches the query in a type-safe manner for this bluetooth hash
 function AlertRoots({
   variables,
+  screenRenders,
 }: {
+  screenRenders: number
   variables: InfectionAlertsQueryVariables
 }) {
   return (
     <QueryRenderer<InfectionAlertsQuery>
       environment={RelayEnviroment}
       query={graphql`
-        query InfectionAlertsQuery(
-          $deviceHashesOfMyOwn: [DeviceKeyParam!]!
-          $optionalEncounters: [EncounterInput!]
-        ) {
-          infectedEncounters(
-            deviceHashesOfMyOwn: $deviceHashesOfMyOwn
-            optionalEncounters: $optionalEncounters
-          ) {
+        query InfectionAlertsQuery($deviceHashesOfMyOwn: [DeviceKeyParam!]!) {
+          infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {
             howManyEncounters
             risk
           }
         }
       `}
-      variables={variables}
+      variables={{ ...variables, screenRenders }}
       render={renderAlerts}
+      fetchPolicy="store-and-network"
     />
   )
 }
@@ -148,9 +161,25 @@ const renderAlerts = ({
 
   return (
     <>
-      <Title style={styles.title}>
-        <Translate text="alerts" />
-      </Title>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Title style={styles.title}>
+          <Translate text="alerts" />
+        </Title>
+        <Text>{lastFetched}</Text>
+        <IconButton
+          onPress={() => {
+            retry && retry()
+          }}
+          icon="refresh"
+        ></IconButton>
+      </View>
+
       {props.infectedEncounters.map((infectedEncounter, index) => (
         <Alert key={index} infectedEncounter={infectedEncounter!} />
       ))}

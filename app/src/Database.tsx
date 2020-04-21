@@ -1,3 +1,5 @@
+// WebRidge Design
+
 import Realm from 'realm'
 import { getDatabaseEncryptionKey } from './Utils'
 
@@ -7,9 +9,9 @@ export const EncounterSchema = {
   properties: {
     id: 'string', // primary key
     hash: 'string',
-    isIos: 'bool', // used to fetch infected iOS targets later on if user opted-in for that
-    rssi: { type: 'int', default: 0 },
-    hits: { type: 'int', default: 0 },
+    // isIos: 'bool', // used to fetch infected iOS targets later on if user opted-in for that
+    rssi: { type: 'int', default: 0 }, // max rrsi signal strenght
+    hits: { type: 'int', default: 0 }, // how many times the signal has changed upwards
     time: { type: 'int', default: 0 }, // hours/seconds are removed, only for easy filtering with unix
     duration: { type: 'int', default: 0 },
   },
@@ -21,8 +23,9 @@ export const KeysSchema = {
   properties: {
     id: 'string', // primary key
     key: 'string', // external identifier for other devices
-    password: 'string', // used to secure risk counts on Android
-    time: { type: 'int', default: 0 },
+    password: 'string', // used to secure own encounters which are sent by others
+    internalTime: { type: 'int', default: 0 },
+    externalTime: { type: 'int', default: 0 },
   },
 }
 
@@ -36,5 +39,6 @@ export async function getDatabase(): Promise<Realm> {
 
   const encryptionKey = await getDatabaseEncryptionKey()
   realm = new Realm({ schema: [EncounterSchema, KeysSchema], encryptionKey })
+  // TODO :try to re-generate another database if decryption failed
   return realm
 }

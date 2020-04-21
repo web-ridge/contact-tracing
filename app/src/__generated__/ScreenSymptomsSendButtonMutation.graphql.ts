@@ -1,10 +1,15 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash 80e444dddf4b821a1e36033c634036c9 */
+/* @relayHash f363763b19cffcc725be4b3372e4b7f9 */
 
 import { ConcreteRequest } from "relay-runtime";
 export type InfectedEncountersCreateInput = {
+    infectionCreateKey: InfectionCreateKeyInput;
     infectedEncounters: Array<InfectedEncounterCreateInput>;
+};
+export type InfectionCreateKeyInput = {
+    key: string;
+    password: string;
 };
 export type InfectedEncounterCreateInput = {
     possibleInfectedHash: string;

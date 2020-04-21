@@ -1,14 +1,23 @@
+// WebRidge Design
+
 import React, { useState } from 'react'
 import { commitMutation, graphql } from 'react-relay'
-import RelayEnvironment from './RelayEnvironment'
+
 import { ScrollView, View, StyleSheet } from 'react-native'
-import { Button, Text, Appbar } from 'react-native-paper'
-import { ScreenDataRemovalRemoveDeviceKeysMutation } from './__generated__/ScreenDataRemovalRemoveDeviceKeysMutation.graphql'
-import { ScreenDataRemovalRemoveEncountersMutation } from './__generated__/ScreenDataRemovalRemoveEncountersMutation.graphql'
+import { Button, Text } from 'react-native-paper'
+
 import { Translate } from 'react-translated'
+import AsyncStorage from '@react-native-community/async-storage'
+import RNSecureStorage from 'rn-secure-storage'
+
+import RelayEnvironment from './RelayEnvironment'
 import { getDeviceKeys, deviceKeysToParams } from './DatabaseUtils'
+import { encryptionDatabaseKey } from './Utils'
 import { stopTracing } from './BluetoothScanning'
 import Header from './Header'
+import { ScreenDataRemovalRemoveDeviceKeysMutation } from './__generated__/ScreenDataRemovalRemoveDeviceKeysMutation.graphql'
+import { ScreenDataRemovalRemoveEncountersMutation } from './__generated__/ScreenDataRemovalRemoveEncountersMutation.graphql'
+import { getDatabase } from './Database'
 
 // deleteInfectedEncountersOnKeys
 // removeDeviceKeys
@@ -41,9 +50,12 @@ export function ScreenDataRemoval({ componentId }: { componentId: string }) {
     '' | 'loading' | 'error'
   >('')
 
+  const [localState, setLocalState] = useState<'' | 'loading' | 'error'>('')
+
   const deleteEncounterAlerts = () => {
     const deleteEncounterAlertsAsync = async () => {
       const deviceKeys = await getDeviceKeys()
+
       commitMutation<ScreenDataRemovalRemoveEncountersMutation>(
         RelayEnvironment,
         {
@@ -97,7 +109,27 @@ export function ScreenDataRemoval({ componentId }: { componentId: string }) {
     deleteDeviceKeysAsync()
   }
 
-  const deleteAllLocalData = () => {}
+  const deleteAllLocalData = () => {
+    stopTracing()
+    const clearAllAsync = async () => {
+      try {
+        await AsyncStorage.clear()
+        const database = await getDatabase()
+        database.write(() => {
+          database.deleteAll()
+        })
+        await RNSecureStorage.remove(encryptionDatabaseKey)
+        setLocalState('')
+      } catch (e) {
+        console.log('deleteAllLocalData', e)
+        setLocalState('error')
+      }
+
+      console.log('Done.')
+    }
+    setLocalState('loading')
+    clearAllAsync()
+  }
 
   return (
     <>
@@ -155,17 +187,30 @@ export function ScreenDataRemoval({ componentId }: { componentId: string }) {
               )}
             </Button>
           </View>
+          <View style={styles.section}>
+            <Text>
+              <Translate text="myLocalState" />
+            </Text>
 
-          {/* <Text>Verwijder mijn lokale database van contacten</Text>
-          <View style={{ height: 24 }} />
-
-          <Button
-            mode="outlined"
-            onPress={deleteAllLocalData}
-            uppercase={false}
-          >
-            Verwijder
-          </Button> */}
+            {localState === 'error' && (
+              <Text style={styles.error}>
+                <Translate text="myDataRemovalFailed" />
+              </Text>
+            )}
+            <Button
+              style={styles.button}
+              loading={localState === 'loading'}
+              mode="outlined"
+              onPress={deleteAllLocalData}
+              uppercase={false}
+            >
+              {localState === 'error' ? (
+                <Translate text="myDataRemovalButtonRetry" />
+              ) : (
+                <Translate text="myDataRemovalButton" />
+              )}
+            </Button>
+          </View>
         </View>
       </ScrollView>
     </>
