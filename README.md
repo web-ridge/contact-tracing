@@ -4,7 +4,7 @@ Demo: https://www.youtube.com/watch?v=te_PKOa8TsY
 
 Een app om contacten mee te traceren waarvan de broncode volledig beschikbaar is en jouw data veilig blijft. Al jouw Bluetooth contacten worden volledig versleuteld lokaal opgeslagen.
 
-De methode is overeenkomstig zoals beschreven staat in het DP3T statement.
+De methode is overeenkomstig zoals beschreven staat in het DP3T statement met enkele afwijking om de gebruiker meer controle over zijn data te geven en nog meer anomiteit.
 
 ## Explain way of working
 
