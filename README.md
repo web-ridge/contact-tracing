@@ -1,26 +1,4 @@
-Als je code controleert, bekijk de development branch! Deze heeft verbeterde privacy!
-
-Er wordt gewerkt aan een vernieuwde versie met volledige controle over eigen data en met ondersteuning voor beveiliging van aanmaken overheidinstantie infectie QR-codes of linkjes: https://github.com/web-ridge/contact-tracing/tree/development
-
-## Roadmap (https://github.com/web-ridge/contact-tracing/tree/development)
-
-- Uitleg waarom locatiepermissie nodig is op Android bij Bluetooth;
-- Zorg dat apparaat iedere {INTERVAL} een ander ContactTracingsNummer krijgt (DONE, integration test WIP)
-- Zorg dat er bij het ContactTracingsNummers een wachtwoord komt zodat andere mensen niet kunnen zien hoeveel risicovolle ontmoetingen dit ContactTracingsNummer nummer heeft; (DONE, integration test WIP)
-- Zorg dat je meldingen op je nummer kan verwijderen aan de hand van je ContactTracingsNummers en bijbehorende; (DONE, integration test WIP)
-
-## Onderstaand gaat waarschijnlijk weg in ruil voor een volledig anonieme manier DP3T.
-
-- Zorg dat Privacy verklaring wordt geupdated en verwijder stuk over openbare data omdat dat dan niet meer aan de orde is;
-- iOS apparaten sturen hun eigen ContactTracingsNummers op i.p.v. de hashes die ze ontmoet hebben (als ze besmet zijn en toestemming geven via de app)
-- Android apparaten kunnen ervoor kiezen om ook meldingen te ontvangen van iOS apparaten, dan blijven alleen de ContactTracingsNummers waarmee ze contact hebben gehad niet lokaal maar zijn ze nodig om de status op te halen. Dit is optioneel. Uiteraard worden deze doorgestuurde ContactTracingsNummers ook niet opgeslagen op de server.
-
-<img src="https://user-images.githubusercontent.com/6492229/79509074-1ad7d680-803b-11ea-840f-3cc13a7e47e8.jpeg" width="280" />|
-<img src="https://user-images.githubusercontent.com/6492229/79509077-1b706d00-803b-11ea-8a50-bbec74eb17de.jpeg" width="280" />|
-<img src="https://user-images.githubusercontent.com/6492229/79689583-16d3d080-8256-11ea-93b6-a3fd52b9607d.jpeg" width="280" />|
-<img src="https://user-images.githubusercontent.com/6492229/79634323-0e05d080-816a-11ea-8d88-97b870d25637.jpeg" width="280" />
-|
-<img src="https://user-images.githubusercontent.com/6492229/79689586-176c6700-8256-11ea-9e94-c0fb90d45881.jpeg" width="280" />
+Demo: https://www.youtube.com/watch?v=te_PKOa8TsY
 
 # Jij hebt de controle
 
@@ -30,7 +8,7 @@ De methode is overeenkomstig zoals beschreven staat in het DP3T statement.
 
 ## Explain way of working
 
-Bij deze oplossing is er gekozen een juiste combinatie van decentralisatie en een snelle oplossing die ook werkt bij miljoenen gebruikers.
+Bij deze oplossing is er gekozen een voor decentralisatie en een snelle backend die ook werkt bij miljoenen gebruikers.
 
 ## Voordeel aan deze oplossing
 
@@ -100,18 +78,8 @@ https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function
 
 ## Security / data
 
-- Server verwijderd ContactTracingsNummer meldingen na 2 weken.
+- Server verwijderd ContactTracingsNummer meldingen na 2/3 weken.
 - De lokale data van hashes en datums worden lokaal opgeslagen met AES-256+SHA2 encryptie en een 64-byte encryption key.
 - De encryption key wordt opgeslagen in Android keystore of Apple Keychain zodat deze niet beschikbaar is voor aanvallers.
 - De eigen key waarmee een gebruik identificeerbaar is
 - Server staat in veilig datacenter en op Nederlandse server en voldoet aan alle europese wetgeving
-
-<<<<<<< HEAD
-
-## Blokkades
-
-- De iOS app moet open staan op het moment dat iemand naar buiten gaat. De API van Apple ondersteunt alleen het scannen van bekende apparaten in de achtergrond zoals hier te lezen is. De app zal dus op op de voorgrond moeten blijven als iemand weggaat. Dat is niet echt haalbaar.
-  https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipheralswithservices
-  =======
-
-> > > > > > > 11ad3e7bbf02571cf26bff2b74a76a280a57b107
