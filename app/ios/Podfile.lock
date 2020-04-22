@@ -266,6 +266,7 @@ PODS:
     - React
   - react-native-track-player (1.2.2):
     - React
+    - SwiftAudio (~> 0.11.0)
   - React-RCTActionSheet (0.62.2):
     - React-Core/RCTActionSheetHeaders (= 0.62.2)
   - React-RCTAnimation (0.62.2):
@@ -342,6 +343,7 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - SwiftAudio (0.11.2)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -428,6 +430,7 @@ SPEC REPOS:
     - MultiplatformBleAdapter
     - OpenSSL-Universal
     - PromisesObjC
+    - SwiftAudio
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -554,7 +557,7 @@ SPEC CHECKSUMS:
   react-native-camera: 1b52abea404d04e040edb3e74b7c5523c01a3089
   react-native-get-random-values: 2b7500cdb68066aba87cdccd97067c29e16ffe95
   react-native-peripheral: ae61f4dcd31e46cf145ca91683c8227652e24f85
-  react-native-track-player: 6e379715f05a2bcac6cdea0f9ad538122694a0ec
+  react-native-track-player: 44c853aad4ec1490a75e629b42bc5483148933a3
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
   React-RCTBlob: a332773f0ebc413a0ce85942a55b064471587a71
@@ -572,6 +575,7 @@ SPEC CHECKSUMS:
   RNPermissions: a96580116f7894146552e92b000ac30bf1661947
   RNSecureStorage: 8b2b07278d80c48b3a881c56e604ab147372f243
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  SwiftAudio: 217f5f184b27a0e25ff0fe7647021f05a21c06c9
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

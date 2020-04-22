@@ -6458,10 +6458,9 @@ react-native-swift@^1.2.3:
     "@raydeck/xcode" "^2.2.0"
     glob "^7.1.2"
 
-react-native-track-player@^1.2.2:
+"react-native-track-player@https://github.com/web-ridge/react-native-track-player":
   version "1.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-track-player/-/react-native-track-player-1.2.2.tgz#97e6d956ac2de70ed24b2665799d48075750b1e9"
-  integrity sha512-+Fv+dF4D8TRkq9kQ9sWKfqYmmvjkKaA4wGG+PRQO3aHRHnaswZG5o9TFbbY7xaLWNTxmmcSMR0YNcMm/Of91xQ==
+  resolved "https://github.com/web-ridge/react-native-track-player#171254f0dd2843a4d36b16578c4d1ddc774e01cf"
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"

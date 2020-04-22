@@ -119,7 +119,7 @@ async function getSecureKey(
   })
   safeLog('secured storage', { secureValue })
 
-  return secureValue || randomKeyString
+  return randomKeyString
 }
 
 export function getRandomString() {
