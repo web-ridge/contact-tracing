@@ -1,6 +1,10 @@
-## Dutch video's 
-Demo of whole application NL: https://www.youtube.com/watch?v=te_PKOa8TsY.  
+# Demonstration
+Demo of whole application (in Dutch): https://www.youtube.com/watch?v=te_PKOa8TsY.  
 Demo of background scanning on iOS: https://www.youtube.com/watch?v=f5bY9dkNX2g.  
+
+# Download
+For now APK-only.
+https://www.contactentraceren.nl/app-release.apk?v=2.
 
 # You are in control
 
