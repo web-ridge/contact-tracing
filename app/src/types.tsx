@@ -25,6 +25,13 @@ export interface RSSIValue {
   // isIos: boolean // used to fetch infected ios targets if enabled
 }
 
-export interface RSSIMap {
+export interface RSSICache {
   [contactTracingDeviceUUID: string]: RSSIValue
+}
+export interface UUIDCache {
+  [bluetoothId: string]: string // contactTracingDeviceUUID
+}
+
+export interface PromiseCache {
+  [bluetoothId: string]: Promise<string> // contactTracingDeviceUUID
 }

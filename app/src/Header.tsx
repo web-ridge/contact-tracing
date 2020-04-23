@@ -6,7 +6,7 @@ export default function Header({
   componentId,
   title,
 }: {
-  title: string
+  title: any
   componentId: string
 }) {
   return (
@@ -16,7 +16,9 @@ export default function Header({
     >
       <Appbar.BackAction
         accessibilityLabel="Go back"
-        onPress={() => Navigation.pop(componentId)}
+        onPress={() => {
+          Navigation.pop(componentId)
+        }}
       />
       <Appbar.Content title={title}></Appbar.Content>
     </Appbar.Header>

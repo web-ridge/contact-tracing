@@ -11,6 +11,7 @@ import {
   Permission,
 } from 'react-native-permissions'
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
+import { v4 as uuidv4 } from 'uuid'
 
 export function safeLog(message?: any, ...optionalParams: any[]): void {
   // @ts-ignore
@@ -23,6 +24,40 @@ export function safeLog(message?: any, ...optionalParams: any[]): void {
 export const contactTracingServiceUUID = '00001200-0000-1000-8000-00805f9b34fb'
 
 export const secondPartOfContactTracingUUID = 'c0d0'
+
+export function getContactTracingIdFromServiceUUIDs(
+  serviceUUIDs: string[]
+): string | undefined {
+  return serviceUUIDs.find((uuid) =>
+    uuid
+      .split('-')
+      .some((part, i) => i === 1 && part === secondPartOfContactTracingUUID)
+  )
+}
+export function createContactTracingId(): string {
+  let uuid: string = uuidv4()
+
+  // let others devices know this is a contact tracing device
+  const uuidParts = uuid.split('-')
+
+  const contactTracingUUID = uuidParts
+    .map((uuidPart, i) => {
+      // e.g. we have uuid of dcef893e-f0b2-4ddc-80e6-cf4c11080848
+      // so we know the user has accepted the terms
+      // and we want it to be dcef893e-c0d0-4ddc-80e6-cf4c11080848
+      // or
+      // and we want it to be dcef893e-c0d1-4ddc-80e6-cf4c11080848
+
+      if (i === 1) {
+        return secondPartOfContactTracingUUID
+      }
+
+      return uuidPart
+    })
+    .join('-')
+
+  return contactTracingUUID
+}
 
 //getAnonymizedTimestamp removes hours seconds and milli seconds so only date is left
 // this is more anonymous since nobody can possible prove that you met someone on that specific time
@@ -176,21 +211,4 @@ export async function requestLocationAccess(): Promise<boolean> {
     console.log({ e })
     return false
   }
-}
-
-export function commitMutation(
-  environment: Environment,
-  options: CommitMutationOptions
-) {
-  return new Promise((resolve, reject) => {
-    commitMutationDefault(environment, {
-      ...options,
-      onError: (error: Error) => {
-        reject(error)
-      },
-      onCompleted: (response: object) => {
-        resolve(response)
-      },
-    })
-  })
 }

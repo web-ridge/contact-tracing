@@ -29,8 +29,11 @@ export const KeysSchema = {
   },
 }
 
+// cache Realm instance so we don't need to heavy logic every time
 let realm: Realm | undefined
 
+// getDatabase returns a cached Realm instance or get the encryption key from Keychain / Keylock
+// and gets the Realm instance
 export async function getDatabase(): Promise<Realm> {
   // if already exist in memory let's return that database
   if (realm) {
@@ -39,6 +42,5 @@ export async function getDatabase(): Promise<Realm> {
 
   const encryptionKey = await getDatabaseEncryptionKey()
   realm = new Realm({ schema: [EncounterSchema, KeysSchema], encryptionKey })
-  // TODO :try to re-generate another database if decryption failed
   return realm
 }

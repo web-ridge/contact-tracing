@@ -26,6 +26,7 @@
     "react-native-background-timer": "^2.2.0",
     "react-native-ble-peripheral": "https://github.com/web-ridge/react-native-ble-peripheral",
     "react-native-ble-plx": "https://github.com/web-ridge/react-native-ble-plx",
+    "react-native-bluetooth-state-manager": "^1.1.1",
     "react-native-camera": "^3.23.1",
     "react-native-get-random-values": "^1.3.1",
     "react-native-navigation": "^6.4.0",

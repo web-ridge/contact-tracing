@@ -2,9 +2,10 @@
 
 import BLEPeripheral from 'react-native-ble-peripheral'
 import { contactTracingServiceUUID, safeLog } from './Utils'
-// startAdvertising registers an UUID which starts with an identifier
+
+// startOrRefreshAdvertising registers an UUID which starts with an identifier
 // so we know this device has the contact-tracing app
-export async function startAdvertising(deviceKey: string) {
+export async function startOrRefreshAdvertising(deviceKey: string) {
   // stop because we want to advertise with another device key
   // to maintain users privacy
   if (BLEPeripheral.isAdvertising()) {
@@ -21,6 +22,10 @@ export async function startAdvertising(deviceKey: string) {
 
   // BLEPeripheral.addCharacteristicToService()
   const response = await BLEPeripheral.start()
-  console.log({ response })
+  safeLog('BLEPeripheral', { response })
   return
+}
+
+export async function stopAdvertising() {
+  return BLEPeripheral.stop()
 }

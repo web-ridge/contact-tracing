@@ -1,23 +1,23 @@
 // WebRidge Design
 import PushNotification from 'react-native-push-notification'
-import { RSSIMap, Encounter, DeviceKey } from './types'
+import { RSSICache, Encounter, DeviceKey } from './types'
 import { getDatabase, EncounterSchema, KeysSchema } from './Database'
 import { sha256 } from 'js-sha256'
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
+import { commitMutation, graphql } from 'react-relay'
+
 import {
   getAnonymizedTimestamp,
   getStartOfRiskUnix,
-  secondPartOfContactTracingUUID,
   getRandomString,
   getExpireDateOfDeviceKey,
   getMaxExpireDateOfDeviceKey,
   now,
   safeLog,
-  commitMutationPromise,
+  createContactTracingId,
 } from './Utils'
-import { v4 as uuidv4 } from 'uuid'
-import { commitMutation, graphql } from 'react-relay'
+
 import RelayEnvironment from './RelayEnvironment'
 import {
   InfectionAlertsQueryVariables,
@@ -26,8 +26,8 @@ import {
 import { DatabaseUtilsCreateDeviceKeyMutation } from './__generated__/DatabaseUtilsCreateDeviceKeyMutation.graphql'
 
 export async function removeAllEncounters(): Promise<boolean> {
-  const database = await getDatabase()
   try {
+    const database = await getDatabase()
     database.write(() => {
       database.delete(database.objects(EncounterSchema.name))
     })
@@ -66,8 +66,8 @@ export function deviceKeysToParams(keys: DeviceKey[]): DeviceKeyParam[] {
 // getDeviceKeys fetches the keys from realm where there is risk for an infection (1-14 days)
 // it also removes device keys older than 14 days since they are not needed anymore
 export async function getDeviceKeys(): Promise<DeviceKey[]> {
-  const database = await getDatabase()
   try {
+    const database = await getDatabase()
     // delete old device keys
     database.write(() => {
       database.delete(
@@ -97,15 +97,18 @@ const createDeviceKeyMutation = graphql`
     }
   }
 `
-export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
+export async function getCurrentDeviceKeyOrRenew(): Promise<
+  DeviceKey | undefined
+> {
+  const database = await getDatabase()
+
   // check if device key exist for this date
   const expireUnix = getExpireDateOfDeviceKey()
-  const database = await getDatabase()
 
   // device keys which are not expired yet
   const keys = database
     .objects(KeysSchema.name)
-    .filtered(`internalTime > ${expireUnix}`)
+    .filtered(`internalTime > ${expireUnix} SORT(internalTime DESC) LIMIT(1)`)
 
   if (keys.length > 0) {
     return keys[0] as any
@@ -117,7 +120,7 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
 
   // create new deviceKey and password
   const password = getRandomString()
-  const newDeviceKey = generateBluetootTraceKey()
+  const newDeviceKey = createContactTracingId()
   const newDeviceHash = sha256(newDeviceKey)
 
   const anomizedDateUnix = getAnonymizedTimestamp()
@@ -141,7 +144,7 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
           time: anomizedDateUnix, // only date no time saved
         },
       },
-      onCompleted: async (response, errors) => {
+      onCompleted: (response, errors) => {
         if (
           response &&
           response.createDeviceKey &&
@@ -158,13 +161,17 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
         throw Error('no device key')
       },
       onError: (err) => {
+        console.log('DatabaseUtils getCurrentDeviceKeyOrRenew onError', { err })
         throw Error('no device key')
       },
     })
   } catch (error) {
     // use old device key for max period of time since user could have
     // no internet connection for a while
-    const previousKeys = database.objects(KeysSchema.name)
+    const previousKeys = database
+      .objects(KeysSchema.name)
+      .filtered('SORT(internalTime DESC) LIMIT(1)')
+
     if (previousKeys.length > 0) {
       safeLog(
         'Use old device key since we could not renew it (probably internet connection)'
@@ -205,8 +212,9 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<DeviceKey> {
       // actions: '["Yes", "No"]',
     })
     // just crash
-    throw Error('could not get a new device key')
+    return undefined
   }
+  return undefined
 }
 
 // // syncDeviceKeys syncs the generated Bluetooth UUIDs with their password
@@ -222,8 +230,8 @@ export async function removeOldData(): Promise<boolean> {
 }
 
 export async function removeOldDeviceKeys(): Promise<boolean> {
-  const database = await getDatabase()
   try {
+    const database = await getDatabase()
     database.write(() => {
       database.delete(
         database
@@ -239,8 +247,8 @@ export async function removeOldDeviceKeys(): Promise<boolean> {
 }
 
 export async function removeOldEncounters(): Promise<boolean> {
-  const database = await getDatabase()
   try {
+    const database = await getDatabase()
     database.write(() => {
       database.delete(
         database
@@ -255,12 +263,15 @@ export async function removeOldEncounters(): Promise<boolean> {
   }
 }
 
-export async function getEncounters(): Promise<Encounter[]> {
+// getRiskyEncountersOfLastTwoWeeks gets encounters which were riskfulle enough to create infection
+export async function getRiskyEncountersOfLastTwoWeeks(): Promise<Encounter[]> {
   try {
     const database = await getDatabase()
     let encounters = database
       .objects(EncounterSchema.name)
       .filtered(`time > ${getStartOfRiskUnix()}`)
+    // TODO: add duration as filter here so we don't send too much useless data to server
+
     if (!encounters) {
       return []
     }
@@ -272,27 +283,76 @@ export async function getEncounters(): Promise<Encounter[]> {
   }
 }
 
-export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
-  const objectsToCreate: Encounter[] = Object.keys(rssiMapUnsafe).map(
+export async function syncRSSICache(rssiCache: RSSICache): Promise<boolean> {
+  const database = await getDatabase()
+  const dateTime = getAnonymizedTimestamp()
+
+  const encountersFromMemoryMap: Encounter[] = Object.keys(rssiCache).map(
     (contactTracingDeviceUUID) => {
-      const rssiValue = rssiMapUnsafe[contactTracingDeviceUUID]
+      const rssiValue = rssiCache[contactTracingDeviceUUID]
       const hash = sha256(contactTracingDeviceUUID)
       return {
         id: 'id' + nanoid(),
         hash,
         rssi: rssiValue.rssi,
         hits: rssiValue.hits,
-        time: getAnonymizedTimestamp(),
+        time: dateTime,
         duration: rssiValue.end - rssiValue.start,
-        // isIos: rssiValue.isIos,
       }
     }
   )
 
-  console.log({ objectsToCreate })
+  safeLog({ encountersFromMemoryMap })
+
+  // get other devices in our database with the same hash (hash could be available for min 1 hour / and max 1 day if user does not have internet)
+  // so the more we can group them together the more reliable it is
+  let otherEncountersWhereHashIs: Encounter[] = []
+  if (encountersFromMemoryMap.length > 0) {
+    const filterQuery = [
+      `(${encountersFromMemoryMap
+        .map((e) => `hash = '${e.hash}'`)
+        .join(' OR ')})`,
+      `time = ${dateTime}`,
+    ].join(' AND ')
+    safeLog({ filterQuery })
+    const otherEncountersWhereHashIs = (database
+      .objects(EncounterSchema.name)
+      .filtered(filterQuery) as unknown) as Encounter[]
+
+    safeLog({ otherEncountersWhereHashIs })
+  }
+
+  const objectsToCreate = encountersFromMemoryMap.map((newEncounter) => {
+    const oldEncounter = otherEncountersWhereHashIs.find(
+      (old) => old.hash === newEncounter.hash
+    )
+
+    // we know this is the same person because is hash has not changed yet
+    if (oldEncounter) {
+      return {
+        id: oldEncounter.hash,
+        hash: oldEncounter.hash,
+        rssi: Math.max(oldEncounter.rssi, newEncounter.rssi),
+        hits: oldEncounter.hits + newEncounter.hits,
+        time: dateTime,
+        duration: oldEncounter.duration + newEncounter.duration,
+      }
+    }
+    // this hash is not seen before in database
+    // could be the same person but his hash did change
+    return {
+      id: 'id' + nanoid(),
+      hash: newEncounter.hash,
+      rssi: newEncounter.rssi,
+      hits: newEncounter.hits,
+      time: dateTime,
+      duration: newEncounter.duration,
+    }
+  })
+
+  safeLog({ objectsToCreate })
 
   try {
-    const database = await getDatabase()
     // sync encounters to database with a encrypted hash of bluetooth ID
     database.write(() => {
       objectsToCreate.map((objectToCreate) =>
@@ -305,29 +365,4 @@ export async function syncRSSIMap(rssiMapUnsafe: RSSIMap): Promise<boolean> {
     console.log({ error })
     return false
   }
-}
-
-function generateBluetootTraceKey() {
-  let uuid: string = uuidv4()
-
-  // let others devices know this is a contact tracing device
-  const uuidParts = uuid.split('-')
-
-  const contactTracingUUID = uuidParts
-    .map((uuidPart, i) => {
-      // e.g. we have uuid of dcef893e-f0b2-4ddc-80e6-cf4c11080848
-      // so we know the user has accepted the terms
-      // and we want it to be dcef893e-c0d0-4ddc-80e6-cf4c11080848
-      // or
-      // and we want it to be dcef893e-c0d1-4ddc-80e6-cf4c11080848
-
-      if (i === 1) {
-        return secondPartOfContactTracingUUID
-      }
-
-      return uuidPart
-    })
-    .join('-')
-
-  return contactTracingUUID
 }

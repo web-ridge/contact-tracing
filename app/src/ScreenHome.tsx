@@ -11,18 +11,20 @@ import {
   Platform,
   Image,
   Linking,
+  Alert,
 } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import BackgroundService from 'react-native-background-actions'
+import BluetoothStateManager from 'react-native-bluetooth-state-manager'
 
 import InfectionAlerts from './InfectionAlerts'
-import { startTracing, stopTracing } from './BluetoothScanning'
+import { startTracing, stopTracing } from './BackgroundJob'
 import {
   goToSymptonsScreen,
   goToDataRemovalScreen,
   goToOnboardingSecureLockScreen,
 } from './Screens'
-import { requestBluetoothStatus, requestLocationAccess } from './Utils'
+import { requestBluetoothStatus, requestLocationAccess, safeLog } from './Utils'
 import AsyncStorage from '@react-native-community/async-storage'
 import { Navigation } from 'react-native-navigation'
 
@@ -67,8 +69,8 @@ function ScreenHome({ componentId }: { componentId: string }) {
 
       if (bluetoothStatus !== 'granted') {
         console.log('bluetooth not enabled', { bluetoothStatus })
-        //@ts-ignore
-        alert('Bluetooth en locatie moeten aan staan')
+        // TODO: translate
+        Alert.alert('Bluetooth', 'Bluetooth needs to be permitted')
         return
       }
 
@@ -76,11 +78,23 @@ function ScreenHome({ componentId }: { componentId: string }) {
       if (Platform.OS === 'android') {
         const locationEnabled = await requestLocationAccess()
         if (!locationEnabled) {
-          console.log('location not enabled')
+          // TODO: translate
+          Alert.alert('Location', 'Location permission needs to be set to true')
           return
         }
+        await BluetoothStateManager.enable()
+        await BluetoothStateManager.requestToEnable()
       }
 
+      const state = await BluetoothStateManager.getState()
+      const dontRun = state === 'PoweredOff' && Platform.OS === 'android'
+      if (dontRun) {
+        Alert.alert(
+          'Bluetooth',
+          'Bluetooth need to be enabled in order to work'
+        )
+        return
+      }
       startTracing()
       setIsTracking(true)
     }

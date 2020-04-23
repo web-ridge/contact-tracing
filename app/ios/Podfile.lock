@@ -333,6 +333,8 @@ PODS:
   - RealmJS (5.0.3):
     - GCDWebServer
     - React
+  - RNBluetoothStateManager (1.1.0):
+    - React
   - RNCAsyncStorage (1.9.0):
     - React
   - RNCPushNotificationIOS (1.1.1):
@@ -407,6 +409,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
   - RealmJS (from `../node_modules/realm`)
+  - RNBluetoothStateManager (from `../node_modules/react-native-bluetooth-state-manager`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -506,6 +509,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-navigation"
   RealmJS:
     :path: "../node_modules/realm"
+  RNBluetoothStateManager:
+    :path: "../node_modules/react-native-bluetooth-state-manager"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCPushNotificationIOS:
@@ -570,6 +575,7 @@ SPEC CHECKSUMS:
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
   ReactNativeNavigation: 667586f6924fbd09512e2933fe70497db914b758
   RealmJS: 85d246ec57ac1420faf933c282c0b379e61f38a0
+  RNBluetoothStateManager: f38ca64bd09d3028b596cb080b89a388207b62a0
   RNCAsyncStorage: 453cd7c335ec9ba3b877e27d02238956b76f3268
   RNCPushNotificationIOS: a0b6894f4ad9b93d9dac467fdf4d055660ac8a0d
   RNPermissions: a96580116f7894146552e92b000ac30bf1661947

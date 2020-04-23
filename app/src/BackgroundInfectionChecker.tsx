@@ -4,9 +4,9 @@ import { fetchQuery, graphql } from 'relay-runtime'
 import AsyncStorage from '@react-native-community/async-storage'
 import { getInfectedEncountersQueryVariables } from './DatabaseUtils'
 import {
-  JobInfectionCheckerQuery,
-  JobInfectionCheckerQueryResponse,
-} from './__generated__/JobInfectionCheckerQuery.graphql'
+  BackgroundInfectionCheckerQuery,
+  BackgroundInfectionCheckerQueryResponse,
+} from './__generated__/BackgroundInfectionCheckerQuery.graphql'
 
 import RelayEnviroment from './RelayEnvironment'
 
@@ -14,7 +14,9 @@ import RelayEnviroment from './RelayEnvironment'
 const alertStorageKey = 'alertStorageKeyContactTracing'
 
 const query = graphql`
-  query JobInfectionCheckerQuery($deviceHashesOfMyOwn: [DeviceKeyParam!]!) {
+  query BackgroundInfectionCheckerQuery(
+    $deviceHashesOfMyOwn: [DeviceKeyParam!]!
+  ) {
     infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {
       howManyEncounters
       risk
@@ -23,8 +25,8 @@ const query = graphql`
 `
 
 function stringifyInfectedEncounters(
-  infectedEncounters: JobInfectionCheckerQueryResponse['infectedEncounters']
-) {
+  infectedEncounters: BackgroundInfectionCheckerQueryResponse['infectedEncounters']
+): string {
   let a = infectedEncounters.map(
     (infectedEncounter) =>
       `${infectedEncounter?.howManyEncounters}_${infectedEncounter?.risk}`
@@ -37,17 +39,24 @@ export async function giveAlerts() {
   // variables contains the secure keys to get own infection status and iOS encounters to check their status
   const variables = await getInfectedEncountersQueryVariables()
 
-  const data = await fetchQuery<JobInfectionCheckerQuery>(
-    RelayEnviroment,
-    query,
-    variables
-  )
+  let data: BackgroundInfectionCheckerQueryResponse | undefined
+  try {
+    data = await fetchQuery<BackgroundInfectionCheckerQuery>(
+      RelayEnviroment,
+      query,
+      variables
+    )
+  } catch (error) {
+    console.log('giveAlerts', { error })
+    return
+  }
 
   // TODO: stringify response in short hash on backend side to be more efficient in network
 
   // these hashes do not need to be secure they are only for notification purposes
   // to see if any alert is added
-  const previousDataHash = await AsyncStorage.getItem(alertStorageKey)
+  const previousDataHashNullable = await AsyncStorage.getItem(alertStorageKey)
+  const previousDataHash = previousDataHashNullable || ''
   const newHash = stringifyInfectedEncounters(data.infectedEncounters)
 
   console.log({ previousDataHash })
@@ -73,9 +82,10 @@ export async function giveAlerts() {
       // repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
       // actions: '["Yes", "No"]',
     })
+
+    // so we know the next time if we need to send new notification
+    await AsyncStorage.setItem(alertStorageKey, newHash)
   }
-  // so we know the next time if we need to send new notification
-  await AsyncStorage.setItem(alertStorageKey, newHash)
 
   // TODO: add last fetched date
 }

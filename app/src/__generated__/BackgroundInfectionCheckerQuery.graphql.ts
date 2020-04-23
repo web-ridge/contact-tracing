@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-/* @relayHash 5740b1d8d08acb21a00cc2338c0261f8 */
+/* @relayHash 5de8628e5514e7c8bbd7c160d9688a63 */
 
 import { ConcreteRequest } from "relay-runtime";
 export type Risk = "HIGH_RISK" | "LOW_RISK" | "MIDDLE_RISK" | "%future added value";
@@ -8,24 +8,24 @@ export type DeviceKeyParam = {
     hash: string;
     password: string;
 };
-export type JobInfectionCheckerQueryVariables = {
+export type BackgroundInfectionCheckerQueryVariables = {
     deviceHashesOfMyOwn: Array<DeviceKeyParam>;
 };
-export type JobInfectionCheckerQueryResponse = {
+export type BackgroundInfectionCheckerQueryResponse = {
     readonly infectedEncounters: ReadonlyArray<{
         readonly howManyEncounters: number;
         readonly risk: Risk;
     } | null>;
 };
-export type JobInfectionCheckerQuery = {
-    readonly response: JobInfectionCheckerQueryResponse;
-    readonly variables: JobInfectionCheckerQueryVariables;
+export type BackgroundInfectionCheckerQuery = {
+    readonly response: BackgroundInfectionCheckerQueryResponse;
+    readonly variables: BackgroundInfectionCheckerQueryVariables;
 };
 
 
 
 /*
-query JobInfectionCheckerQuery(
+query BackgroundInfectionCheckerQuery(
   $deviceHashesOfMyOwn: [DeviceKeyParam!]!
 ) {
   infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {
@@ -81,7 +81,7 @@ return {
   "kind": "Request",
   "fragment": {
     "kind": "Fragment",
-    "name": "JobInfectionCheckerQuery",
+    "name": "BackgroundInfectionCheckerQuery",
     "type": "Query",
     "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
@@ -89,18 +89,18 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "JobInfectionCheckerQuery",
+    "name": "BackgroundInfectionCheckerQuery",
     "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
     "operationKind": "query",
-    "name": "JobInfectionCheckerQuery",
+    "name": "BackgroundInfectionCheckerQuery",
     "id": null,
-    "text": "query JobInfectionCheckerQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {\n    howManyEncounters\n    risk\n  }\n}\n",
+    "text": "query BackgroundInfectionCheckerQuery(\n  $deviceHashesOfMyOwn: [DeviceKeyParam!]!\n) {\n  infectedEncounters(deviceHashesOfMyOwn: $deviceHashesOfMyOwn) {\n    howManyEncounters\n    risk\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
-(node as any).hash = 'd3052d679bf162ec5bd58a5b0fb47983';
+(node as any).hash = '03c97fd289ed6db42d3c44f45ac20d96';
 export default node;

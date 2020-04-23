@@ -7,9 +7,9 @@ import { Translate } from 'react-translated'
 import { commitMutation, graphql } from 'react-relay'
 import RelayEnvironment from './RelayEnvironment'
 import { ScreenSymptomsSendButtonMutation } from './__generated__/ScreenSymptomsSendButtonMutation.graphql'
-import { getEncounters } from './DatabaseUtils'
+import { getRiskyEncountersOfLastTwoWeeks } from './DatabaseUtils'
 import { EncounterSchema, getDatabase } from './Database'
-import { syncMap } from './JobTracingUtils'
+import { syncDevicesInMemoryToLocalDatabase } from './BackgroundBluetoothDeviceScanned'
 
 const mutation = graphql`
   mutation ScreenSymptomsSendButtonMutation(
@@ -35,8 +35,8 @@ export default function ScreenSymptomsSendButton({
 
   useEffect(() => {
     const updateCountAsync = async () => {
-      await syncMap()
-      const encountersFromLast2Weeks = await getEncounters()
+      await syncDevicesInMemoryToLocalDatabase()
+      const encountersFromLast2Weeks = await getRiskyEncountersOfLastTwoWeeks()
       setHowManyContacts(encountersFromLast2Weeks.length)
     }
     updateCountAsync()
@@ -47,7 +47,7 @@ export default function ScreenSymptomsSendButton({
       // TODO: fetch contact from encrypted database in the previous 2 weeks
       setError(false)
 
-      const encountersFromLast2Weeks = await getEncounters()
+      const encountersFromLast2Weeks = await getRiskyEncountersOfLastTwoWeeks()
       console.log({ createKey, password })
       commitMutation<ScreenSymptomsSendButtonMutation>(RelayEnvironment, {
         mutation,

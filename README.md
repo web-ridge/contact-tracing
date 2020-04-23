@@ -91,15 +91,19 @@ Paper about RSSI signals and distances: https://www.researchgate.net/figure/Blue
 
 The QR code is not linked to a sick person in order to guarantee his anonymity and to ensure that there is no record of who has been tested positive. However, this way it is possible to send your contacts with someone else's QR code. This theory is unlikely to happen in practice because abuse is often done by people who don't trust the app. If they don't have the app, they don't have contacts to make a fake report. Moreover, this QR code is only valid once. If someone does send their contacts with someone else's QR code, they must actually have been around people who get this message. So this person unnecessarily worries the people around him. Of course, there are always those awful suckers who do such a thing anyway, but for that you shouldn't reduce the privacy of your other users.
 
-## How does the app device if I'm at risk?
+## How does the app decide if I'm at risk?
 
-We look at the RSSI of the signal and the number of hits with this signal.= The closer the RSSI is to 0 and the more hits, and the longer the duratoin, the greater the chance of contamination.
+We look at the RSSI of the signal and the number of hits with this signal.= The closer the RSSI is to 0 and the more hits, and the longer the duration, the greater the chance of contamination.
 
 The code for this is available here: https://github.com/web-ridge/contact-tracing/blob/master/backend/risk.go
 
 ## Some people say background scanning on iOS is not possible. How does this app do that?
 
-TODO:
+Both devices registers a Bluetooth service with a 16 bit UUID. On iOS this is part of a secret overflow which only iOS devices can read. So in order to keep background scanning working we list to this 16 bit UUID in iOS. On Android we listen to all services since this 16 bit UUID is not visible there. We need to use a 16 bit UUID for this since Android can't advertise their ContactTracingsNumber.
+
+## How can Android devices lookup iOS Bluetooth services while their devices are in background
+
+Because iOS devices remove all their service UUIDs while in background we need to connect to the device with their 16 bit UUID. We set the UUID a a charesteric UUID on the 16 bit UUID advertiser. We don't need to read this charesteric on Android nor iOS since we know this UUID is the ContactTracingsNumber.
 
 ## Is this project finished
 

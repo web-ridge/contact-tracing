@@ -206,9 +206,10 @@ export default {
     nl: 'Verwijder gegevens',
   },
   myLocalState: {
-    en: 'Delete all my local data such as contact times and my security keys.',
+    en:
+      'Delete all my local data from server and also the authorization to view my own local database.',
     nl:
-      'Verwijder al mijn lokale gegevens zoals contactmomenten en mijn beveiligingskeys.',
+      'Verwijder al mijn lokale gegevens en ook mijn toegang tot de lokale database.',
   },
   infectedTitle: {
     en: 'Tested positive',

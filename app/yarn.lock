@@ -6381,6 +6381,11 @@ react-native-background-timer@^2.2.0:
   version "2.0.0"
   resolved "https://github.com/web-ridge/react-native-ble-plx#10d3be81381c789259e4b435df7f5ddbd4a00506"
 
+react-native-bluetooth-state-manager@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-bluetooth-state-manager/-/react-native-bluetooth-state-manager-1.1.1.tgz#e489ec36ec5435d48b0cb3cdeac103f77d6392b9"
+  integrity sha512-OvauhpV+4Buj+FpU+ocNPsxNaP32y1aKqxYWFzOfyefEn1r4HexoGII5/laq+9OcQTOS5qMBqsBfHYCAPEVS2g==
+
 react-native-camera@^3.23.1:
   version "3.23.1"
   resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-3.23.1.tgz#fb6fe52f8a357852de6dcd81d0d187cd632dc7dd"
