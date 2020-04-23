@@ -68,21 +68,25 @@ He gets back how many times he has had contact with a certain hash (grouped on a
 He get's back the following data
 - how many risky encounters he had (the risk indication parameters can be changed)
 
-## How the risk of contamination is calculated
-
-We look at the RSSI of the signal and the number of hits with this signal.= The closer the RSSI is to 0 and the more hits, and the longer the duratoin, the greater the chance of contamination.
-
-Risk assessment code: https://github.com/web-ridge/contact-tracing/blob/master/backend/risk.go
-Paper about RSSI signals: https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function-of-distance-A-Scans-between-two-phones_fig2_263708916
-
 # FAQ
 
 ## Bluetooth solutions are not reliable
 Some people say that Bluetooth solutions are not reliable enough. That is true in some cases. However, you can make a fairly good estimate of how much contact there has been between 2 phones. Of course there can be an incorrect conclusion, but was this not the case with the classic contact investigation? And how bad is it when people receive a message that they have to pay attention to symptoms / or stay indoors for 5 days. We all need to do that now! We can build the risk assessment in such a way that as few false reports as possible occur, but then there will also be people who do not receive a report even though they are infected.
 
+Paper about RSSI signals and distances: https://www.researchgate.net/figure/Bluetooth-signal-strength-RSSI-as-a-function-of-distance-A-Scans-between-two-phones_fig2_263708916
+
 ## How do you know QR-code is not misused by other persons
 The QR code is not linked to a sick person in order to guarantee his anonymity and to ensure that there is no record of who has been tested positive. However, this way it is possible to send your contacts with someone else's QR code. This theory is unlikely to happen in practice because abuse is often done by people who don't trust the app. If they don't have the app, they don't have contacts to make a fake report. Moreover, this QR code is only valid once. If someone does send their contacts with someone else's QR code, they must actually have been around people who get this message. So this person unnecessarily worries the people around him. Of course, there are always those awful suckers who do such a thing anyway, but for that you shouldn't reduce the privacy of your other users.
 
+## How does the app device if I'm at risk?
+
+We look at the RSSI of the signal and the number of hits with this signal.= The closer the RSSI is to 0 and the more hits, and the longer the duratoin, the greater the chance of contamination.
+
+The code for this is available here: https://github.com/web-ridge/contact-tracing/blob/master/backend/risk.go
+
+## Some people say background scanning on iOS is not possible. How does this app do that?
+
+TODO: 
 
 ## Footnotes
 *ContactTracingsNumber* - BluetoothUUID which will be publicly visible.  
