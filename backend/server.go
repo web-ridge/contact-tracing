@@ -34,8 +34,8 @@ var createKeysValidForDays = 7 * 24 * time.Hour
 var incubationPeriodIndays = 10 * 24 * time.Hour // 1-14 days choose a valid one
 
 // needed because user could sent in his infections later. It is filtered on front-end but just to be sure.
-var removeAfterDays = incubationPeriodIndays + createKeysValidForDays
 var howLongForTestResult = 24 * time.Hour
+var removeAfterDays = incubationPeriodIndays + createKeysValidForDays + howLongForTestResult
 
 func main() {
 	// create fast logging

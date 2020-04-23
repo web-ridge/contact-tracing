@@ -1,7 +1,9 @@
 // WebRidge Design
-// Need someone with expertise in uncbation period and chance of infections
+// Need someone with expertise in incubation period and chance of infections
 // to make risk calculation better
 // Hit me on GitHub, LinkedIn, etc.
+// Maybe we could also ask the user if he had a lot of coughing in the period before
+// That way we can ++ the risk of users in the neightborhood
 
 package main
 
@@ -90,6 +92,15 @@ func getRiskOfEncounters(encounters []*dm.InfectedEncounter) int {
 	return noRisk
 }
 
+// getDurationOfEncounters returns total duration in seconds
+func getDurationOfEncounters(encounters []*dm.InfectedEncounter) int {
+	var duration int
+	for _, encounter := range encounters {
+		duration += encounter.Duration
+	}
+	return duration
+}
+
 // groupInfectedEncounterOnRandomPart so we know how many different encounters probably from 1 device
 func groupInfectedEncounterOnRandomPart(infectedEncounters []*dm.InfectedEncounter) map[string][]*dm.InfectedEncounter {
 	m := make(map[string][]*dm.InfectedEncounter)
@@ -114,10 +125,16 @@ func getRiskAlerts(infectedEncounters []*dm.InfectedEncounter) []*fm.InfectionAl
 		if risk == noRisk {
 			continue
 		}
-		alerts = append(alerts, &fm.InfectionAlert{
-			HowManyEncounters: len(value),
-			Risk:              riskToGraphql(risk),
-		})
+
+		totalDuration := getDurationOfEncounters(value)
+
+		// 2 minutes
+		if totalDuration > 60*2 {
+			alerts = append(alerts, &fm.InfectionAlert{
+				HowManyEncounters: len(value),
+				Risk:              riskToGraphql(risk),
+			})
+		}
 	}
 	return alerts
 }
