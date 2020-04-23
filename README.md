@@ -22,6 +22,7 @@ The method is similar as described in the DP3T statement with some deviation to 
 - Local health authorities can change notification parameters without an app update
 - Backend is fully open-source and written in Golang which compiles to byte code (very fast)
 - Proven techniques like React Native, PostgresSQL, Golang
+- Multilanguage support (only English and Dutch are done a.t.m.)
 
 ## What the backend server should be running
 - The domain should be verified with DNSSEC
