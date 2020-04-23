@@ -1,6 +1,6 @@
 # Demonstration
 
-Demo of whole application (in Dutch): https://www.youtube.com/watch?v=te_PKOa8TsY.  
+Demo of whole application (in Dutch): https://www.youtube.com/watch?v=te_PKOa8TsY.
 Demo of background scanning on iOS: https://www.youtube.com/watch?v=f5bY9dkNX2g.
 
 # Download
@@ -17,19 +17,19 @@ The method is similar as described in the DP3T statement with some deviation to 
 ## Benefits of our application
 
 - It works on iOS & Android (including background scanning on iOS)
-- It is not possible to view someone else's alerts (only the user knows a secret password for every unique identiefier he sends via Bluetooth)
+- It is not possible to view someone else's alerts (only the user knows a secret password for every unique identifier he sends via Bluetooth)
 - It is not stored anywhere whether a Bluetooth number is infected
 - Nothing happens without your explicit permission
 - If you do not send an infection, all your contacts are stored locally with AES-256 + SHA2 encryption and a 64-byte encryption key
-- The encryption key is stored in an Android keystore or Apple Keychain so that it is not available to attackers
+- The encryption key is stored in an Android Keystore or Apple Keychain so that it is not available to attackers
 - This solution is scalable and can be rolled out to millions of users without any problems
 - The data on the server does not contain any personal data
 - The data stored on the server is stored no longer than 4 weeks
 - You can delete your data yourself at any time
 - Local health authorities can change notification parameters without an app update
 - Backend is fully open-source and written in Golang which compiles to byte code (very fast)
-- Proven techniques like React Native, PostgresSQL, Golang
-- Multilanguage support (only English and Dutch are done a.t.m.)
+- Proven techniques like React Native, PostgresQL, Golang
+- Multi language support (only English and Dutch are done a.t.m.)
 
 ## What the backend server should be running
 
@@ -37,7 +37,7 @@ The method is similar as described in the DP3T statement with some deviation to 
 - Any data sent to the server should be done via SSL
 - Any data between server and a proxy should be done via SSL
 - The database connection between the API and server should be done with an SSL connection.
-- The database is stored encrypted with <a href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>.
+- The database should be  stored encrypted on a encrypted disk with e.g. (<a  href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>).
 - Access to the management console should at least be directly and indirectly secured with 2-factor authentication codes and a digital safe.
 
 ## How the app works
@@ -51,9 +51,7 @@ The app will create a secure local database which is fully encrypted with AES-25
 
 #### Step 2: Secure password is created
 
-The applications generate a random ContactTracingsNumber≈ every hour and a half. The hash of this BluetoothUUID will be
-
-Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will do the following. Risk assessment can be changed afterwards without app update.
+The applications generate a random ContactTracingsNumber* every hour and a half. Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will start saving an encounter.
 
 #### Step 3: Both devices store each other's ContactTracingsNumberHash\*
 
@@ -64,20 +62,20 @@ With a strong signal, both applications store these 2 hashes **locally** on thei
 Alice has been tested positive on COVID-19.
 
 - Alice scans QR-code of their local health institute ;
-- Alice sends their contact moments with the follwing data:
+- Alice sends their contact moments with the following data:
 
-  - signal strength
-  - date,
-  - period
-  - hits (how many times signal did go stronger, the more reliable it is)
+- signal strength
+- date,
+- period
+- hits (how many times signal did go stronger, the more reliable it is)
 
-**It not saved anywhere WHO send in this data, so there can't be proved who has contact with whom.**
+**It not saved anywhere WHO sent in this data, so there can't be proved who has contact with whom.**
 
 Every so often, Bob asks the central server if any infections have been added to his ContactTracingsHashes* with their with associated ContactTracingsPasswords* from the past 2 weeks. Only he can do this because he knows the secret passwords of his ContactTracingNumbers.
 
-He get's back the following data
+He get back the following data
 
-- how many risky encounters (low,middle,high)
+- how many risky encounters (low, middle, high)
 
 # FAQ
 
@@ -115,6 +113,7 @@ We still want to improve some things
 - Automatic frontend-tests
 - Better risk calculation with less false positives
 - Working together with local health instances for the QR-code solution
+- Rate limiting across Redis clusters to improve scaling of servers and protect DDOS attacks or mis-use
 
 ## What can you do to help us?
 
@@ -127,6 +126,6 @@ We still want to improve some things
 
 ## Footnotes
 
-_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.  
-_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.  
-_ContactTracingsPassword_ - Only known between server and user and not publicly visible.
+_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.   
+_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.   
+_ContactTracingsPassword_ - Only known between server and user and not publicly visible.   
