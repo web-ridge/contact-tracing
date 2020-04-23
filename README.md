@@ -86,7 +86,16 @@ The code for this is available here: https://github.com/web-ridge/contact-tracin
 
 ## Some people say background scanning on iOS is not possible. How does this app do that?
 
-TODO: 
+TODO:
+
+## Is this project finished
+It is fully working and already deployed. You can download the Android app on this link: https://www.contactentraceren.nl/app-release.apk?v=2.
+
+We still want to improve some things
+- Automatic backend-tests
+- Automatic frontend-tests
+- Better risk calculation with less false positives
+- Working together with local health instances for the QR-code solution
 
 ## Footnotes
 *ContactTracingsNumber* - BluetoothUUID which will be publicly visible.  
