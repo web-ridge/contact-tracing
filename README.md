@@ -111,6 +111,7 @@ We still want to improve some things
 - Automatic frontend-tests
 - Better risk calculation with less false positives
 - Working together with local health instances for the QR-code solution
+- Rate limiting across Redis clusters to improve scaling of servers and protect DDOS attacks or mis-use
 
 ## What can you do to help us?
 
