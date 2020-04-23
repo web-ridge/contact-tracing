@@ -51,9 +51,7 @@ The app will create a secure local database which is fully encrypted with AES-25
 
 #### Step 2: Secure password is created
 
-The applications generate a random ContactTracingsNumber≈ every hour and a half. The hash of this BluetoothUUID will be
-
-Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will do the following. Risk assessment can be changed afterwards without app update.
+The applications generate a random ContactTracingsNumber≈ every hour and a half. Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will start saving an encounter.
 
 #### Step 3: Both devices store each other's ContactTracingsNumberHash\*
 
