@@ -77,9 +77,7 @@ Every so often, Bob asks the central server if any infections have been added to
 
 He get's back the following data
 
-- all infected encounters
-
-  - how much risk per encounter
+- how many risky encounters (low,middle,high)
 
 # FAQ
 
