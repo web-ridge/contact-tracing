@@ -1,5 +1,5 @@
-Demo of whole application: https://www.youtube.com/watch?v=te_PKOa8TsY
-Demo of background scanning on iOS: https://www.youtube.com/watch?v=f5bY9dkNX2g
+Demo of whole application: https://www.youtube.com/watch?v=te_PKOa8TsY.  
+Demo of background scanning on iOS: https://www.youtube.com/watch?v=f5bY9dkNX2g.  
 
 # You are in control
 
