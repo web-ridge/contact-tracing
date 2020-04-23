@@ -37,7 +37,7 @@ The method is similar as described in the DP3T statement with some deviation to 
 - Any data sent to the server should be done via SSL
 - Any data between server and a proxy should be done via SSL
 - The database connection between the API and server should be done with an SSL connection.
-- The database is stored encrypted with <a  href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>.
+- The database should be  stored encrypted on a encrypted disk with e.g. (<a  href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>).
 - Access to the management console should at least be directly and indirectly secured with 2-factor authentication codes and a digital safe.
 
 ## How the app works
