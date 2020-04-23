@@ -81,7 +81,7 @@ Paper about RSSI signals: https://www.researchgate.net/figure/Bluetooth-signal-s
 Some people say that Bluetooth solutions are not reliable enough. That is true in some cases. However, you can make a fairly good estimate of how much contact there has been between 2 phones. Of course there can be an incorrect conclusion, but was this not the case with the classic contact investigation? And how bad is it when people receive a message that they have to pay attention to symptoms / or stay indoors for 5 days. We all need to do that now! We can build the risk assessment in such a way that as few false reports as possible occur, but then there will also be people who do not receive a report even though they are infected.
 
 
-## *
+## Footnotes
 *ContactTracingsNumber* - BluetoothUUID which will be publicly visible
 *ContactTracingsHash* - Hash of the ContactTracingsNumber which will be stored on the server
 *ContactTracingsPassword* - Only known between server and user and not publicly visible
