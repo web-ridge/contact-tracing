@@ -85,7 +85,7 @@ The QR code is not linked to a sick person in order to guarantee his anonymity a
 
 
 ## Footnotes
-*ContactTracingsNumber* - BluetoothUUID which will be publicly visible
-*ContactTracingsHash* - Hash of the ContactTracingsNumber which will be stored on the server
-*ContactTracingsPassword* - Only known between server and user and not publicly visible
+*ContactTracingsNumber* - BluetoothUUID which will be publicly visible.  
+*ContactTracingsHash* - Hash of the ContactTracingsNumber which will be stored on the server.   
+*ContactTracingsPassword* - Only known between server and user and not publicly visible.     
 
