@@ -5,7 +5,7 @@ Demo of background scanning on iOS: https://www.youtube.com/watch?v=f5bY9dkNX2g.
 
 An app which respects your privacy while still tracking your contacts. All your Bluetooth contacts are stored locally fully encrypted. When you're infected you can scan the QR-code provided by your local health institute.
 
-The method is similar as described in the DP3T statement with some deviation to give the user more control over his data and even more anonymity.
+The method is similar as described in the DP3T statement with some deviation to *give the user full control over his data* and even *more anonymity*.
 
 ## Benefits of our application
 
