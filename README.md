@@ -37,7 +37,7 @@ The method is similar as described in the DP3T statement with some deviation to 
 - Any data sent to the server should be done via SSL
 - Any data between server and a proxy should be done via SSL
 - The database connection between the API and server should be done with an SSL connection.
-- The database should be  stored encrypted on a encrypted disk with e.g. (<a  href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>).
+- The database should be stored encrypted on a encrypted disk with e.g. (<a  href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a>).
 - Access to the management console should at least be directly and indirectly secured with 2-factor authentication codes and a digital safe.
 
 ## How the app works
@@ -51,7 +51,7 @@ The app will create a secure local database which is fully encrypted with AES-25
 
 #### Step 2: Secure password is created
 
-The applications generate a random ContactTracingsNumber* every hour and a half. Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will start saving an encounter.
+The applications generate a random ContactTracingsNumber\* every hour and a half. Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will start saving an encounter.
 
 #### Step 3: Both devices store each other's ContactTracingsNumberHash\*
 
@@ -97,11 +97,12 @@ The code for this is available here: https://github.com/web-ridge/contact-tracin
 
 ## Some people say background scanning on iOS is not possible. How does this app do that?
 
-Both devices registers a Bluetooth service with a 16 bit UUID. On iOS this is part of a secret overflow which only iOS devices can read. So in order to keep background scanning working we list to this 16 bit UUID in iOS. On Android we listen to all services since this 16 bit UUID is not visible there. We need to use a 16 bit UUID for this since Android can't advertise their ContactTracingsNumber.
+Both devices registers a Bluetooth service with a 16 bit UUID and the ContactTracingNumber. On iOS in the background this is part of a secret overflow buffer only iOS devices can see this if they explicitly scan for this UUID. So in order to keep background scanning working we scan this 16 bit UUID in the background for iOS devices. On Android we listen to all services since this 16 bit UUID is not visible there. We need to use a 16 bit UUID for this since Android can't advertise their ContactTracingsNumber and more than 16 bits.
 
 ## How can Android devices lookup iOS Bluetooth services while their devices are in background
 
-Because iOS devices remove all their service UUIDs while in background we need to connect to the device with their 16 bit UUID. We set the UUID a a charesteric UUID on the 16 bit UUID advertiser. We don't need to read this charesteric on Android nor iOS since we know this UUID is the ContactTracingsNumber.
+Because iOS devices hide all their service UUIDs while in background mode, we need to connect to the device with the 16 bit UUID. We set the ContactTracingsNumber aa a charesteric UUID on the 16 bit UUID advertiser. We don't need to read this charesteric on Android nor iOS since we know this UUID is the ContactTracingsNumber. Logic can be found here:
+https://github.com/web-ridge/contact-tracing/blob/master/app/src/BackgroundBluetoothDeviceScanned.tsx
 
 ## Is this project finished
 
@@ -126,6 +127,6 @@ We still want to improve some things
 
 ## Footnotes
 
-_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.   
-_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.   
-_ContactTracingsPassword_ - Only known between server and user and not publicly visible.   
+_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.  
+_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.  
+_ContactTracingsPassword_ - Only known between server and user and not publicly visible.
