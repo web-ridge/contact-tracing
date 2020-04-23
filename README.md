@@ -37,20 +37,20 @@ The method is similar as described in the DP3T statement with some deviation to 
 Alice installs the tracing app via the App Store.
 Bob installs the tracing app via the Play Store.
 
-### Step 1: Secure database is created locally
+#### Step 1: Secure database is created locally
 The app will create a secure local database which is fully encrypted with AES-256 + SHA2 encryption and a 64-byte encryption key
 
-### Step 2: Secure password is created
+#### Step 2: Secure password is created
 
 The applications generate a random ContactTracingsNumber≈ every hour and a half. The hash of this BluetoothUUID will be 
 
 Bob runs into Alice to chat with. If these persons are in contact with each other for longer, the risk of contamination increases and the devices will do the following. Risk assessment can be changed afterwards without app update.
 
-## Step 3: Both devices store each other's ContactTracingsNumberHash* 
+#### Step 3: Both devices store each other's ContactTracingsNumberHash* 
 
 With a strong signal, both applications store these 2 hashes **locally** on their own phone with date and strength of the signal (RSSI) and the number of times this signal has changed and the duration of this contact.
 
-## Step 4: A positive test
+#### Step 4: A positive test
 
 Alice has been tested positive on COVID-19.
 - Alice scans QR-code of their local health institute ;
