@@ -97,6 +97,14 @@ We still want to improve some things
 - Better risk calculation with less false positives
 - Working together with local health instances for the QR-code solution
 
+## What can you do to help us?
+- Share this app
+- Send pull requests
+- Fix spelling mistakes we made along the way
+- Help write automated tests
+- Improve code
+- Give feedback (https://github.com/web-ridge/contact-tracing/issues)
+
 ## Footnotes
 *ContactTracingsNumber* - BluetoothUUID which will be publicly visible.  
 *ContactTracingsHash* - Hash of the ContactTracingsNumber which will be stored on the server.   
