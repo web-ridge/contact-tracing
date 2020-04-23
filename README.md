@@ -122,6 +122,6 @@ We still want to improve some things
 
 ## Footnotes
 
-_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.
-_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.
-_ContactTracingsPassword_ - Only known between server and user and not publicly visible.
+_ContactTracingsNumber_ - BluetoothUUID which will be publicly visible.   
+_ContactTracingsHash_ - Hash of the ContactTracingsNumber which will be stored on the server.   
+_ContactTracingsPassword_ - Only known between server and user and not publicly visible.   
