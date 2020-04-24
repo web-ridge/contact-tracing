@@ -3,7 +3,7 @@
 import { Navigation, Options } from 'react-native-navigation'
 
 import AppHOC from './App'
-import ScreenSymptons from './ScreenSymptoms'
+import ScreenSymptoms from './ScreenSymptoms'
 import ScreenHome from './ScreenHome'
 import { ScreenDataRemoval } from './ScreenDataRemoval'
 import ScreenScanQRCode from './ScreenScanQRCode'
@@ -11,7 +11,7 @@ import ScreenOnboardingSecureLock from './ScreenOnboardingSecureLock'
 import ScreenOnboardingPermission from './ScreenOnboardingPermission'
 
 export const screenHomeRoute = 'com.contacttracing.home'
-const screenSymptonsRoute = 'com.contacttracing.symptomsRoute'
+const screenSymptomsRoute = 'com.contacttracing.symptomsRoute'
 const screenDataRemoval = 'com.contacttracing.dataRemoval'
 const screenSecureLock = 'com.contacttracing.secureLock'
 const screenPermission = 'com.contacttracing.permission'
@@ -19,7 +19,7 @@ const screenPermission = 'com.contacttracing.permission'
 export const screenQRCode = 'com.contacttracing.screenQRCode'
 
 Navigation.registerComponent(screenHomeRoute, () => AppHOC(ScreenHome))
-Navigation.registerComponent(screenSymptonsRoute, () => AppHOC(ScreenSymptons))
+Navigation.registerComponent(screenSymptomsRoute, () => AppHOC(ScreenSymptoms))
 Navigation.registerComponent(screenDataRemoval, () => AppHOC(ScreenDataRemoval))
 Navigation.registerComponent(screenQRCode, () => AppHOC(ScreenScanQRCode))
 Navigation.registerComponent(screenSecureLock, () =>
@@ -64,10 +64,10 @@ export const goToDataRemovalScreen = (componentId: string) => {
   })
 }
 
-export const goToSymptonsScreen = (componentId: string) => {
+export const goToSymptomsScreen = (componentId: string) => {
   Navigation.push(componentId, {
     component: {
-      name: screenSymptonsRoute,
+      name: screenSymptomsRoute,
       options: defaultOptions,
     },
   })

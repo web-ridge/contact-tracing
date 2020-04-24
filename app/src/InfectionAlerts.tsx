@@ -28,7 +28,19 @@ const styles = StyleSheet.create({
     minHeight: 300,
     width: '100%',
   },
-  title: { fontWeight: 'bold', margin: 12, textAlign: 'center' },
+  titleRoot: {
+    margin: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+
+    marginRight: 12,
+    textAlign: 'center',
+  },
   alertRoot: {
     backgroundColor: '#fff',
     margin: 12,
@@ -60,6 +72,31 @@ const styles = StyleSheet.create({
   alertTextContainer: { flex: 1, padding: 12 },
   alertText: { fontWeight: 'bold' },
 })
+
+function InfectionTitle({
+  lastFetched,
+  retry,
+}: {
+  lastFetched: string
+  retry?: () => any
+}) {
+  return (
+    <View style={styles.titleRoot}>
+      <Text style={styles.title}>
+        <Translate text="noAlerts" />
+      </Text>
+      <Text>{lastFetched}</Text>
+      {retry && (
+        <IconButton
+          onPress={() => {
+            retry()
+          }}
+          icon="refresh"
+        ></IconButton>
+      )}
+    </View>
+  )
+}
 
 export default function InfectionAlerts({
   screenRenders,
@@ -132,9 +169,9 @@ const renderAlerts = ({
   if (error) {
     return (
       <>
-        <Title style={styles.title}>
+        <Text style={styles.title}>
           <Translate text="errorWhileFetchingAlerts" />
-        </Title>
+        </Text>
         <Button uppercase={false} onPress={() => retry && retry()}>
           <Translate text="refetchAlerts" />
         </Button>
@@ -152,34 +189,10 @@ const renderAlerts = ({
   if (props.infectedEncounters.length === 0) {
     return <NoAlerts retry={retry} lastFetched={lastFetched} />
   }
-  // const infectedEncounters = [
-  //   {
-  //     howManyEncounters: 2,
-  //     risk: 'HIGH_RISK',
-  //   },
-  // ] as InfectionAlertsQueryResponse['infectedEncounters']
 
   return (
     <>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Title style={styles.title}>
-          <Translate text="alerts" />
-        </Title>
-        <Text>{lastFetched}</Text>
-        <IconButton
-          onPress={() => {
-            retry && retry()
-          }}
-          icon="refresh"
-        ></IconButton>
-      </View>
-
+      <InfectionTitle lastFetched={lastFetched} retry={retry!} />
       {props.infectedEncounters.map((infectedEncounter, index) => (
         <Alert key={index} infectedEncounter={infectedEncounter!} />
       ))}
@@ -228,18 +241,7 @@ function NoAlerts({
 }) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Title style={styles.title}>
-          <Translate text="noAlerts" />
-        </Title>
-        <Text>{lastFetched}</Text>
-        <IconButton
-          onPress={() => {
-            retry && retry()
-          }}
-          icon="refresh"
-        ></IconButton>
-      </View>
+      <InfectionTitle lastFetched={lastFetched} retry={retry!} />
 
       <Image
         source={require('../assets/background.png')}

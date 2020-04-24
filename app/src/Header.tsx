@@ -5,13 +5,15 @@ import { Navigation } from 'react-native-navigation'
 export default function Header({
   componentId,
   title,
+  light,
 }: {
   title: any
   componentId: string
+  light?: boolean
 }) {
   return (
     <Appbar.Header
-      dark={false}
+      dark={light ? true : false}
       style={{ backgroundColor: 'transparent', elevation: 0 }}
     >
       <Appbar.BackAction

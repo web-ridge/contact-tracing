@@ -5,8 +5,9 @@ import { getDatabaseEncryptionKey } from './Utils'
 
 export const EncounterSchema = {
   name: 'Encounter',
-  primaryKey: 'has',
+  primaryKey: 'id',
   properties: {
+    id: 'string',
     hash: 'string',
     // isIos: 'bool', // used to fetch infected iOS targets later on if user opted-in for that
     rssi: { type: 'int', default: 0 }, // max rrsi signal strenght

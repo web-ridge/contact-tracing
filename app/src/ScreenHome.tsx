@@ -16,19 +16,26 @@ import {
 import { Button, Text } from 'react-native-paper'
 import BackgroundService from 'react-native-background-actions'
 import BluetoothStateManager from 'react-native-bluetooth-state-manager'
-
+import SafeAreaView from 'react-native-safe-area-view'
 import InfectionAlerts from './InfectionAlerts'
 import { startTracing, stopTracing } from './BackgroundJob'
 import {
-  goToSymptonsScreen,
+  goToSymptomsScreen,
   goToDataRemovalScreen,
   goToOnboardingSecureLockScreen,
 } from './Screens'
-import { requestBluetoothStatus, requestLocationAccess, safeLog } from './Utils'
+import {
+  requestBluetoothStatus,
+  requestLocationAccess,
+  getTranslation,
+} from './Utils'
 import AsyncStorage from '@react-native-community/async-storage'
 import { Navigation } from 'react-native-navigation'
+import { useSafeArea } from 'react-native-safe-area-context'
 
 function ScreenHome({ componentId }: { componentId: string }) {
+  const insets = useSafeArea()
+
   const [isTracking, setIsTracking] = useState<boolean>()
   const [onboardingDone, setOnboardingDone] = useState<boolean>(false)
   const [screenRenders, setScreenRenders] = useState<number>(0)
@@ -63,40 +70,11 @@ function ScreenHome({ componentId }: { componentId: string }) {
 
   const startTracingPressed = () => {
     const startTracingAsync = async () => {
-      // TODO: add more information to comfort user in accepting these
-
-      const bluetoothStatus = await requestBluetoothStatus()
-
-      if (bluetoothStatus !== 'granted') {
-        console.log('bluetooth not enabled', { bluetoothStatus })
-        // TODO: translate
-        Alert.alert('Bluetooth', 'Bluetooth needs to be permitted')
-        return
+      const ok = await hasEnableAllRequiredThings()
+      if (ok) {
+        startTracing()
+        setIsTracking(true)
       }
-
-      // On Android location permissions are needed
-      if (Platform.OS === 'android') {
-        const locationEnabled = await requestLocationAccess()
-        if (!locationEnabled) {
-          // TODO: translate
-          Alert.alert('Location', 'Location permission needs to be set to true')
-          return
-        }
-        await BluetoothStateManager.enable()
-        await BluetoothStateManager.requestToEnable()
-      }
-
-      const state = await BluetoothStateManager.getState()
-      const dontRun = state === 'PoweredOff' && Platform.OS === 'android'
-      if (dontRun) {
-        Alert.alert(
-          'Bluetooth',
-          'Bluetooth need to be enabled in order to work'
-        )
-        return
-      }
-      startTracing()
-      setIsTracking(true)
     }
     // do this in background
     startTracingAsync()
@@ -122,30 +100,13 @@ function ScreenHome({ componentId }: { componentId: string }) {
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <View style={styles.body}>
-          {/* <Text style={styles.subtitle}>
-            <Translate text="subtitle" />
-          </Text>
-          <Text style={styles.title}>
-            <Translate text="title" />
-          </Text> */}
-          {onboardingDone && <InfectionAlerts screenRenders={screenRenders} />}
-          {isTracking ? (
-            <>
-              <Button
-                mode="contained"
-                onPress={stopTracingPressed}
-                style={styles.button}
-                uppercase={false}
-              >
-                <Translate text="stopTracking" />
-              </Button>
-              {privacyText}
-              <View style={{ height: 12 }} />
-            </>
-          ) : (
-            <>
-              {!onboardingDone && (
+        <SafeAreaView
+          style={{ flex: 1 }}
+          forceInset={{ bottom: 'never', top: 'never' }}
+        >
+          <View style={styles.body}>
+            {!onboardingDone && (
+              <>
                 <Image
                   source={require('../assets/privacy.png')}
                   style={{
@@ -157,80 +118,139 @@ function ScreenHome({ componentId }: { componentId: string }) {
                   }}
                   resizeMode="contain"
                 ></Image>
-              )}
-              {/* <Text></Text> */}
-              {onboardingDone && (
                 <Button
-                  mode="contained"
-                  onPress={startTracingPressed}
-                  style={styles.button}
                   uppercase={false}
+                  mode="contained"
+                  onPress={() => goToOnboardingSecureLockScreen(componentId)}
                 >
-                  <Translate text="startTracking" />
+                  <Translate text="startOnboarding" />
                 </Button>
-              )}
-            </>
-          )}
-          {onboardingDone ? (
-            <Button
-              uppercase={false}
-              mode="outlined"
-              onPress={() => goToSymptonsScreen(componentId)}
-              style={{ marginTop: 12 }}
-            >
-              <Translate text="infectedButton" />
-            </Button>
-          ) : (
-            <Button
-              uppercase={false}
-              mode="contained"
-              onPress={() => goToOnboardingSecureLockScreen(componentId)}
-            >
-              <Translate text="startOnboarding" />
-            </Button>
-          )}
-        </View>
+              </>
+            )}
+            {onboardingDone && (
+              <>
+                <InfectionAlerts screenRenders={screenRenders} />
+                {isTracking ? (
+                  <>
+                    <Button
+                      mode="contained"
+                      onPress={stopTracingPressed}
+                      style={styles.button}
+                      uppercase={false}
+                    >
+                      <Translate text="stopTracking" />
+                    </Button>
+                    {privacyText}
+                    <View style={{ height: 12 }} />
+                  </>
+                ) : (
+                  <Button
+                    mode="contained"
+                    onPress={startTracingPressed}
+                    style={styles.button}
+                    uppercase={false}
+                  >
+                    <Translate text="startTracking" />
+                  </Button>
+                )}
 
-        <View
-          style={{
-            padding: 24,
-            flexDirection: 'row',
-            justifyContent: 'center',
+                <Button
+                  uppercase={false}
+                  mode="outlined"
+                  onPress={() => goToSymptomsScreen(componentId)}
+                  style={{ marginTop: 12 }}
+                >
+                  <Translate text="infectedButton" />
+                </Button>
+              </>
+            )}
+          </View>
+        </SafeAreaView>
+      </ScrollView>
+      <View
+        style={[
+          styles.footer,
+          {
+            paddingBottom: insets.bottom + 16,
+            paddingLeft: insets.left + 16,
+            paddingRight: insets.right + 16,
+          },
+        ]}
+      >
+        <Button
+          uppercase={false}
+          onPress={() => {
+            Linking.openURL(
+              'https://www.contactentraceren.nl/Privacyverklaring.pdf'
+            )
           }}
         >
-          <Button
-            uppercase={false}
-            onPress={() => {
-              Linking.openURL(
-                'https://www.contactentraceren.nl/Privacyverklaring.pdf'
-              )
-            }}
-          >
-            <Translate text="privacyButton" />
-          </Button>
-          <Button
-            uppercase={false}
-            onPress={() => goToDataRemovalScreen(componentId)}
-          >
-            <Translate text="myDataButton" />
-          </Button>
-        </View>
-      </ScrollView>
+          <Translate text="privacyButton" />
+        </Button>
+        <Button
+          uppercase={false}
+          onPress={() => goToDataRemovalScreen(componentId)}
+        >
+          <Translate text="myDataButton" />
+        </Button>
+      </View>
     </>
   )
 }
 
-function useInterval(callback, delay) {
+async function hasEnableAllRequiredThings(): Promise<boolean> {
+  const bluetoothStatus = await requestBluetoothStatus()
+
+  if (bluetoothStatus !== 'granted') {
+    console.log('bluetooth not enabled', { bluetoothStatus })
+    Alert.alert(
+      getTranslation('bluetoothErrorTitle'),
+      getTranslation('bluetoothErrorMessage')
+    )
+    return false
+  }
+
+  // On Android location permissions are needed
+  if (Platform.OS === 'android') {
+    const locationEnabled = await requestLocationAccess()
+    if (!locationEnabled) {
+      Alert.alert(
+        getTranslation('locationErrorTitle'),
+        getTranslation('locationErrorMessage')
+      )
+      return false
+    }
+    await BluetoothStateManager.enable()
+    await BluetoothStateManager.requestToEnable()
+  }
+
+  const state = await BluetoothStateManager.getState()
+
+  // only on Android, on iOS there will be another popup which ask for permission
+  const dontRun = state === 'PoweredOff' && Platform.OS === 'android'
+  if (dontRun) {
+    Alert.alert(
+      getTranslation('bluetoothErrorTitle'),
+      getTranslation('bluetoothErrorMessage')
+    )
+    return false
+  }
+  return true
+}
+
+function useInterval(callback: () => any, delay: number) {
   const savedCallback = useRef()
 
   // Remember the latest callback.
   useEffect(() => {
+    //@ts-ignore
     savedCallback.current = callback
   }, [callback])
 
   // Set up the interval.
   useEffect(() => {
     function tick() {
+      //@ts-ignore
       savedCallback.current()
     }
     if (delay !== null) {
@@ -252,10 +272,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    flex: 1,
-    // justifyContent: 'center',
     alignItems: 'center',
-    padding: 12,
+    padding: 16,
+    paddingBottom: 24,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 20,
+    padding: 16,
   },
   title: {
     textAlign: 'center',

@@ -25,20 +25,33 @@ export default {
     en: `Your digital locker`,
     nl: 'Jouw digitale kluis',
   },
-  onboardingLockerFirst: {
-    en: `The privacy of you and your contacts is very important to us. That is why we make a digital safe for you that remains locally and is fully encrypted.`,
-    nl:
-      'Wij vinden de privacy van jou en je contacten uiterst belangrijk. Daarom maken wij een digitale kluis voor jou die lokaal blijft staan en volledig versleuteld is.',
+  lockerErrorTitle: {
+    en: `Error`,
+    nl: 'Foutmelding',
   },
-  onboardingLockerSecond: {
-    en: `No one can access this data on your phone even if it would be stolen.`,
+  lockerErrorMessage: {
+    en: `Your digital locker could not be created. Try again or re-install this app.`,
     nl:
-      'Niemand kan deze gegevens die op je telefoon staan, zelfs niet als deze gestolen wordt.',
+      'Jouw digitale kluis kon niet aangemaakt worden. Probeer nog een keer of installeer de app opnieuw.',
+  },
+  lockerInfoTitle: {
+    en: `Locker info`,
+    nl: 'Kluisinfo',
+  },
+  lockerInfoMessage: {
+    en: `Your digital locker will be encrypted with AES-256+SHA2 encrypton and a 64-byte encryption key.`,
+    nl:
+      'Jouw digitale kluis zal versleuteld worden met AES-256+SHA2 encryptie en een 64-byte encryptie sleutel.',
+  },
+  onboardingLockerFirst: {
+    en: `Your privacy is our highest priority! That is why we make a secured digital safe for you that does not leave your phone.`,
+    nl:
+      'Jouw privacy is onze hoogste prioriteit! Daarom maken wij een beveiligde digitale kluis voor jou die je telefoon niet verlaat.',
   },
   onboardingLockerThird: {
-    en: `We do not share this information without your explicit permission in case of contamination.`,
+    en: `We do not share anything without your explicit permission in case of contamination.`,
     nl:
-      'Wij delen deze gegevens niet zonder jouw explicitie toestemming bij een eventuele besmetting.',
+      'Wij delen niets zonder jouw expliciete toestemming bij een eventuele besmetting.',
   },
   onboardingDone: {
     en: "Let's go!", // Clear is kees :-P
@@ -57,16 +70,32 @@ export default {
     nl: 'Hoe het werkt',
   },
   bluetoothPermissionText: {
-    en:
-      "Our app uses Bluetooth. Your phone sends out a unique signal which changes at least every hour and a half. If this does not work, we will notify you. If another telephone receives this signal, both telephones store each other's number.",
+    en: 'Our app will detect other phones using this app through Bluetooth.',
     nl:
-      'Onze app maakt gebruik van Bluetooth. Jouw telefoon zend een uniek signaal uit wat minimaal ieder anderhalf uur wijzigt. Als dit niet lukt geven we een melding. Als een andere telefoon dit signaal opvangt slaan beide telefoons elkaars nummer op.',
+      'Onze app zal andere telefoons detecteren die deze app gebruiken door Bluetooth te gebruiken.',
   },
   bluetoothAndroid: {
     en:
-      'We do not store location data anywhere. Still, Android (the program your phone runs on) has made it mandatory for apps to request access to your location. We hereby pledge that we will not do anything with your location and will not do it!',
+      'Permission to your location is needed to use Bluetooth. We will not save your location.',
     nl:
-      'Wij slaan nergens locatiegevens op. Toch heeft Android (het programma waar jouw telefoon op draait) het verplicht gesteld voor apps om toegang tot je locatie te vragen. Wij beloven hierbij plechtig dat wij helemaal niets met jouw locatie doen en ook niet gaan doen!',
+      'Toestemming tot locatie is nodig om Bluetooth te kunnen gebruiken. Wij slaan je locatie niet op.',
+  },
+
+  acceptErrorTitle: {
+    en: 'Approve',
+    nl: 'Akkoord',
+  },
+  acceptErrorMessage: {
+    en: 'You must first agree to the terms before you can continue',
+    nl: 'Je moet eerst akkoord gaan met de voorwaarden voordat je verder kan',
+  },
+  onboardingSaveErrorTitle: {
+    en: 'Oops',
+    nl: 'Helaas',
+  },
+  onboardingSaveErrorMessage: {
+    en: 'Could not save your acceptance',
+    nl: 'Could not save your acceptance',
   },
   startTracking: {
     en: 'Start scanning',
@@ -76,15 +105,32 @@ export default {
     en: 'Stop scanning',
     nl: 'Stop scannen',
   },
+  bluetoothErrorTitle: {
+    en: 'Bluetooth',
+    nl: 'Bluetooth',
+  },
+  bluetoothErrorMessage: {
+    en:
+      'Bluetooth needs to be enabled in order to start scanning other devices',
+    nl: 'Bluetooth moet aan staan om andere apparaten te scannen',
+  },
+  locationErrorTitle: {
+    en: 'Location',
+    nl: 'Locatie',
+  },
+  locationErrorMessage: {
+    en: 'Location is needed to use Bluetooth. We will not save your location.',
+    nl: 'Locatie is nodig voor Bluetooth. We zullen je lokatie niet opslaan.',
+  },
   infectedButton: {
     en: 'I have been tested positive',
     nl: 'Ik ben positief getest',
   },
   privacyTracking: {
     en:
-      'Other users in the your neightbordhood will save your Bluetooth number in their safe digital locker. You will save them too',
+      'Other phones in your neighborhood will save your Bluetooth number in their safe digital locker. You will save them too.',
     nl:
-      'Andere gebruikers in de buurt slaan jouw Bluetooth nummer op in hun beveiligde digitale kluis. Jij slaat hun nummers ook op.',
+      'Andere telefoons in de buurt slaan jouw Bluetooth nummer op in hun beveiligde digitale kluis. Jij slaat hun nummers ook op.',
   },
   refetchAlerts: {
     en: 'Retry',
@@ -119,8 +165,8 @@ export default {
     nl: 'Privacy verklaring',
   },
   symptomTitle: {
-    en: 'Symptons',
-    nl: 'Symptonen',
+    en: 'Symptoms',
+    nl: 'Symptomen',
   },
   symptomIntroduction: {
     en: 'I have all of the following symptoms',
@@ -139,16 +185,20 @@ export default {
     nl: 'of',
   },
   permissionText: {
-    en: `I agree that my locally saved contactmomenten of the past 2 weeks with will be shared so that other phones will be notified when they have been in contact with me.`,
-    nl: `Ik ga ermee akkoord dat mijn contactmomenten van de afgelopen 2 weken contactmomenten worden gedeeld zodat andere telefoons een melding krijgen als ze in contact zijn geweest met mij.`,
+    en: `I agree that my locally saved contactmoments of the past 2 weeks with will be shared so that your contacts will be notified.`,
+    nl: `Ik ga ermee akkoord dat mijn contactmomenten van de afgelopen 2 weken worden gedeeld zodat je contacten een melding krijgen.`,
   },
   permissionTrust: {
-    en: `Nowhere will be saved wo sent the contactmoments.`,
+    en: `Nowhere will be saved wo sent these contactmoments.`,
     nl: `Nergens wordt opgeslagen wie deze contactmomenten heeft opgestuurd.`,
   },
   permissionBluetoothTrustPrivacyTermsText: {
-    en: `I have read the data privacy agreement and agree that my device will sent an unique signal which other entities can use to send infection alerts to my phone after they have been tested positive on COVID-19.`,
-    nl: `Ik heb de privacyverklaring gelezen en ga akkoord dat mijn apparaat een uniek signaal verzend die andere apparaten kunnen opslaan en kunnen gebruiken om mij een melding te kunnen sturen als ze positief getest zijn op COVID-19.`,
+    en: `I have read the privacy agreement and agree that my device will send Bluetooth signals which other phones can save to send infection alerts.`,
+    nl: `Ik heb de privacyverklaring gelezen en ga akkoord dat mijn apparaat Bluetooth uitzend die andere telefoons kunnen opslaan om infectie meldingen te versturen.`,
+  },
+  permissionOkLabel: {
+    en: `I accept, done!`,
+    nl: `Accepteren en klaar!`,
   },
   permissionTrustPrivacyTermsClickText: {
     en: `Read privacy agreement.`,
@@ -184,12 +234,12 @@ export default {
   },
   myDataEncounterAlerts: {
     en:
-      'Remove eventuele infections alerts which are registered on my Bluetooth numbers',
+      'Remove all infection alerts which are registered on my Bluetooth numbers',
     nl:
-      'Verwijder eventuele besmettingsmeldingen die geregistreerd staan op mijn Bluetooth nummers',
+      'Verwijder alle besmettingsmeldingen die geregistreerd staan op mijn Bluetooth nummers',
   },
   myDeviceKeys: {
-    en: 'Delete my own Bluetooth numbers by which identify my to other devices',
+    en: 'Delete my own Bluetooth numbers by which I identify to other devices',
     nl:
       'Verwijder mijn eigen Bluetooth nummers waarmee ik mij identificeer aan andere apparaten',
   },
@@ -216,7 +266,8 @@ export default {
     nl: 'Positief getest',
   },
   pickQRLetter: {
-    en: 'Find the letteryou received and click the button below',
+    en:
+      'Find the letter you received from your health organization and click the button below',
     nl: 'Zoek de brief van de gezondheidsinstantie erbij en druk op de knop',
   },
   goToQRLetter: {
@@ -228,11 +279,19 @@ export default {
     en: 'Scan QR-Code',
     nl: 'Scan QR-Code',
   },
+  scanErrorTitle: {
+    en: 'QR-code',
+    nl: 'QR-code',
+  },
+  scanErrorMessage: {
+    en: 'Could not scan QR code',
+    nl: 'Kon QR-code niet scannen',
+  },
   fakeText: {
     en:
-      'Because you local health institue does not work together with use you can generate a fake code to test the app',
+      'Because you local health institue does not work together with this app you can generate a fake code to test the app',
     nl:
-      'Omdat je lokale gezondheidsinstantie nog niet met ons samenwerken kun je een neppe code genereren om de app te testen',
+      'Omdat je lokale gezondheidsinstantie nog niet met deze app samenwerken kun je een neppe code genereren om de app te testen',
   },
   scanFakeButtonText: {
     en: 'Geneer een nep-code',

@@ -1,22 +1,13 @@
 // WebRidge Design
 
-import { Platform, NativeModules } from 'react-native'
-
-import { Provider as TranslateProvider } from 'react-translated'
 import React from 'react'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { Provider as TranslateProvider } from 'react-translated'
 
 import translations from './translations'
 import { QRCodeProvider } from './QRCodeContext'
-
-const deviceLanguage =
-  Platform.OS === 'ios'
-    ? NativeModules.SettingsManager.settings.AppleLocale ||
-      NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
-    : NativeModules.I18nManager.localeIdentifier
-
-const deviceLanguageShort =
-  deviceLanguage.length > 2 ? deviceLanguage.substring(0, 2) : deviceLanguage
+import { deviceLanguageShort } from './Utils'
 
 const theme = {
   ...DefaultTheme,
@@ -31,16 +22,18 @@ const theme = {
 export default function HOC(WrappedComponent: any) {
   return function (props: { componentId: string }) {
     return (
-      <TranslateProvider
-        language={deviceLanguageShort}
-        translation={translations}
-      >
-        <PaperProvider theme={theme}>
-          <QRCodeProvider>
-            <WrappedComponent {...props} />
-          </QRCodeProvider>
-        </PaperProvider>
-      </TranslateProvider>
+      <SafeAreaProvider>
+        <TranslateProvider
+          language={deviceLanguageShort}
+          translation={translations}
+        >
+          <PaperProvider theme={theme}>
+            <QRCodeProvider>
+              <WrappedComponent {...props} />
+            </QRCodeProvider>
+          </PaperProvider>
+        </TranslateProvider>
+      </SafeAreaProvider>
     )
   }
 }

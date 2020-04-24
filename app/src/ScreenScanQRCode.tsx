@@ -1,42 +1,58 @@
-import React, { useContext, createContext, useState } from 'react'
+import React from 'react'
 import { View, Alert } from 'react-native'
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Linking,
-} from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { Translate } from 'react-translated'
 import { QRCodeConsumer } from './QRCodeContext'
+import { useSafeArea } from 'react-native-safe-area-context'
 
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import Header from './Header'
 import { Navigation } from 'react-native-navigation'
+import { safeLog, getTranslation } from './Utils'
 
-function ScreenScanQRCode({ componentId, onScanned }: { componentId: string }) {
+function ScreenScanQRCode({
+  componentId,
+  onScanned,
+}: {
+  componentId: string
+  onScanned: (key: string, password: string) => any
+}) {
+  const insets = useSafeArea()
+
   return (
-    <View style={{ backgroundColor: '#fff', flex: 1 }}>
-      <Header title={''} componentId={componentId}></Header>
+    <View style={styles.root}>
+      <Header title={''} componentId={componentId} light></Header>
       <QRCodeConsumer>
         {({ updateKey, updatePassword }) => (
           <QRCodeScanner
             onRead={(e) => {
-              console.log('ON REAd!!!')
-              console.log(e.data)
+              safeLog('ScreenScanQRCode scanned', e.data)
+
               const keyAndPass: string[] = e.data.split('(((SEP)))')
               if (keyAndPass.length === 2) {
                 onScanned(keyAndPass[0], keyAndPass[1])
                 Navigation.pop(componentId)
               } else {
-                // TODO; translate
-                Alert.alert('Fout', 'Kon QR-code niet scannen')
+                Alert.alert(
+                  getTranslation('scanErrorTitle'),
+                  getTranslation('scanErrorMessage')
+                )
               }
             }}
             topContent={
-              <Text style={styles.centerText}>
-                <Translate text="goToQRLetter" />
-              </Text>
+              <View
+                style={{
+                  padding: 16,
+                  paddingLeft: insets.left + 16,
+                  paddingRight: insets.right + 16,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={styles.centerText}>
+                  <Translate text="goToQRLetter" />
+                </Text>
+              </View>
             }
             showMarker
           />
@@ -47,22 +63,12 @@ function ScreenScanQRCode({ componentId, onScanned }: { componentId: string }) {
 }
 
 const styles = StyleSheet.create({
+  root: { backgroundColor: '#000', flex: 1 },
   centerText: {
     flex: 1,
     fontSize: 18,
-    padding: 32,
-    color: '#777',
-  },
-  textBold: {
-    fontWeight: '500',
-    color: '#000',
-  },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)',
-  },
-  buttonTouchable: {
-    padding: 16,
+    color: '#fff',
+    textAlign: 'center',
   },
 })
 

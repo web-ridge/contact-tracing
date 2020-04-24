@@ -7,6 +7,7 @@ import { Checkbox, Button } from 'react-native-paper'
 import { Translate } from 'react-translated'
 import { Navigation } from 'react-native-navigation'
 import { commitMutation, graphql } from 'react-relay'
+import SafeAreaView from 'react-native-safe-area-view'
 
 import ScreenSymptomsSendButton from './ScreenSymptomsSendButton'
 
@@ -25,13 +26,13 @@ const generateFakeCreateMutation = graphql`
   }
 `
 
-export default function ScreenSymptons({
+export default function ScreenSymptoms({
   componentId,
 }: {
   componentId: string
 }) {
-  const [checkedSympton, setCheckedSympton] = useState<'symptons' | 'tested'>(
-    'symptons'
+  const [checkedSymptom, setCheckedSymptom] = useState<'Symptoms' | 'tested'>(
+    'Symptoms'
   )
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false)
   const [keyAndPass, setKeyAndPass] = useState<{
@@ -74,106 +75,110 @@ export default function ScreenSymptons({
         title={<Translate text="infectedTitle" />}
       ></Header>
       <ScrollView>
-        {keyAndPass.key && keyAndPass.password ? (
-          <>
-            <Button
-              mode="outlined"
-              onPress={() =>
-                Linking.openURL(
-                  'https://www.contactentraceren.nl/Privacyverklaring.pdf'
-                )
-              }
-              style={styles.privacyButton}
-            >
-              <Translate text="permissionTrustPrivacyTermsClickText" />
-            </Button>
-            <View
-              style={[styles.symptonItemRoot, { margin: 12, elevation: 0 }]}
-            >
-              <TouchableRipple onPress={() => setAcceptedTerms(!acceptedTerms)}>
-                <View
-                  style={[
-                    styles.symptonItemInner,
-                    { backgroundColor: 'transparent' },
-                  ]}
+        <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'never' }}>
+          {keyAndPass.key && keyAndPass.password ? (
+            <>
+              <Button
+                mode="outlined"
+                onPress={() =>
+                  Linking.openURL(
+                    'https://www.contactentraceren.nl/Privacyverklaring.pdf'
+                  )
+                }
+                style={styles.privacyButton}
+              >
+                <Translate text="permissionTrustPrivacyTermsClickText" />
+              </Button>
+              <View
+                style={[styles.SymptomItemRoot, { margin: 12, elevation: 0 }]}
+              >
+                <TouchableRipple
+                  onPress={() => setAcceptedTerms(!acceptedTerms)}
                 >
-                  <View style={styles.symptonItemInnerContent}>
-                    <Text>
-                      <Translate text="permissionText" />{' '}
-                      <Text style={styles.permissionTrust}>
-                        <Translate text="permissionTrust" />
-                      </Text>
-                      {/* <Translate text="permissionTrustPrivacyTermsText" /> */}
-                    </Text>
-                  </View>
                   <View
-                    style={styles.symptonItemInnerRight}
-                    pointerEvents="none"
+                    style={[
+                      styles.SymptomItemInner,
+                      { backgroundColor: 'transparent' },
+                    ]}
                   >
-                    <Checkbox.Android
-                      status={acceptedTerms ? 'checked' : 'unchecked'}
-                      color="#242648"
-                      uncheckedColor="#242648"
-                    />
+                    <View style={styles.SymptomItemInnerContent}>
+                      <Text>
+                        <Translate text="permissionText" />{' '}
+                        <Text style={styles.permissionTrust}>
+                          <Translate text="permissionTrust" />
+                        </Text>
+                        {/* <Translate text="permissionTrustPrivacyTermsText" /> */}
+                      </Text>
+                    </View>
+                    <View
+                      style={styles.SymptomItemInnerRight}
+                      pointerEvents="none"
+                    >
+                      <Checkbox.Android
+                        status={acceptedTerms ? 'checked' : 'unchecked'}
+                        color="#242648"
+                        uncheckedColor="#242648"
+                      />
+                    </View>
                   </View>
-                </View>
-              </TouchableRipple>
-            </View>
+                </TouchableRipple>
+              </View>
 
-            <View style={styles.sendButtonContainer}>
-              <ScreenSymptomsSendButton
-                disabled={!acceptedTerms}
-                createKey={keyAndPass.key}
-                password={keyAndPass.password}
-              />
-            </View>
-          </>
-        ) : (
-          <View style={{ padding: 24 }}>
-            <Text>
-              <Translate text="pickQRLetter" />
-            </Text>
-            <View style={{ height: 12 }}></View>
-            <Button
-              mode="contained"
-              uppercase={false}
-              icon="qrcode-scan"
-              onPress={() => {
-                Navigation.push(componentId, {
-                  component: {
-                    name: screenQRCode,
-                    options: defaultOptions,
-                    passProps: {
-                      onScanned: (key: string, password: string) => {
-                        setKeyAndPass({ key, password })
+              <View style={styles.sendButtonContainer}>
+                <ScreenSymptomsSendButton
+                  disabled={!acceptedTerms}
+                  createKey={keyAndPass.key}
+                  password={keyAndPass.password}
+                />
+              </View>
+            </>
+          ) : (
+            <View style={{ padding: 24 }}>
+              <Text>
+                <Translate text="pickQRLetter" />
+              </Text>
+              <View style={{ height: 12 }}></View>
+              <Button
+                mode="contained"
+                uppercase={false}
+                icon="qrcode-scan"
+                onPress={() => {
+                  Navigation.push(componentId, {
+                    component: {
+                      name: screenQRCode,
+                      options: defaultOptions,
+                      passProps: {
+                        onScanned: (key: string, password: string) => {
+                          setKeyAndPass({ key, password })
+                        },
                       },
                     },
-                  },
-                })
-              }}
-            >
-              <Translate text="scanQRButtonText" />
-            </Button>
-            <View style={{ height: 24 }}></View>
-            <Text>
-              <Translate text="fakeText" />
-            </Text>
-            <View style={{ height: 12 }}></View>
-            {generateState === 'error' && (
+                  })
+                }}
+              >
+                <Translate text="scanQRButtonText" />
+              </Button>
+              <View style={{ height: 24 }}></View>
               <Text>
-                <Translate text="fakeFailed" />
+                <Translate text="fakeText" />
               </Text>
-            )}
-            <Button
-              loading={generateState === 'loading'}
-              mode="outlined"
-              uppercase={false}
-              onPress={generateFakePressed}
-            >
-              <Translate text="scanFakeButtonText" />
-            </Button>
-          </View>
-        )}
+              <View style={{ height: 12 }}></View>
+              {generateState === 'error' && (
+                <Text>
+                  <Translate text="fakeFailed" />
+                </Text>
+              )}
+              <Button
+                loading={generateState === 'loading'}
+                mode="outlined"
+                uppercase={false}
+                onPress={generateFakePressed}
+              >
+                <Translate text="scanFakeButtonText" />
+              </Button>
+            </View>
+          )}
+        </SafeAreaView>
       </ScrollView>
     </>
   )
@@ -181,8 +186,8 @@ export default function ScreenSymptons({
 
 /* 
 <CheckItem
-    onPress={() => setCheckedSympton('symptons')}
-    checked={checkedSympton === 'symptons'}
+    onPress={() => setCheckedSymptom('Symptoms')}
+    checked={checkedSymptom === 'Symptoms'}
   >
     <Text style={{ fontWeight: 'bold' }}>
       <Translate text="symptomIntroduction" />
@@ -197,8 +202,8 @@ export default function ScreenSymptons({
     <Translate text="orText" />
   </Text>
   <CheckItem
-    onPress={() => setCheckedSympton('tested')}
-    checked={checkedSympton === 'tested'}
+    onPress={() => setCheckedSymptom('tested')}
+    checked={checkedSymptom === 'tested'}
   >
     <Text>
       <Translate text="testedText" />
@@ -216,11 +221,11 @@ function CheckItem({
   onPress: () => any
 }) {
   return (
-    <View style={styles.symptonItemRoot}>
+    <View style={styles.SymptomItemRoot}>
       <TouchableRipple onPress={onPress}>
-        <View style={styles.symptonItemInner}>
-          <View style={styles.symptonItemInnerContent}>{children}</View>
-          <View style={styles.symptonItemInnerRight} pointerEvents="none">
+        <View style={styles.SymptomItemInner}>
+          <View style={styles.SymptomItemInnerContent}>{children}</View>
+          <View style={styles.SymptomItemInnerRight} pointerEvents="none">
             <RadioButton.Android
               status={checked ? 'checked' : 'unchecked'}
               color="#242648"
@@ -235,13 +240,13 @@ function CheckItem({
 }*/
 
 const styles = StyleSheet.create({
-  symptonItemRoot: {
+  SymptomItemRoot: {
     margin: 12,
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 10,
   },
-  symptonItemInner: {
+  SymptomItemInner: {
     padding: 12,
     overflow: 'hidden',
     // borderWidth: 1,
@@ -250,8 +255,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
-  symptonItemInnerContent: { flex: 1, justifyContent: 'center' },
-  symptonItemInnerRight: { justifyContent: 'center' },
+  SymptomItemInnerContent: { flex: 1, justifyContent: 'center' },
+  SymptomItemInnerRight: { justifyContent: 'center' },
   orText: { fontWeight: 'bold', textAlign: 'center', fontSize: 19 },
   sendButtonContainer: { margin: 24, marginTop: 12 },
   permissionTrust: {

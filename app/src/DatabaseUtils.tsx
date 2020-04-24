@@ -264,7 +264,7 @@ export async function setIgnoredDevice(bluetoothId: string): Promise<boolean> {
     })
     return false
   } catch (error) {
-    console.log('isIgnoredDevice', { error })
+    console.log('could not setIgnoredDevice', { error })
     return false
   }
 }

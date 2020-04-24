@@ -5,6 +5,7 @@ import { commitMutation, graphql } from 'react-relay'
 
 import { ScrollView, View, StyleSheet } from 'react-native'
 import { Button, Text } from 'react-native-paper'
+import SafeAreaView from 'react-native-safe-area-view'
 
 import { Translate } from 'react-translated'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -138,80 +139,82 @@ export function ScreenDataRemoval({ componentId }: { componentId: string }) {
         title={<Translate text="myDataTitle" />}
       />
       <ScrollView>
-        <View style={{ padding: 24 }}>
-          <View style={styles.section}>
-            <Text>
-              <Translate text="myDataEncounterAlerts" />
-            </Text>
-
-            {encounterState === 'error' && (
+        <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'never' }}>
+          <View style={{ padding: 24 }}>
+            <View style={styles.section}>
               <Text>
-                <Translate text="myDataRemovalFailed" />
+                <Translate text="myDataEncounterAlerts" />
               </Text>
-            )}
-            <Button
-              style={styles.button}
-              loading={encounterState === 'loading'}
-              mode="contained"
-              onPress={deleteEncounterAlerts}
-              uppercase={false}
-            >
-              {encounterState === 'error' ? (
-                <Translate text="myDataRemovalButtonRetry" />
-              ) : (
-                <Translate text="myDataRemovalButton" />
-              )}
-            </Button>
-          </View>
-          <View style={styles.section}>
-            <Text>
-              <Translate text="myDeviceKeys" />
-            </Text>
 
-            {deviceKeyState === 'error' && (
-              <Text style={styles.error}>
-                <Translate text="myDataRemovalFailed" />
-              </Text>
-            )}
-            <Button
-              style={styles.button}
-              loading={deviceKeyState === 'loading'}
-              mode="outlined"
-              onPress={deleteDeviceKeys}
-              uppercase={false}
-            >
-              {deviceKeyState === 'error' ? (
-                <Translate text="myDataRemovalButtonRetry" />
-              ) : (
-                <Translate text="myDataRemovalButton" />
+              {encounterState === 'error' && (
+                <Text>
+                  <Translate text="myDataRemovalFailed" />
+                </Text>
               )}
-            </Button>
-          </View>
-          <View style={styles.section}>
-            <Text>
-              <Translate text="myLocalState" />
-            </Text>
+              <Button
+                style={styles.button}
+                loading={encounterState === 'loading'}
+                mode="contained"
+                onPress={deleteEncounterAlerts}
+                uppercase={false}
+              >
+                {encounterState === 'error' ? (
+                  <Translate text="myDataRemovalButtonRetry" />
+                ) : (
+                  <Translate text="myDataRemovalButton" />
+                )}
+              </Button>
+            </View>
+            <View style={styles.section}>
+              <Text>
+                <Translate text="myDeviceKeys" />
+              </Text>
 
-            {localState === 'error' && (
-              <Text style={styles.error}>
-                <Translate text="myDataRemovalFailed" />
-              </Text>
-            )}
-            <Button
-              style={styles.button}
-              loading={localState === 'loading'}
-              mode="outlined"
-              onPress={deleteAllLocalData}
-              uppercase={false}
-            >
-              {localState === 'error' ? (
-                <Translate text="myDataRemovalButtonRetry" />
-              ) : (
-                <Translate text="myDataRemovalButton" />
+              {deviceKeyState === 'error' && (
+                <Text style={styles.error}>
+                  <Translate text="myDataRemovalFailed" />
+                </Text>
               )}
-            </Button>
+              <Button
+                style={styles.button}
+                loading={deviceKeyState === 'loading'}
+                mode="outlined"
+                onPress={deleteDeviceKeys}
+                uppercase={false}
+              >
+                {deviceKeyState === 'error' ? (
+                  <Translate text="myDataRemovalButtonRetry" />
+                ) : (
+                  <Translate text="myDataRemovalButton" />
+                )}
+              </Button>
+            </View>
+            <View style={styles.section}>
+              <Text>
+                <Translate text="myLocalState" />
+              </Text>
+
+              {localState === 'error' && (
+                <Text style={styles.error}>
+                  <Translate text="myDataRemovalFailed" />
+                </Text>
+              )}
+              <Button
+                style={styles.button}
+                loading={localState === 'loading'}
+                mode="outlined"
+                onPress={deleteAllLocalData}
+                uppercase={false}
+              >
+                {localState === 'error' ? (
+                  <Translate text="myDataRemovalButtonRetry" />
+                ) : (
+                  <Translate text="myDataRemovalButton" />
+                )}
+              </Button>
+            </View>
           </View>
-        </View>
+        </SafeAreaView>
       </ScrollView>
     </>
   )

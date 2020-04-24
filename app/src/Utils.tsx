@@ -3,7 +3,7 @@
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { Base64 } from 'js-base64'
 import 'react-native-get-random-values'
-import { Platform } from 'react-native'
+import { Platform, NativeModules } from 'react-native'
 import {
   check,
   request,
@@ -12,6 +12,25 @@ import {
 } from 'react-native-permissions'
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
 import { v4 as uuidv4 } from 'uuid'
+import translations from './translations'
+
+//getTranslation gets the right text for the right language
+const deviceLanguage =
+  Platform.OS === 'ios'
+    ? NativeModules.SettingsManager.settings.AppleLocale ||
+      NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
+    : NativeModules.I18nManager.localeIdentifier
+
+export const deviceLanguageShort =
+  deviceLanguage.length > 2 ? deviceLanguage.substring(0, 2) : deviceLanguage
+
+export function getTranslation(key: keyof translations): string {
+  const obj = translations[key] as any
+  if (!obj) {
+    return key
+  }
+  return obj[deviceLanguageShort] || key
+}
 
 export function safeLog(message?: any, ...optionalParams: any[]): void {
   // @ts-ignore
