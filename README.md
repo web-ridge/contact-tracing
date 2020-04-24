@@ -87,7 +87,7 @@ Paper about RSSI signals and distances: https://www.researchgate.net/figure/Blue
 
 ## How do you know QR-code is not misused by other persons
 
-The QR code is not linked to a sick person in order to guarantee his anonymity and to ensure that there is no record of who has been tested positive. However, this way it is possible to send your contacts with someone else's QR code. This theory is unlikely to happen in practice because abuse is often done by people who don't trust the app. If they don't have the app, they don't have contacts to make a fake report. Moreover, this QR code is only valid once. If someone does send their contacts with someone else's QR code, they must actually have been around people who get this message. So this person unnecessarily worries the people around him. Of course, there are always those awful suckers who do such a thing anyway, but for that you shouldn't reduce the privacy of your other users.
+The QR code is not linked to a sick person in order to guarantee his anonymity and to ensure that there is no record of who has been tested positive. However, this way it is possible to send your contacts with someone else's QR code. This theory is unlikely to happen in practice because abuse is often done by people who don't trust the app. If they don't have the app, they don't have contacts to make a fake report. Moreover, this QR code is only valid once. If someone does send their contacts with someone else's QR code, they must actually have been around people who get this message. So this person unnecessarily worries the people around him. Of course, there are some who do such a thing anyway, but for that you shouldn't reduce the privacy of the other users.
 
 ## How does the app decide if I'm at risk?
 
