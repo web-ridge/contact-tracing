@@ -145,8 +145,8 @@ async function getiOSContactTracingId(
 export async function syncDevicesInMemoryToLocalDatabase(): Promise<boolean> {
   const done = await syncRSSICache(rssiCache)
   if (done) {
-    // reset memory map
-    rssiCache = {}
+    // clear in memory cache to prevent memory issues after a while
+    clearCache()
     return true
   } else {
     console.log('syncing rrsi not done')
