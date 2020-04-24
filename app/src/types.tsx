@@ -10,7 +10,7 @@ export interface Encounter {
   // isIos: boolean
 }
 export interface DeviceKey {
-  id: string
+  // id: string
   key: string
   password: string
   internalTime: number // used to fetch latest device key

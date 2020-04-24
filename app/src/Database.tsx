@@ -5,9 +5,8 @@ import { getDatabaseEncryptionKey } from './Utils'
 
 export const EncounterSchema = {
   name: 'Encounter',
-  primaryKey: 'id',
+  primaryKey: 'has',
   properties: {
-    id: 'string', // primary key
     hash: 'string',
     // isIos: 'bool', // used to fetch infected iOS targets later on if user opted-in for that
     rssi: { type: 'int', default: 0 }, // max rrsi signal strenght
@@ -19,13 +18,21 @@ export const EncounterSchema = {
 
 export const KeysSchema = {
   name: 'DeviceKey',
-  primaryKey: 'id',
+  primaryKey: 'key',
   properties: {
-    id: 'string', // primary key
     key: 'string', // external identifier for other devices
     password: 'string', // used to secure own encounters which are sent by others
     internalTime: { type: 'int', default: 0 },
     externalTime: { type: 'int', default: 0 },
+  },
+}
+
+export const IgnoredDeviceSchema = {
+  name: 'IgnoredDevice',
+  primaryKey: 'bluetoothId',
+  properties: {
+    bluetoothId: 'string', // external identifier for other devices
+    time: { type: 'int', default: 0 },
   },
 }
 
@@ -41,6 +48,9 @@ export async function getDatabase(): Promise<Realm> {
   }
 
   const encryptionKey = await getDatabaseEncryptionKey()
-  realm = new Realm({ schema: [EncounterSchema, KeysSchema], encryptionKey })
+  realm = new Realm({
+    schema: [EncounterSchema, KeysSchema, IgnoredDeviceSchema],
+    encryptionKey,
+  })
   return realm
 }

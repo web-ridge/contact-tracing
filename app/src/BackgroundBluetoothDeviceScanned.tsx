@@ -7,7 +7,11 @@ import {
   now,
   safeLog,
 } from './Utils'
-import { syncRSSICache } from './DatabaseUtils'
+import {
+  syncRSSICache,
+  isIgnoredDevice,
+  setIgnoredDevice,
+} from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 import { Platform } from 'react-native'
 
@@ -37,6 +41,12 @@ async function getiOSContactTracingIdByConnection(
   device: Device
 ): Promise<string | undefined | BleError> {
   try {
+    const isIgnored = await isIgnoredDevice(device.id)
+    if (isIgnored) {
+      safeLog('ignored, not a contact tracing device', device.id)
+      return undefined
+    }
+
     // safeLog(device.id, Platform.OS, 'getiOSContactTracingIdByConnection')
     device = await device.connect({ autoConnect: false, timeout: 1000 * 3 })
     device = await device.discoverAllServicesAndCharacteristics()
@@ -58,6 +68,8 @@ async function getiOSContactTracingIdByConnection(
     }
     return contactTracingId
   } catch (error) {
+    // save it as ignored since we could not scan this device
+    await setIgnoredDevice(device.id)
     safeLog(
       device.id,
       'getiOSContactTracingIdByConnection' + Platform.OS,

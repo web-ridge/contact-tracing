@@ -1,7 +1,12 @@
 // WebRidge Design
 import PushNotification from 'react-native-push-notification'
 import { RSSICache, Encounter, DeviceKey } from './types'
-import { getDatabase, EncounterSchema, KeysSchema } from './Database'
+import {
+  getDatabase,
+  EncounterSchema,
+  KeysSchema,
+  IgnoredDeviceSchema,
+} from './Database'
 import { sha256 } from 'js-sha256'
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
@@ -126,7 +131,6 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<
   const anomizedDateUnix = getAnonymizedTimestamp()
 
   const deviceKey: DeviceKey = {
-    id: 'id' + nanoid(),
     key: newDeviceKey,
     password,
     internalTime: now(),
@@ -226,7 +230,10 @@ export async function getCurrentDeviceKeyOrRenew(): Promise<
 export async function removeOldData(): Promise<boolean> {
   const oldEncountersRemoved = await removeOldEncounters()
   const oldDeviceKeysRemoved = await removeOldDeviceKeys()
-  return oldEncountersRemoved && oldDeviceKeysRemoved
+  const oldIgnoredDevicesRemoved = await removeOldIgnoredDevices()
+  return (
+    oldEncountersRemoved && oldDeviceKeysRemoved && oldIgnoredDevicesRemoved
+  )
 }
 
 export async function removeOldDeviceKeys(): Promise<boolean> {
@@ -235,8 +242,8 @@ export async function removeOldDeviceKeys(): Promise<boolean> {
     database.write(() => {
       database.delete(
         database
-          .objects(EncounterSchema.name)
-          .filtered(`time < ${getStartOfRiskUnix()}`)
+          .objects(KeysSchema.name)
+          .filtered(`internalTime < ${getStartOfRiskUnix()}`)
       )
     })
     return true
@@ -246,6 +253,56 @@ export async function removeOldDeviceKeys(): Promise<boolean> {
   }
 }
 
+export async function setIgnoredDevice(bluetoothId: string): Promise<boolean> {
+  try {
+    const database = await getDatabase()
+    database.write(() => {
+      database.create(IgnoredDeviceSchema.name, {
+        bluetoothId,
+        time: getAnonymizedTimestamp(),
+      })
+    })
+    return false
+  } catch (error) {
+    console.log('isIgnoredDevice', { error })
+    return false
+  }
+}
+
+// We don't want to check bluetooth devices to check if this device is a contact tracing device
+// Let's check if this a ignored device (e.g. at home your local machines would not need to be checked) everytime
+export async function isIgnoredDevice(bluetoothId: string): Promise<boolean> {
+  try {
+    const database = await getDatabase()
+    const objects = database
+      .objects(IgnoredDeviceSchema.name)
+      .filtered(`bluetoothId = ${bluetoothId} LIMIT(1)`)
+    if (objects && objects.length > 0) {
+      return true
+    }
+    return false
+  } catch (error) {
+    console.log('isIgnoredDevice', { error })
+    return false
+  }
+}
+
+export async function removeOldIgnoredDevices(): Promise<boolean> {
+  try {
+    const database = await getDatabase()
+    database.write(() => {
+      database.delete(
+        database
+          .objects(IgnoredDeviceSchema.name)
+          .filtered(`time < ${getStartOfRiskUnix()}`)
+      )
+    })
+    return true
+  } catch (error) {
+    console.log({ error })
+    return false
+  }
+}
 export async function removeOldEncounters(): Promise<boolean> {
   try {
     const database = await getDatabase()
