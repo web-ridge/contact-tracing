@@ -14,13 +14,17 @@ import {
 } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 import { Platform } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
+import { refreshJob } from './BackgroundJobFunctions'
 
 // We don't want to write directly to database for every little change
 // Keep some values in cache before writing it down
+// only used on Android since iOS job need to close as soon as possible
 let rssiCache: RSSICache = {}
 
 // When an iOS device goes to background we need to scan for the UUID
 // In order to save battery we cache those for some period
+// only used on Android since iOS job need to close as soon as possible
 let uuuidCache: UUIDCache = {}
 let uuidResolverCache: PromiseCache = {}
 
@@ -107,16 +111,16 @@ async function getiOSContactTracingIdByPromise(
   return uuidResolverCache[device.id]
 }
 
-function shouldRetry(error: BleError) {
-  // services where not found so never try again ;)
-  if (error.errorCode > 300) {
-    return false
-  }
-  // make some exceptions
-  // TODO: maybe OperationTimedOut = 3,
-  // Need to verify in real life situtatoin
-  return false
-}
+// function shouldRetry(error: BleError) {
+//   // services where not found so never try again ;)
+//   if (error.errorCode > 300) {
+//     return false
+//   }
+//   // make some exceptions
+//   // TODO: maybe OperationTimedOut = 3,
+//   // Need to verify in real life situtatoin
+//   return false
+// }
 
 async function getiOSContactTracingId(
   device: Device
@@ -126,14 +130,15 @@ async function getiOSContactTracingId(
 
   if (isString) {
     return uuidOrError as string
-  } else if (shouldRetry(uuidOrError as BleError)) {
-    // try again
-    uuidOrError = await getiOSContactTracingIdByPromise(device)
-    isString = typeof uuidOrError === 'string'
-    if (isString) {
-      return uuidOrError as string
-    }
   }
+  // else if (shouldRetry(uuidOrError as BleError)) {
+  //   // try again
+  //   uuidOrError = await getiOSContactTracingIdByPromise(device)
+  //   isString = typeof uuidOrError === 'string'
+  //   if (isString) {
+  //     return uuidOrError as string
+  //   }
+  // }
 
   // safeLog('Returning undefined')
   return undefined
@@ -158,6 +163,7 @@ export async function deviceScanned(
   error: BleError | null,
   scannedDevice: null | Device
 ) {
+  safeLog('deviceScanned_' + Platform.OS)
   if (error) {
     if (error.errorCode >= 200) {
       safeLog('local', { error })
@@ -168,13 +174,8 @@ export async function deviceScanned(
     return
   }
 
-  // not relevant
-  if (
-    !scannedDevice ||
-    !scannedDevice.rssi ||
-    -70 > scannedDevice.rssi //||
-    // !scannedDevice.serviceUUIDs
-  ) {
+  // not relevant enough
+  if (!scannedDevice || !scannedDevice.rssi || -70 > scannedDevice.rssi) {
     // safeLog(
     //   'not a valid contact tracing device',
     //   Platform.OS,
@@ -183,13 +184,6 @@ export async function deviceScanned(
     return
   }
 
-  // safeLog(
-  //   Platform.OS + '_serviceUUIDs found',
-  //   scannedDevice.serviceUUIDs
-  //   // scannedDevice.overflowServiceUUIDs,
-  //   // scannedDevice.solicitedServiceUUIDs
-  // )
-
   const scannedDeviceUUIDs = (scannedDevice.serviceUUIDs || []).concat(
     scannedDevice.overflowServiceUUIDs || []
   )
@@ -197,8 +191,9 @@ export async function deviceScanned(
     scannedDeviceUUIDs
   )
 
-  // on iOS these are not advertised in background
-  if (!scannedDeviceUUID) {
+  // only iOS devices can find overflowServiceUUIDS, on Android we need to connect
+  // to device to find it :(
+  if (!scannedDeviceUUID && Platform.OS === 'android') {
     try {
       // safeLog(
       //   scannedDevice.id,
@@ -246,5 +241,32 @@ export async function deviceScanned(
       scannedDeviceUUID,
       rssiCache[scannedDeviceUUID]
     )
+
+    // on iOS we can't keep background mode working very long
+    // so we use the wake up function of the app to do the work ;)
+    if (Platform.OS === 'ios') {
+      // rssi cache will not be saved in background, so write it to disk with Realm
+      await syncDevicesInMemoryToLocalDatabase()
+      const previousSyncS = await AsyncStorage.getItem(previousSyncedKey)
+      safeLog({ previousSyncS })
+      const nowUnix = now()
+      const hourInSeconds = 60 * 60
+      safeLog({
+        number: Number(previousSyncS),
+        plusValue: hourInSeconds > nowUnix,
+      })
+
+      if (!previousSyncS || Number(previousSyncS) + hourInSeconds > nowUnix) {
+        safeLog('refresh job on iOS')
+        const ok = await refreshJob()
+        if (!ok) {
+          safeLog('error while refreshing job in iOS')
+        }
+        // safe previous sync
+        await AsyncStorage.setItem(previousSyncedKey, `${nowUnix}`)
+      }
+    }
   }
 }
+
+const previousSyncedKey = 'previousSyncedKey'

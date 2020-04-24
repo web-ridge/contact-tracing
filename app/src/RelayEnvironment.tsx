@@ -1,5 +1,4 @@
 import { Environment, Network, RecordSource, Store } from 'relay-runtime'
-// import { RelayTransactionLogger } from './RelayTransactionLogger'
 
 // Export a singleton instance of Relay Environment configured with our network function:
 const env = new Environment({

@@ -37,7 +37,7 @@ export async function startOrRefreshAdvertising(deviceKey: string) {
 }
 export async function stopAdvertising() {
   if (Peripheral.isAdvertising()) {
-    await Peripheral.removeAllServices()
+    // await Peripheral.removeAllServices()
     return await Peripheral.stopAdvertising()
   }
 }

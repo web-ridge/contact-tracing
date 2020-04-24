@@ -29,6 +29,7 @@ import {
   DeviceKeyParam,
 } from './__generated__/InfectionAlertsQuery.graphql'
 import { DatabaseUtilsCreateDeviceKeyMutation } from './__generated__/DatabaseUtilsCreateDeviceKeyMutation.graphql'
+import { Platform } from 'react-native'
 
 export async function removeAllEncounters(): Promise<boolean> {
   try {
@@ -276,7 +277,7 @@ export async function isIgnoredDevice(bluetoothId: string): Promise<boolean> {
     const database = await getDatabase()
     const objects = database
       .objects(IgnoredDeviceSchema.name)
-      .filtered(`bluetoothId = ${bluetoothId} LIMIT(1)`)
+      .filtered(`bluetoothId = '${bluetoothId}' LIMIT(1)`)
     if (objects && objects.length > 0) {
       return true
     }
@@ -354,7 +355,8 @@ export async function syncRSSICache(rssiCache: RSSICache): Promise<boolean> {
         rssi: rssiValue.rssi,
         hits: rssiValue.hits,
         time: dateTime,
-        duration: rssiValue.end - rssiValue.start,
+        duration:
+          rssiValue.end - rssiValue.start + (Platform.OS === 'ios' ? 10 : 0), // +10 because iOS devices are limited in their memory
       }
     }
   )

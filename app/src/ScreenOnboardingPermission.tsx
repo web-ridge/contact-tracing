@@ -18,7 +18,6 @@ import SafeAreaView from 'react-native-safe-area-view'
 import {
   requestBluetoothStatus,
   requestLocationAccess,
-  safeLog,
   getTranslation,
 } from './Utils'
 

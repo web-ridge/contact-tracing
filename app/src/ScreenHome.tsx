@@ -1,5 +1,4 @@
 // WebRidge Design
-// TODO: this needs component little cleanup
 
 import React, { useState, useEffect, useRef } from 'react'
 import { Translate } from 'react-translated'
@@ -14,11 +13,14 @@ import {
   Alert,
 } from 'react-native'
 import { Button, Text } from 'react-native-paper'
-import BackgroundService from 'react-native-background-actions'
 import BluetoothStateManager from 'react-native-bluetooth-state-manager'
 import SafeAreaView from 'react-native-safe-area-view'
 import InfectionAlerts from './InfectionAlerts'
-import { startTracing, stopTracing } from './BackgroundJob'
+import {
+  startTracing,
+  isRunningInBackground,
+  stopTracing,
+} from './BackgroundJob'
 import {
   goToSymptomsScreen,
   goToDataRemovalScreen,
@@ -61,12 +63,15 @@ function ScreenHome({ componentId }: { componentId: string }) {
 
   // sync background job with relation status of background job
   useInterval(() => {
-    const isRunning = BackgroundService.isRunning()
-    // console.log({ isRunning })
-    if (isRunning !== isTracking) {
-      setIsTracking(isRunning)
+    const asynInterval = async () => {
+      const isRunning = await isRunningInBackground()
+      // console.log({ isRunning })
+      if (isRunning !== isTracking) {
+        setIsTracking(isRunning)
+      }
     }
-  }, 1000)
+    asynInterval()
+  }, 4000)
 
   const startTracingPressed = () => {
     const startTracingAsync = async () => {
@@ -82,7 +87,8 @@ function ScreenHome({ componentId }: { componentId: string }) {
   const stopTracingPressed = () => {
     const stopTracingAsync = async () => {
       await stopTracing()
-      setIsTracking(BackgroundService.isRunning())
+      const isRunning = await isRunningInBackground()
+      setIsTracking(isRunning)
     }
     stopTracingAsync()
   }
@@ -289,17 +295,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6.27,
     elevation: 20,
     padding: 16,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 25,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    opacity: 0.7,
   },
 })
 

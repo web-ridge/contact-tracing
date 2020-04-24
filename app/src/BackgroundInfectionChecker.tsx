@@ -9,6 +9,8 @@ import {
 } from './__generated__/BackgroundInfectionCheckerQuery.graphql'
 
 import RelayEnviroment from './RelayEnvironment'
+import { getTranslation, safeLog } from './Utils'
+import { Platform } from 'react-native'
 
 // we use this to see if alerts changed since previous aflert
 const alertStorageKey = 'alertStorageKeyContactTracing'
@@ -59,8 +61,9 @@ export async function giveAlerts() {
   const previousDataHash = previousDataHashNullable || ''
   const newHash = stringifyInfectedEncounters(data.infectedEncounters)
 
-  console.log({ previousDataHash })
-  console.log({ newHash })
+  safeLog(Platform.OS, { previousDataHash })
+  safeLog(Platform.OS, { newHash })
+
   // if alerts have been changed
   if (
     previousDataHash !== newHash ||
@@ -70,22 +73,15 @@ export async function giveAlerts() {
       data.infectedEncounters.length > 0)
   ) {
     PushNotification.localNotification({
-      largeIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_launcher"
-      smallIcon: 'ic_stat_sentiment_satisfied_alt', // (optional) default: "ic_notification" with fallback for "ic_launcher"
-      title: 'Infectiestatus', // (optional)
-      message: 'Uw infectiestatus is gewijzigd', // (required)
-      // subText: 'This is a subText', // (optional) default: none
+      largeIcon: 'ic_stat_sentiment_satisfied_alt',
+      smallIcon: 'ic_stat_sentiment_satisfied_alt',
+      title: getTranslation('infectionStateChangeTitle'),
+      message: getTranslation('infectionStateChangeDescription'),
       priority: 'high',
-      visibility: 'private', // (optional) set notification visibility, default: private
+      visibility: 'private',
       importance: 'high',
       playSound: true,
-      // repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-      // actions: '["Yes", "No"]',
     })
-
-    // so we know the next time if we need to send new notification
     await AsyncStorage.setItem(alertStorageKey, newHash)
   }
-
-  // TODO: add last fetched date
 }

@@ -84,7 +84,7 @@ export function ScreenDataRemoval({ componentId }: { componentId: string }) {
     const deleteDeviceKeysAsync = async () => {
       const deviceKeys = await getDeviceKeys()
 
-      stopTracing()
+      await stopTracing()
 
       commitMutation<ScreenDataRemovalRemoveDeviceKeysMutation>(
         RelayEnvironment,

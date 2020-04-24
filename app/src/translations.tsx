@@ -301,4 +301,25 @@ export default {
     en: 'Something went wrong',
     nl: 'Er ging iets fout',
   },
+
+  taskName: {
+    en: 'Contacts saving',
+    nl: 'Contacten opslaan',
+  },
+  taskTitle: {
+    en: 'Bluetooth contacts are saved',
+    nl: 'Bluetooth contacten worden opgeslagen',
+  },
+  taskDesc: {
+    en: 'Bluetooth devices are stored locally.',
+    nl: 'Bluetooth apparaten worden lokaal opgeslagen.',
+  },
+  infectionStateChangeTitle: {
+    en: 'Infection status',
+    nl: 'Infectiestatus',
+  },
+  infectionStateChangeDescription: {
+    en: 'Your infection status has changed.',
+    nl: 'Uw infectiestatus is gewijzigd.',
+  },
 } as TranslationDatabase

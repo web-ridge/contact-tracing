@@ -2,14 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Image, View, StyleSheet } from 'react-native'
-import {
-  Text,
-  Button,
-  Title,
-  IconButton,
-  ProgressBar,
-} from 'react-native-paper'
-
+import { Text, Button, IconButton, ProgressBar } from 'react-native-paper'
 import { Translate } from 'react-translated'
 import { getInfectedEncountersQueryVariables } from './DatabaseUtils'
 import { QueryRenderer, graphql } from 'react-relay'
@@ -35,9 +28,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
-
     marginRight: 12,
     textAlign: 'center',
   },

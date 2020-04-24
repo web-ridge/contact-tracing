@@ -44,7 +44,6 @@ export default function ScreenSymptomsSendButton({
 
   const sendContacts = () => {
     const sendContactsAsync = async () => {
-      // TODO: fetch contact from encrypted database in the previous 2 weeks
       setError(false)
 
       const encountersFromLast2Weeks = await getRiskyEncountersOfLastTwoWeeks()

@@ -6,7 +6,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider as TranslateProvider } from 'react-translated'
 
 import translations from './translations'
-import { QRCodeProvider } from './QRCodeContext'
 import { deviceLanguageShort } from './Utils'
 
 const theme = {
@@ -28,9 +27,7 @@ export default function HOC(WrappedComponent: any) {
           translation={translations}
         >
           <PaperProvider theme={theme}>
-            <QRCodeProvider>
-              <WrappedComponent {...props} />
-            </QRCodeProvider>
+            <WrappedComponent {...props} />
           </PaperProvider>
         </TranslateProvider>
       </SafeAreaProvider>
