@@ -14,8 +14,6 @@ import {
 } from './DatabaseUtils'
 import { Device, BleError } from 'react-native-ble-plx'
 import { Platform } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
-import { refreshJob } from './BackgroundJobFunctions'
 
 // We don't want to write directly to database for every little change
 // Keep some values in cache before writing it down
@@ -72,14 +70,16 @@ async function getiOSContactTracingIdByConnection(
     }
     return contactTracingId
   } catch (error) {
-    // save it as ignored since we could not scan this device
-    await setIgnoredDevice(device.id)
     safeLog(
-      device.id,
+      'setIgnoredDevice',
       'getiOSContactTracingIdByConnection' + Platform.OS,
+      device.id,
       { error },
       error.reason
     )
+
+    // save it as ignored since we could not scan this device
+    await setIgnoredDevice(device.id)
 
     return error
   }
@@ -163,7 +163,6 @@ export async function deviceScanned(
   error: BleError | null,
   scannedDevice: null | Device
 ) {
-  safeLog('deviceScanned_' + Platform.OS)
   if (error) {
     if (error.errorCode >= 200) {
       safeLog('local', { error })
@@ -235,38 +234,12 @@ export async function deviceScanned(
           end: now(),
         }
 
+    safeLog('______________________________')
     safeLog(
-      'changed_',
-      Platform.OS,
+      `[${Platform.OS} (my platform)] found a contact tracing uuid`,
       scannedDeviceUUID,
       rssiCache[scannedDeviceUUID]
     )
-
-    // on iOS we can't keep background mode working very long
-    // so we use the wake up function of the app to do the work ;)
-    if (Platform.OS === 'ios') {
-      // rssi cache will not be saved in background, so write it to disk with Realm
-      await syncDevicesInMemoryToLocalDatabase()
-      const previousSyncS = await AsyncStorage.getItem(previousSyncedKey)
-      safeLog({ previousSyncS })
-      const nowUnix = now()
-      const hourInSeconds = 60 * 60
-      safeLog({
-        number: Number(previousSyncS),
-        plusValue: hourInSeconds > nowUnix,
-      })
-
-      if (!previousSyncS || Number(previousSyncS) + hourInSeconds > nowUnix) {
-        safeLog('refresh job on iOS')
-        const ok = await refreshJob()
-        if (!ok) {
-          safeLog('error while refreshing job in iOS')
-        }
-        // safe previous sync
-        await AsyncStorage.setItem(previousSyncedKey, `${nowUnix}`)
-      }
-    }
+    safeLog('____________________________________________')
   }
 }
-
-const previousSyncedKey = 'previousSyncedKey'
